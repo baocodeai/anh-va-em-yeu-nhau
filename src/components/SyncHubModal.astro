@@ -620,6 +620,7 @@
         }
 
         const bucketList = JSON.parse(localStorage.getItem('couple_bucket_list') || '[]');
+        const bucketCategories = JSON.parse(localStorage.getItem('couple_bucket_categories') || '[]');
         const habit21 = JSON.parse(localStorage.getItem('couple_habit_21') || '[]');
         const memories = JSON.parse(localStorage.getItem('couple_memories') || '[]');
         const trashBin = JSON.parse(localStorage.getItem('couple_trash_bin') || '[]');
@@ -628,6 +629,7 @@
         forcePushBtn.textContent = '⏳ Đang đẩy...';
         const ok = await pushDataToFirebase({
           bucketList,
+          bucketCategories,
           habit21,
           memories,
           trashBin,
@@ -656,6 +658,15 @@
           const newCloud = JSON.stringify(cloudData.bucketList);
           if (currentLocal !== newCloud) {
             localStorage.setItem('couple_bucket_list', newCloud);
+            shouldNotify = true;
+          }
+        }
+
+        if (cloudData.bucketCategories && Array.isArray(cloudData.bucketCategories)) {
+          const currentCats = localStorage.getItem('couple_bucket_categories');
+          const newCats = JSON.stringify(cloudData.bucketCategories);
+          if (currentCats !== newCats) {
+            localStorage.setItem('couple_bucket_categories', newCats);
             shouldNotify = true;
           }
         }

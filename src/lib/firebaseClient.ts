@@ -50,7 +50,11 @@ export function initFirebaseClient(): Database | null {
     } else {
       app = initializeApp(config);
     }
-    cachedDb = getDatabase(app);
+    if (config.databaseURL) {
+      cachedDb = getDatabase(app, config.databaseURL);
+    } else {
+      cachedDb = getDatabase(app);
+    }
     return cachedDb;
   } catch (err) {
     console.warn('[Firebase] Khởi tạo thất bại:', err);
