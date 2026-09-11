@@ -18,6 +18,7 @@ export interface PartnerInfo {
 
 export interface CoupleConfig {
   anniversaryDate: string; // YYYY-MM-DD (Thời khắc bắt đầu yêu nhau)
+  birthdayUnlockDate?: string; // YYYY-MM-DDTHH:mm:ss (Thời điểm mở khóa sinh nhật)
   title: string;
   subtitle: string;
   description: string;
@@ -30,6 +31,8 @@ export interface CoupleConfig {
 export const COUPLE_CONFIG: CoupleConfig = {
   // Ngày chính thức yêu nhau: 15 tháng 8 năm 2026
   anniversaryDate: '2026-08-15',
+  // Ngày mở khóa sinh nhật của AI: 28 tháng 9 năm 2026 lúc 00:00:00
+  birthdayUnlockDate: '2026-09-28T00:00:00',
 
   title: 'Nơi Bí Mật Của Hai Ta',
   subtitle: 'Hành Trình Tình Yêu & Thói Quen Giữa Ngân Hà',

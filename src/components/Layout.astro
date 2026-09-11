@@ -380,6 +380,93 @@ const ogImageUrl = new URL('/assets/og.png', site).toString();
 
     <LoveLockScreen />
 
+    <!-- Secret Creator PIN Unlock Modal -->
+    <div class="creator-secret-modal-overlay" id="creator-secret-modal" style="display: none;">
+      <div class="creator-secret-modal-card romantic-card">
+        <div class="creator-secret-header">
+          <span class="creator-modal-crown">👑</span>
+          <h3 class="creator-modal-title gradient-love-text">Xác Thực Quyền Creator</h3>
+          <p class="creator-modal-desc">Nhập mã PIN bí mật của Anh để mở toàn quyền chỉnh sửa và xem trước các trang đang khóa.</p>
+        </div>
+
+        <form id="form-creator-secret-auth" class="creator-modal-form">
+          <input
+            type="password"
+            id="input-creator-secret-pin"
+            class="form-input creator-pin-input"
+            maxlength="6"
+            placeholder="••••"
+            autocomplete="off"
+            required
+          />
+          <p class="creator-auth-error" id="creator-auth-error" style="display: none;">Mã PIN chưa đúng rồi!</p>
+          <div class="creator-modal-btns">
+            <button type="button" class="btn-outline-love" id="btn-close-creator-modal">Hủy</button>
+            <button type="submit" class="btn-love">🚀 Kích Hoạt</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <style>
+      .creator-secret-modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 100000;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.2rem;
+      }
+      .creator-secret-modal-card {
+        background: #0f172a;
+        border: 1px solid rgba(244, 63, 94, 0.4);
+        border-radius: 20px;
+        padding: 1.8rem;
+        max-width: 360px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(244, 63, 94, 0.25);
+        animation: fadeInModal 0.2s ease-out;
+      }
+      .creator-modal-crown {
+        font-size: 2rem;
+        display: block;
+        margin-bottom: 6px;
+        filter: drop-shadow(0 0 8px rgba(244, 63, 94, 0.5));
+      }
+      .creator-modal-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin: 0 0 6px;
+      }
+      .creator-modal-desc {
+        font-size: 0.82rem;
+        color: #94a3b8;
+        margin: 0 0 1.2rem;
+        line-height: 1.5;
+      }
+      .creator-pin-input {
+        text-align: center;
+        font-size: 1.15rem !important;
+        letter-spacing: 0.2em;
+        margin-bottom: 0.8rem;
+      }
+      .creator-auth-error {
+        color: #f87171;
+        font-size: 0.78rem;
+        margin: -4px 0 8px;
+      }
+      .creator-modal-btns {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+      }
+    </style>
+
     <script>
       import { initGlobalSyncEngine } from '../lib/globalSyncEngine';
       initGlobalSyncEngine();
@@ -397,6 +484,84 @@ const ogImageUrl = new URL('/assets/og.png', site).toString();
 
         if (lockBtn) lockBtn.addEventListener('click', triggerLock);
         mobileLockBtns.forEach((btn) => btn.addEventListener('click', triggerLock));
+
+        // Secret Creator Mode Trigger (Triple tap on Logo or Ctrl+Shift+A)
+        const brandLogo = document.querySelector('.couple-header-brand');
+        const creatorModal = document.getElementById('creator-secret-modal');
+        const btnCloseModal = document.getElementById('btn-close-creator-modal');
+        const formAuth = document.getElementById('form-creator-secret-auth');
+        const pinInput = document.getElementById('input-creator-secret-pin') as HTMLInputElement | null;
+        const errorMsg = document.getElementById('creator-auth-error');
+
+        let tapCount = 0;
+        let tapTimer: any = null;
+
+        function openCreatorModal() {
+          if (creatorModal) {
+            creatorModal.style.display = 'flex';
+            if (pinInput) {
+              pinInput.value = '';
+              setTimeout(() => pinInput.focus(), 150);
+            }
+            if (errorMsg) errorMsg.style.display = 'none';
+          }
+        }
+
+        function closeCreatorModal() {
+          if (creatorModal) creatorModal.style.display = 'none';
+        }
+
+        if (brandLogo) {
+          brandLogo.addEventListener('click', (e) => {
+            tapCount++;
+            clearTimeout(tapTimer);
+            if (tapCount >= 3) {
+              e.preventDefault();
+              tapCount = 0;
+              openCreatorModal();
+            } else {
+              tapTimer = setTimeout(() => { tapCount = 0; }, 1200);
+            }
+          });
+        }
+
+        // Shortcut: Ctrl + Shift + A
+        document.addEventListener('keydown', (e) => {
+          if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+            e.preventDefault();
+            openCreatorModal();
+          }
+        });
+
+        if (btnCloseModal) {
+          btnCloseModal.addEventListener('click', closeCreatorModal);
+        }
+
+        if (creatorModal) {
+          creatorModal.addEventListener('click', (e) => {
+            if (e.target === creatorModal) closeCreatorModal();
+          });
+        }
+
+        if (formAuth) {
+          formAuth.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const entered = pinInput?.value.trim() || '';
+            const customPin = localStorage.getItem('couple_custom_passcode');
+
+            if (entered === '2908' || (customPin && entered === customPin.trim())) {
+              localStorage.setItem('couple_creator_access', 'true');
+              closeCreatorModal();
+              window.dispatchEvent(new CustomEvent('couple-creator-access-granted'));
+            } else {
+              if (errorMsg) errorMsg.style.display = 'block';
+              if (pinInput) {
+                pinInput.focus();
+                pinInput.select();
+              }
+            }
+          });
+        }
       }
 
       initHeaderLockAction();

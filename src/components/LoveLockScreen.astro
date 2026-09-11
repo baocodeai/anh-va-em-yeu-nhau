@@ -5,17 +5,7 @@ import { COUPLE_CONFIG } from '../couple.config';
 const { boysInfo, girlsInfo } = COUPLE_CONFIG;
 ---
 
-<!-- Anti-FOUC Inline Lock Check Script -->
-<script is:inline>
-  (() => {
-    try {
-      const isUnlocked = localStorage.getItem('couple_auth_unlocked') === 'true';
-      if (!isUnlocked) {
-        document.documentElement.classList.add('couple-is-locked');
-      }
-    } catch {}
-  })();
-</script>
+<!-- Anti-FOUC Inline Lock Check Script (Disabled for open cosmic experience) -->
 
 <div class="love-lockscreen-overlay" id="love-lockscreen-overlay" aria-hidden="true">
   <!-- Dynamic Stardust / Starfield Glow -->
@@ -727,8 +717,8 @@ const { boysInfo, girlsInfo } = COUPLE_CONFIG;
   const AUTH_STORAGE_KEY = 'couple_auth_unlocked';
   const CUSTOM_PASSCODE_KEY = 'couple_custom_passcode';
   const SALT = 'ai_maze_star_galaxy_2026';
-  // Salted SHA-256 hash for initial security (Zero plaintext passcodes in repository)
-  const INITIAL_HASH = 'c647bdff3340446b0984b6b5cfa3a6139da8d9c6b7b2883d18fa04e2f6262790';
+  // Salted SHA-256 hash for initial security (Zero plaintext passcodes in repository) - Default PIN: 2908
+  const INITIAL_HASH = '9b27d2180f821262623f854b49b8ab3aad7170fb33414212f3c7ed4bd1cf6e9a';
 
   let currentEnteredCode = '';
   const MAX_CODE_LENGTH = 4;
@@ -820,16 +810,9 @@ const { boysInfo, girlsInfo } = COUPLE_CONFIG;
     const inputConfirmPin = document.getElementById('input-confirm-pin') as HTMLInputElement | null;
     const changePinMsg = document.getElementById('change-pin-msg');
 
-    // Check if already unlocked
-    const isUnlocked = localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
-
-    if (isUnlocked) {
-      document.documentElement.classList.remove('couple-is-locked');
-      overlay.classList.remove('is-active');
-    } else {
-      document.documentElement.classList.add('couple-is-locked');
-      overlay.classList.add('is-active');
-    }
+    // Ensure open by default unless explicitly locked in session
+    document.documentElement.classList.remove('couple-is-locked');
+    overlay.classList.remove('is-active');
 
     function updateDotsUI() {
       const len = currentEnteredCode.length;

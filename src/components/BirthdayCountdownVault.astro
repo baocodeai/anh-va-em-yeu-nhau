@@ -1,0 +1,23 @@
+---
+// BirthdayCountdownVault.astro
+// Không gian Vũ Trụ Thuần Khiết: Chiêm ngưỡng trực tiếp nền dải ngân hà, các hành tinh và ngàn sao
+interface Props {
+  vaultId?: string;
+}
+
+const { vaultId = 'cosmos-pure-view' } = Astro.props;
+---
+
+<div class="pure-cosmos-open-space" id={vaultId} aria-hidden="true">
+  <!-- Hoàn toàn trong suốt để người yêu ngắm trọn vẹn nền vũ trụ CosmosBackground -->
+</div>
+
+<style>
+  .pure-cosmos-open-space {
+    width: 100%;
+    min-height: 85vh;
+    background: transparent;
+    pointer-events: none;
+    display: block;
+  }
+</style>
