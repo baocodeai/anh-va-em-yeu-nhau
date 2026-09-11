@@ -183,7 +183,7 @@ const defaultMemoriesJSON = JSON.stringify(PHOTO_MEMORIES).replace(/</g, '\\u003
       </div>
 
       <!-- Main 2-Column Split Body Form -->
-      <form id="memory-form" class="zen-split-form">
+      <form id="memory-form" class="zen-split-form" novalidate>
         <input type="hidden" id="form-mem-id" value="" />
 
         <div class="zen-two-columns-body">
@@ -288,7 +288,6 @@ const defaultMemoriesJSON = JSON.stringify(PHOTO_MEMORIES).replace(/</g, '\\u003
                   id="form-mem-title"
                   class="zen-title-textarea"
                   rows="1"
-                  required
                   placeholder="Tiêu đề trang nhật ký..."
                 ></textarea>
               </div>
@@ -4648,71 +4647,110 @@ Hai đứa mình dạo bước bên nhau..."
       });
     }
 
-    // Form submit
+    // Form submit & Save Memory handler
     const form = document.getElementById('memory-form');
-    if (form) {
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const id = (document.getElementById('form-mem-id') as HTMLInputElement).value;
-        const title = (document.getElementById('form-mem-title') as HTMLInputElement).value.trim();
-        const date = (document.getElementById('form-mem-date') as HTMLInputElement).value.trim();
-        const location = (document.getElementById('form-mem-loc') as HTMLInputElement).value.trim();
-        const author = ((document.getElementById('form-mem-author') as HTMLSelectElement)?.value || 'both') as 'ai' | 'maze' | 'both';
-        const mood = (document.getElementById('form-mem-mood') as HTMLInputElement).value.trim();
-        const weather = (document.getElementById('form-mem-weather') as HTMLInputElement).value.trim();
-        const caption = (document.getElementById('form-mem-caption') as HTMLTextAreaElement).value.trim();
-        const journalContent = (document.getElementById('form-mem-content') as HTMLTextAreaElement).value.trim();
-        const isPinned = (document.getElementById('form-mem-pinned') as HTMLInputElement)?.checked || false;
+    const btnSaveMem = document.getElementById('btn-save-mem');
 
-        const list = getStoredMemories();
+    function handleSaveMemory(e?: Event) {
+      if (e) e.preventDefault();
 
-        if (id) {
-          const idx = list.findIndex((p) => p.id === id);
-          if (idx !== -1) {
-            const updatedItem: PhotoMemory = {
-              ...list[idx],
-              title,
-              date,
-              location,
-              author,
-              mood,
-              weather,
-              caption,
-              journalContent,
-              isPinned,
-              imageUrl: currentUploadedMemPhoto || list[idx].imageUrl,
-              galleryImages: [...currentAttachedGallery]
-            };
-            list[idx] = updatedItem;
+      const idEl = document.getElementById('form-mem-id') as HTMLInputElement | null;
+      const titleEl = document.getElementById('form-mem-title') as HTMLTextAreaElement | null;
+      const dateEl = document.getElementById('form-mem-date') as HTMLInputElement | null;
+      const locEl = document.getElementById('form-mem-loc') as HTMLInputElement | null;
+      const authorEl = document.getElementById('form-mem-author') as HTMLSelectElement | null;
+      const moodEl = document.getElementById('form-mem-mood') as HTMLInputElement | null;
+      const weatherEl = document.getElementById('form-mem-weather') as HTMLInputElement | null;
+      const captionEl = document.getElementById('form-mem-caption') as HTMLTextAreaElement | null;
+      const contentEl = document.getElementById('form-mem-content') as HTMLTextAreaElement | null;
+      const pinnedEl = document.getElementById('form-mem-pinned') as HTMLInputElement | null;
 
-            // If currently viewing in reader, update reader view
-            if (currentViewingPhoto && currentViewingPhoto.id === id) {
-              currentViewingPhoto = updatedItem;
+      const id = idEl ? idEl.value : '';
+      const title = titleEl ? titleEl.value.trim() : '';
+      const date = dateEl ? dateEl.value.trim() : new Date().toLocaleDateString('vi-VN');
+      const location = locEl ? locEl.value.trim() : 'Bên nhau';
+      const author = ((authorEl?.value || 'both') as 'ai' | 'maze' | 'both');
+      const mood = moodEl ? moodEl.value.trim() : '';
+      const weather = weatherEl ? weatherEl.value.trim() : '';
+      const caption = captionEl ? captionEl.value.trim() : '';
+      const journalContent = contentEl ? contentEl.value.trim() : '';
+      const isPinned = pinnedEl ? pinnedEl.checked : false;
+
+      if (!title) {
+        setMobilePane('right');
+        if (titleEl) {
+          titleEl.focus();
+          titleEl.style.borderColor = '#f43f5e';
+          titleEl.style.boxShadow = '0 0 16px rgba(244, 63, 94, 0.6)';
+          setTimeout(() => {
+            if (titleEl) {
+              titleEl.style.borderColor = '';
+              titleEl.style.boxShadow = '';
             }
-          }
-        } else {
-          const newMem: PhotoMemory = {
-            id: 'mem-' + Date.now(),
+          }, 2500);
+        }
+        alert('🌸 Vui lòng nhập tiêu đề cho trang nhật ký trước khi lưu nhé!');
+        return;
+      }
+
+      const list = getStoredMemories();
+
+      if (id) {
+        const idx = list.findIndex((p) => p.id === id);
+        if (idx !== -1) {
+          const updatedItem: PhotoMemory = {
+            ...list[idx],
             title,
-            date: date || new Date().toLocaleDateString('vi-VN'),
-            location: location || 'Bên nhau',
+            date,
+            location,
             author,
             mood,
             weather,
             caption,
             journalContent,
             isPinned,
-            imageUrl: currentUploadedMemPhoto || '/photos/anniversary.svg',
+            imageUrl: currentUploadedMemPhoto || list[idx].imageUrl || '/photos/anniversary.svg',
             galleryImages: [...currentAttachedGallery]
           };
-          list.unshift(newMem);
+          list[idx] = updatedItem;
+
+          // If currently viewing in reader, update reader view
+          if (currentViewingPhoto && currentViewingPhoto.id === id) {
+            currentViewingPhoto = updatedItem;
+          }
         }
+      } else {
+        const newMem: PhotoMemory = {
+          id: 'mem-' + Date.now(),
+          title,
+          date: date || new Date().toLocaleDateString('vi-VN'),
+          location: location || 'Bên nhau',
+          author,
+          mood,
+          weather,
+          caption,
+          journalContent,
+          isPinned,
+          imageUrl: currentUploadedMemPhoto || '/photos/anniversary.svg',
+          galleryImages: [...currentAttachedGallery]
+        };
+        list.unshift(newMem);
+      }
 
-        saveStoredMemories(list);
-        renderMemories();
+      saveStoredMemories(list);
+      renderMemories();
+      if (currentPhotoFilter || currentPhotoSearchQuery) {
+        renderAllPhotosStream();
+      }
 
-        if (crudModal) crudModal.classList.remove('is-open');
-      });
+      if (crudModal) crudModal.classList.remove('is-open');
+    }
+
+    if (form) {
+      form.addEventListener('submit', handleSaveMemory);
+    }
+    if (btnSaveMem) {
+      btnSaveMem.addEventListener('click', handleSaveMemory);
     }
 
     // Realtime sync listener
@@ -4743,5 +4781,6 @@ Hai đứa mình dạo bước bên nhau..."
   }
 
   initMemoryInteractive();
+  document.addEventListener('astro:page-load', initMemoryInteractive);
   document.addEventListener('astro:after-swap', initMemoryInteractive);
 </script>
