@@ -3129,9 +3129,42 @@ button.nav-icon-link {
     /* Mobile Filter Bar: 1 dòng duy nhất gồm ô search và nút Lọc */
     .mobile-filter-bar {
         display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .mobile-search-row {
+        display: flex;
         align-items: center;
         gap: 0.5rem;
         width: 100%;
+    }
+
+    .mobile-capsule-scroll-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        overflow-x: auto;
+        white-space: nowrap;
+        width: 100%;
+        padding: 2px 2px 6px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        mask-image: linear-gradient(to right, black 88%, transparent 100%);
+        -webkit-mask-image: linear-gradient(to right, black 88%, transparent 100%);
+    }
+
+    .mobile-capsule-scroll-wrap::-webkit-scrollbar {
+        display: none;
+    }
+
+    .mobile-capsule-chip {
+        padding: 0.4rem 0.95rem;
+        font-size: 0.82rem;
+        flex-shrink: 0;
+        border-radius: 999px;
     }
 
     .mobile-search-wrapper {

@@ -103,35 +103,52 @@ const filterDomains = [
         </div>
       </div>
 
-      <!-- MOBILE FILTER BAR: COMPACT SEARCH + BOTTOM SHEET TRIGGER BUTTON -->
+      <!-- MOBILE FILTER BAR: COMPACT SEARCH + HORIZONTAL SCROLL CAPSULE + BOTTOM SHEET TRIGGER BUTTON -->
       <div class="mobile-filter-bar">
-        <div class="mobile-search-wrapper">
-          <svg class="search-box-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <input
-            type="search"
-            id="mobile-search-input"
-            class="mobile-search-input"
-            placeholder="Tìm bài viết, kỹ năng..."
-            aria-label="Tìm bài viết trên di động"
-            autocomplete="off"
-          />
+        <div class="mobile-search-row">
+          <div class="mobile-search-wrapper">
+            <svg class="search-box-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="search"
+              id="mobile-search-input"
+              class="mobile-search-input"
+              placeholder="Tìm bài viết, kỹ năng..."
+              aria-label="Tìm bài viết trên di động"
+              autocomplete="off"
+            />
+          </div>
+          <button
+            type="button"
+            id="mobile-filter-trigger"
+            class="mobile-filter-trigger-btn"
+            aria-label="Mở bộ lọc bài viết"
+            aria-haspopup="dialog"
+          >
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            <span>Lọc</span>
+            <span id="mobile-filter-badge" class="mobile-filter-badge" style="display: none;">0</span>
+          </button>
         </div>
-        <button
-          type="button"
-          id="mobile-filter-trigger"
-          class="mobile-filter-trigger-btn"
-          aria-label="Mở bộ lọc bài viết"
-          aria-haspopup="dialog"
-        >
-          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-          </svg>
-          <span>Lọc</span>
-          <span id="mobile-filter-badge" class="mobile-filter-badge" style="display: none;">0</span>
-        </button>
+
+        <!-- HORIZONTAL SCROLL CAPSULE BAR FOR MOBILE -->
+        <div class="mobile-capsule-scroll-wrap" role="tablist" aria-label="Lọc theo lĩnh vực trên di động">
+          {filterDomains.map((dm, idx) => (
+            <button
+              class={`filter-chip-btn mobile-capsule-chip ${idx === 0 ? 'is-active' : ''}`}
+              data-domain={dm.id}
+              type="button"
+              role="tab"
+              aria-selected={idx === 0 ? 'true' : 'false'}
+            >
+              {dm.label}
+            </button>
+          ))}
+        </div>
       </div>
     </section>
 

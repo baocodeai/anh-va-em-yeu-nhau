@@ -325,18 +325,18 @@
     function drawSeamlessPlanets() {
       // 1. SATURN (Sao Thổ) - Top Right
       if (transparentPlanets.saturn) {
-        const saturnX = (width < 768 ? width * 0.85 : width * 0.86) + mouse.normX * 14;
-        const saturnY = (height * 0.18) + mouse.normY * 12;
-        const saturnSize = width < 768 ? 140 : 210;
+        const saturnX = (width < 768 ? width * 0.94 : width * 0.86) + mouse.normX * 14;
+        const saturnY = (width < 768 ? height * 0.08 : height * 0.18) + mouse.normY * 12;
+        const saturnSize = width < 768 ? 95 : 210;
 
         renderSeamlessPlanet(transparentPlanets.saturn, saturnX, saturnY, saturnSize, 'rgba(234, 179, 8, 0.3)');
       }
 
       // 2. EARTH (Trái Đất The Blue Marble) - Bottom Left
       if (transparentPlanets.earth) {
-        const earthX = (width < 768 ? width * 0.15 : width * 0.12) + mouse.normX * 22;
-        const earthY = (height * 0.74) + mouse.normY * 18;
-        const earthSize = width < 768 ? 110 : 160;
+        const earthX = (width < 768 ? width * 0.10 : width * 0.12) + mouse.normX * 22;
+        const earthY = (width < 768 ? height * 0.72 : height * 0.74) + mouse.normY * 18;
+        const earthSize = width < 768 ? 90 : 160;
 
         renderSeamlessPlanet(transparentPlanets.earth, earthX, earthY, earthSize, 'rgba(96, 165, 250, 0.4)');
 
@@ -361,18 +361,18 @@
 
       // 3. JUPITER (Sao Mộc with Great Red Spot) - Mid-Left
       if (transparentPlanets.jupiter) {
-        const jupX = (width < 768 ? width * 0.18 : width * 0.20) + mouse.normX * 10;
-        const jupY = (height * 0.22) + mouse.normY * 9;
-        const jupSize = width < 768 ? 85 : 125;
+        const jupX = (width < 768 ? width * 0.06 : width * 0.20) + mouse.normX * 10;
+        const jupY = (width < 768 ? height * 0.42 : height * 0.22) + mouse.normY * 9;
+        const jupSize = width < 768 ? 60 : 125;
 
         renderSeamlessPlanet(transparentPlanets.jupiter, jupX, jupY, jupSize, 'rgba(217, 119, 6, 0.25)');
       }
 
       // 4. MARS (Sao Hỏa) - Mid-Right
       if (transparentPlanets.mars) {
-        const marsX = (width * 0.74) + mouse.normX * 16;
-        const marsY = (height * 0.84) + mouse.normY * 14;
-        const marsSize = width < 768 ? 65 : 95;
+        const marsX = (width < 768 ? width * 0.90 : width * 0.74) + mouse.normX * 16;
+        const marsY = (width < 768 ? height * 0.88 : height * 0.84) + mouse.normY * 14;
+        const marsSize = width < 768 ? 50 : 95;
 
         renderSeamlessPlanet(transparentPlanets.mars, marsX, marsY, marsSize, 'rgba(239, 68, 68, 0.3)');
       }
