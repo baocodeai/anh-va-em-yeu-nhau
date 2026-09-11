@@ -31,34 +31,34 @@ export const COUPLE_CONFIG: CoupleConfig = {
   // Ngày chính thức yêu nhau: 15 tháng 8 năm 2026
   anniversaryDate: '2026-08-15',
 
-  title: '21 Ngày Cùng Em — AI & Maze',
+  title: 'Nơi Bí Mật Của Hai Ta',
   subtitle: 'Hành Trình Tình Yêu & Thói Quen Giữa Ngân Hà',
   description: 'Cuốn nhật ký tinh cầu lưu giữ 21 ngày rèn luyện thói quen tiếng Anh và những điều ước sẽ làm cùng nhau của AI và Maze.',
 
   // Thông tin về Chàng
   boysInfo: {
     name: 'AI',
-    nickname: 'Chàng Kỹ Sư Vũ Trụ',
+    nickname: 'Chàng Kỹ Sư Tình Yêu',
     role: 'Anh',
     birthday: '2005-09-28', // 28/09/2005
-    zodiac: 'Thiên Bình (Libra)',
+    zodiac: 'Thiên Bình',
     avatar: '/assets/ai.png',
-    bio: 'Chàng trai luôn muốn dùng cả bầu trời ngân hà và sự kiên trì của mình để che chở và đồng hành cùng Maze.',
+    bio: 'Chàng trai ấm áp luôn muốn dùng tất cả của mình cùng sự kiên trì để che chở và đồng hành cùng Maze.',
     color: '#38bdf8' // Xanh ánh sao lấp lánh
   },
 
   // Thông tin về Nàng
   girlsInfo: {
     name: 'Maze',
-    nickname: 'Nàng Tinh Cầu Rực Rỡ',
+    nickname: 'Nàng Kiến Tạo Yêu Thương',
     role: 'Em',
     birthday: '2005-12-11', // 11/12/2005
-    zodiac: 'Nhân Mã (Sagittarius)',
+    zodiac: 'Nhân Mã',
     avatar: '/assets/maze.jpg',
-    bio: 'Cô gái dịu dàng, nụ cười thắp sáng những vì sao, nguồn cảm hứng ngọt ngào nhất trong từng ngày của AI.',
+    bio: 'Cô gái dịu dàng, dễ thương và thông minh cùng với nụ cười thắp sáng những vì sao, nguồn cảm hứng ngọt ngào nhất trong từng ngày của anh.',
     color: '#f43f5e' // Hồng thạch anh ấm áp
   },
 
   // Lời tựa tình yêu
-  loveDeclaration: 'Giữa vũ trụ bao la với hàng tỷ thiên hà và triệu năm ánh sáng, gặp được em là điều kỳ diệu nhất. 21 ngày học cùng nhau không chỉ là thói quen của một ngôn ngữ, mà là thói quen có em trong từng nhịp thở mỗi ngày.',
+  loveDeclaration: 'Tu trăm năm mới chung một thuyền, tu ngàn năm mới chung chăn gối.\n Hơn 8 tỷ người, tại sao hai ta gặp nhau nhỉ ?',
 };
