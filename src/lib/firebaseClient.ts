@@ -96,10 +96,69 @@ export function normalizeArray(val: any): any[] {
   return [];
 }
 
+export function normalizeSubTasks(rawSubTasks: any): any[] {
+  if (!rawSubTasks) return [];
+  const list = normalizeArray(rawSubTasks);
+  return list.map((st: any) => {
+    if (!st || typeof st !== 'object') return st;
+    const normalizedSt: any = {
+      id: String(st.id || `st-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`),
+      title: String(st.title || ''),
+      completed: Boolean(st.completed),
+      completedDate: typeof st.completedDate === 'string' ? st.completedDate : undefined
+    };
+    if (st.children) {
+      normalizedSt.children = normalizeSubTasks(st.children);
+    }
+    return normalizedSt;
+  });
+}
+
+export function normalizeBucketList(rawBucketList: any): any[] {
+  if (!rawBucketList) return [];
+  const list = normalizeArray(rawBucketList);
+  return list.map((item: any) => {
+    if (!item || typeof item !== 'object') return item;
+    const normalizedItem: any = {
+      id: String(item.id || `bl-${Date.now()}`),
+      title: String(item.title || ''),
+      description: typeof item.description === 'string' ? item.description : '',
+      category: typeof item.category === 'string' ? item.category : 'Hẹn hò lãng mạn',
+      completed: Boolean(item.completed),
+      createdAt: typeof item.createdAt === 'string' ? item.createdAt : undefined,
+      completedDate: typeof item.completedDate === 'string' ? item.completedDate : undefined,
+      memoryNote: typeof item.memoryNote === 'string' ? item.memoryNote : undefined,
+      photoUrl: typeof item.photoUrl === 'string' ? item.photoUrl : undefined
+    };
+    if (item.subTasks) {
+      normalizedItem.subTasks = normalizeSubTasks(item.subTasks);
+    }
+    return normalizedItem;
+  });
+}
+
+export function sanitizeForFirebase(obj: any): any {
+  if (obj === undefined) return null;
+  if (obj === null) return null;
+  if (Array.isArray(obj)) {
+    return obj.map(sanitizeForFirebase);
+  }
+  if (typeof obj === 'object') {
+    const cleaned: Record<string, any> = {};
+    for (const [k, v] of Object.entries(obj)) {
+      if (v !== undefined) {
+        cleaned[k] = sanitizeForFirebase(v);
+      }
+    }
+    return cleaned;
+  }
+  return obj;
+}
+
 export function normalizeCoupleCloudPayload(raw: any): CoupleCloudPayload {
   if (!raw || typeof raw !== 'object') return {};
   return {
-    bucketList: raw.bucketList !== undefined ? normalizeArray(raw.bucketList) : undefined,
+    bucketList: raw.bucketList !== undefined ? normalizeBucketList(raw.bucketList) : undefined,
     bucketCategories: raw.bucketCategories !== undefined ? normalizeArray(raw.bucketCategories) : undefined,
     habit21: raw.habit21 !== undefined ? normalizeArray(raw.habit21) : undefined,
     habitStartDate: typeof raw.habitStartDate === 'string' ? raw.habitStartDate : undefined,
@@ -177,7 +236,8 @@ export async function pushDataToFirebase(payload: CoupleCloudPayload): Promise<b
       if (payload[key] !== undefined) {
         const childRef = ref(db, `${DB_NODE_PATH}/${key}`);
         const val = payload[key];
-        promises.push(set(childRef, val === undefined ? null : val));
+        const sanitized = sanitizeForFirebase(val);
+        promises.push(set(childRef, sanitized));
       }
     }
 
