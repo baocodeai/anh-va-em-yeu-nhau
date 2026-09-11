@@ -4,7 +4,7 @@
  * =========================================================================
  */
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getDatabase, ref, set, onValue, type Database, type Unsubscribe } from 'firebase/database';
+import { getDatabase, ref, set, update, onValue, type Database, type Unsubscribe } from 'firebase/database';
 import { DEFAULT_FIREBASE_CONFIG, type FirebaseConfig } from '../firebase.config';
 
 const STORAGE_FIREBASE_KEY = 'ai_maze_firebase_config';
@@ -118,7 +118,7 @@ export async function pushDataToFirebase(payload: CoupleCloudPayload): Promise<b
       ...payload,
       updatedAt: new Date().toISOString()
     };
-    await set(dataRef, dataToSave);
+    await update(dataRef, dataToSave);
     return true;
   } catch (err) {
     console.error('[Firebase] Lỗi đẩy dữ liệu:', err);

@@ -626,6 +626,50 @@ const { boysInfo, girlsInfo, anniversaryDate, loveDeclaration } = COUPLE_CONFIG;
     if (mazeImg && avs.maze) mazeImg.src = avs.maze;
   }
 
+  // Tự động nén và crop ảnh đại diện vuông 360x360px sắc nét cho Retina, dung lượng chỉ ~30KB (không nghẽn bộ nhớ)
+  async function compressAvatarImage(file: File): Promise<string> {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const MAX_SIZE = 360;
+          const width = img.naturalWidth || img.width;
+          const height = img.naturalHeight || img.height;
+
+          // Crop vuông tâm ảnh để avatar tròn luôn đẹp nhất
+          const minDim = Math.min(width, height);
+          const sx = (width - minDim) / 2;
+          const sy = (height - minDim) / 2;
+
+          const canvas = document.createElement('canvas');
+          const targetDim = Math.min(minDim, MAX_SIZE);
+          canvas.width = targetDim;
+          canvas.height = targetDim;
+
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, targetDim, targetDim);
+            try {
+              const compressed = canvas.toDataURL('image/jpeg', 0.88);
+              resolve(compressed);
+            } catch {
+              resolve(event.target?.result as string);
+            }
+          } else {
+            resolve(event.target?.result as string);
+          }
+        };
+        img.onerror = () => resolve(event.target?.result as string);
+        img.src = event.target?.result as string;
+      };
+      reader.onerror = () => resolve('');
+      reader.readAsDataURL(file);
+    });
+  }
+
   let editingPerson: 'ai' | 'maze' = 'ai';
   let tempAvatarData = '';
 
@@ -682,7 +726,7 @@ const { boysInfo, girlsInfo, anniversaryDate, loveDeclaration } = COUPLE_CONFIG;
     const modal = document.getElementById('avatar-modal');
     const closeBtn = document.getElementById('avatar-modal-close');
     const cancelBtn = document.getElementById('btn-cancel-avatar');
-    const saveBtn = document.getElementById('btn-save-avatar');
+    const saveBtn = document.getElementById('btn-save-avatar') as HTMLButtonElement | null;
     const fileInput = document.getElementById('avatar-file-input') as HTMLInputElement | null;
     const changeFileBtn = document.getElementById('btn-change-avatar-file') as HTMLInputElement | null;
     const urlInput = document.getElementById('avatar-url-input') as HTMLInputElement | null;
@@ -700,14 +744,13 @@ const { boysInfo, girlsInfo, anniversaryDate, loveDeclaration } = COUPLE_CONFIG;
       });
     }
 
-    const handleFile = (file: File) => {
+    const handleFile = async (file: File) => {
       if (!file || !file.type.startsWith('image/')) return;
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const result = event.target?.result as string;
-        updateAvatarDropzonePreview(result);
-      };
-      reader.readAsDataURL(file);
+      // Nén ảnh tức thì trước khi đưa vào preview & lưu
+      const compressedData = await compressAvatarImage(file);
+      if (compressedData) {
+        updateAvatarDropzonePreview(compressedData);
+      }
     };
 
     if (fileInput) {
@@ -773,17 +816,34 @@ const { boysInfo, girlsInfo, anniversaryDate, loveDeclaration } = COUPLE_CONFIG;
           return;
         }
 
-        const avs = getStoredAvatars();
-        if (editingPerson === 'ai') avs.ai = tempAvatarData;
-        if (editingPerson === 'maze') avs.maze = tempAvatarData;
+        const originalText = saveBtn.textContent;
+        saveBtn.textContent = '⏳ Đang lưu...';
+        saveBtn.disabled = true;
 
-        localStorage.setItem(AVATARS_STORAGE_KEY, JSON.stringify(avs));
-        applyAvatars();
+        try {
+          const avs = getStoredAvatars();
+          if (editingPerson === 'ai') avs.ai = tempAvatarData;
+          if (editingPerson === 'maze') avs.maze = tempAvatarData;
 
-        // Push to Firebase Realtime
-        pushDataToFirebase({ avatars: avs, lastUpdatedBy: editingPerson }).catch(() => {});
+          try {
+            localStorage.setItem(AVATARS_STORAGE_KEY, JSON.stringify(avs));
+          } catch (storageErr) {
+            console.warn('[Avatar] LocalStorage warning:', storageErr);
+          }
 
-        modal.classList.remove('is-open');
+          applyAvatars();
+
+          // Push to Firebase Realtime Database
+          await pushDataToFirebase({ avatars: avs, lastUpdatedBy: editingPerson });
+
+          modal.classList.remove('is-open');
+        } catch (err) {
+          console.error('[Avatar] Error while saving avatar:', err);
+          modal.classList.remove('is-open');
+        } finally {
+          saveBtn.textContent = originalText || 'Lưu Ảnh Đại Diện';
+          saveBtn.disabled = false;
+        }
       });
     }
 
