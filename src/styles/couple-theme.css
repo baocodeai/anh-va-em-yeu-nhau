@@ -909,7 +909,7 @@ html, body {
   .couple-toast-container {
     left: 12px;
     right: 12px;
-    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(65px + env(safe-area-inset-bottom, 0px));
     align-items: stretch;
   }
 
@@ -925,6 +925,99 @@ html, body {
   .couple-toast .toast-msg {
     font-size: 0.82rem;
     white-space: normal;
+  }
+}
+
+/* =========================================================================
+   NATIVE MOBILE BOTTOM APP BAR (App Navigation for Phones)
+   ========================================================================= */
+.mobile-bottom-app-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(7, 10, 19, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(244, 63, 94, 0.28);
+  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(244, 63, 94, 0.12);
+  padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+  justify-content: space-around;
+  align-items: center;
+}
+
+.bottom-tab-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 6px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  flex: 1;
+  max-width: 72px;
+  position: relative;
+}
+
+.bottom-tab-btn .bottom-tab-icon {
+  font-size: 1.25rem;
+  line-height: 1.1;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.bottom-tab-btn .bottom-tab-label {
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.bottom-tab-btn:hover {
+  color: #cbd5e1;
+}
+
+.bottom-tab-btn.is-active {
+  color: #ffffff;
+}
+
+.bottom-tab-btn.is-active .bottom-tab-icon {
+  transform: scale(1.18);
+  filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.85));
+}
+
+.bottom-tab-btn.is-active .bottom-tab-label {
+  color: #fda4af;
+  font-weight: 800;
+}
+
+.bottom-tab-btn.is-active::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #f43f5e, #38bdf8);
+  box-shadow: 0 0 10px #f43f5e;
+}
+
+@media (max-width: 992px) {
+  .mobile-bottom-app-bar {
+    display: flex;
+  }
+  body {
+    padding-bottom: calc(4.8rem + env(safe-area-inset-bottom, 0px));
   }
 }
 

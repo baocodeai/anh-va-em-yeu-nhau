@@ -320,12 +320,13 @@ const { title, subtitle } = COUPLE_CONFIG;
   function initTabSwitcher() {
     const headerTabButtons = document.querySelectorAll('.header-tab-btn');
     const mobileTabButtons = document.querySelectorAll('.mobile-tab-btn');
+    const bottomTabButtons = document.querySelectorAll('.bottom-tab-btn');
     const brandLinks = document.querySelectorAll('.couple-header-brand');
     const tabPanes = document.querySelectorAll('.tab-pane');
     const jumpButtons = document.querySelectorAll('.jump-tab-btn');
 
     function switchTab(targetPaneId: string) {
-      // Header & Mobile Buttons
+      // Header, Mobile Drawer & Mobile Bottom Buttons
       headerTabButtons.forEach((btn) => {
         if (btn.getAttribute('data-target') === targetPaneId) {
           btn.classList.add('is-active');
@@ -335,6 +336,14 @@ const { title, subtitle } = COUPLE_CONFIG;
       });
 
       mobileTabButtons.forEach((btn) => {
+        if (btn.getAttribute('data-target') === targetPaneId) {
+          btn.classList.add('is-active');
+        } else {
+          btn.classList.remove('is-active');
+        }
+      });
+
+      bottomTabButtons.forEach((btn) => {
         if (btn.getAttribute('data-target') === targetPaneId) {
           btn.classList.add('is-active');
         } else {
@@ -380,6 +389,13 @@ const { title, subtitle } = COUPLE_CONFIG;
     });
 
     mobileTabButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-target');
+        if (target) switchTab(target);
+      });
+    });
+
+    bottomTabButtons.forEach((btn) => {
       btn.addEventListener('click', () => {
         const target = btn.getAttribute('data-target');
         if (target) switchTab(target);

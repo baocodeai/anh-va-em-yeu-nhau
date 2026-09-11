@@ -1114,22 +1114,65 @@ Routine - Thói quen ngọt ngào - Learning English with you is my sweetest rou
   }
 
   @media (max-width: 768px) {
+    .habit-tracker-section {
+      padding: 0 0.8rem;
+      margin: 2rem auto;
+    }
     .habit-overview-card {
       padding: 1.4rem 1rem;
     }
+    :global(.learning-columns-grid) {
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+    }
+    :global(.partner-learn-box) {
+      padding: 1.2rem 1.1rem;
+      min-height: auto;
+    }
+    :global(.vocab-chips-grid) {
+      grid-template-columns: 1fr;
+      gap: 0.8rem;
+    }
+    :global(.romantic-note-box) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 1.1rem 1.2rem;
+    }
     .zen-scrollable-content,
     .zen-footer-bar {
-      padding-left: 1.2rem;
-      padding-right: 1.2rem;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    .zen-sticky-toolbar {
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      padding: 6px 4px;
+      justify-content: flex-start;
+      gap: 0.6rem;
+    }
+    .zen-sticky-toolbar::-webkit-scrollbar {
+      display: none;
+    }
+    .zen-tools-group {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .zen-tools-group::-webkit-scrollbar {
+      display: none;
     }
     .habit-dual-notes-grid {
       grid-template-columns: 1fr;
     }
     .crud-modal-overlay {
-      padding: 0.5rem;
+      padding: 0.4rem;
     }
     .zen-journal-card {
       height: 96vh;
+      border-radius: 16px;
     }
     .zen-title-textarea {
       font-size: 1.4rem;
@@ -1137,77 +1180,127 @@ Routine - Thói quen ngọt ngào - Learning English with you is my sweetest rou
   }
 
   @media (max-width: 520px) {
+    .habit-tracker-section {
+      padding: 0 0.5rem;
+      margin: 1.5rem auto;
+    }
     .section-title {
-      font-size: 1.6rem;
+      font-size: 1.5rem;
+      line-height: 1.3;
     }
     .section-desc {
       font-size: 0.88rem;
+      line-height: 1.55;
     }
     .habit-overview-card {
-      padding: 1.2rem 0.6rem;
-      border-radius: 18px;
+      padding: 1rem 0.5rem;
+      border-radius: 16px;
     }
     .progress-stats-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 0.3rem;
-      margin-bottom: 1.2rem;
+      gap: 0.2rem;
+      margin-bottom: 1rem;
     }
     .stat-number {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
     }
     .stat-total {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
     }
     .stat-name {
-      font-size: 0.65rem;
+      font-size: 0.62rem;
       text-align: center;
     }
     .constellation-guide-text {
-      font-size: 0.82rem;
-      margin-bottom: 0.8rem;
+      font-size: 0.8rem;
+      margin-bottom: 0.75rem;
+      padding: 0 0.4rem;
     }
     .constellation-nodes-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 5px;
+      gap: 4px;
       max-width: 320px;
       margin: 0 auto;
       justify-items: center;
     }
     :global(.day-node-btn) {
-      width: 36px;
-      height: 36px;
-      min-width: 36px;
-      min-height: 36px;
-      font-size: 0.8rem;
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      min-height: 34px;
+      font-size: 0.76rem;
     }
     .day-detail-panel {
-      padding: 1.2rem 0.8rem;
+      padding: 1.1rem 0.75rem;
       border-radius: 16px;
     }
     :global(.panel-header-row) {
       flex-direction: column;
       align-items: stretch;
       gap: 0.8rem;
-      margin-bottom: 1.2rem;
-      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.9rem;
     }
-    :global(.panel-title) {
+    :global(.day-heading) {
       font-size: 1.35rem;
     }
-    :global(.panel-action-btns) {
+    :global(.day-theme-label) {
+      font-size: 0.88rem;
+    }
+    :global(.panel-actions-group) {
       display: flex;
       gap: 0.5rem;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    :global(.panel-actions-group .btn-love),
+    :global(.panel-actions-group .btn-outline-love) {
+      flex: 1;
+      justify-content: center;
+      min-height: 40px;
+      font-size: 0.85rem;
+      padding: 8px 12px;
+    }
+    :global(.vocab-section-wrap) {
+      padding: 1.1rem 0.9rem;
+      border-radius: 14px;
+    }
+    :global(.vocab-chip) {
+      padding: 0.75rem;
+    }
+    :global(.vocab-word) {
+      font-size: 0.95rem;
+    }
+    :global(.vocab-meaning) {
+      font-size: 0.84rem;
+    }
+    :global(.vocab-example) {
+      font-size: 0.78rem;
+    }
+    .zen-cover-hero {
+      height: 110px;
+    }
+    .zen-meta-row {
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .zen-pill-item {
+      font-size: 0.78rem;
+      padding: 4px 10px;
+    }
+    .zen-footer-bar {
+      padding: 0.8rem 1rem;
+    }
+    .zen-footer-buttons {
+      width: 100%;
       justify-content: flex-end;
     }
-    :global(.vocab-table-wrap) {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    :global(.vocab-table) {
-      font-size: 0.82rem;
-      min-width: 280px;
+    .zen-footer-buttons button {
+      min-height: 38px;
+      font-size: 0.85rem;
+      padding: 6px 14px;
     }
   }
 </style>

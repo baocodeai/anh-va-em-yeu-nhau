@@ -873,20 +873,39 @@ const { boysInfo, girlsInfo, anniversaryDate, loveDeclaration } = COUPLE_CONFIG;
     .partner-zodiac-pill {
       font-size: 0.68rem;
       padding: 1px 6px;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .partner-bday-badge {
-      font-size: 0.68rem;
-      padding: 2px 6px;
-      gap: 4px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      padding: 3px 6px;
+      border-radius: 10px;
+      max-width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .bday-sep {
+      display: none;
     }
     .bday-date-label {
       font-size: 0.68rem;
+      line-height: 1.15;
+      white-space: nowrap;
     }
     .bday-count-label {
-      font-size: 0.68rem;
+      font-size: 0.70rem;
+      line-height: 1.15;
+      white-space: nowrap;
     }
     .partner-meta-row {
       gap: 3px;
+      width: 100%;
+      max-width: 100%;
     }
     .partner-bio-card {
       padding: 1.1rem 1.1rem;
@@ -923,6 +942,10 @@ const { boysInfo, girlsInfo, anniversaryDate, loveDeclaration } = COUPLE_CONFIG;
     }
     .time-val {
       font-size: 1.25rem;
+    }
+    .bday-date-label,
+    .bday-count-label {
+      font-size: 0.64rem;
     }
   }
 </style>
@@ -961,7 +984,7 @@ const { boysInfo, girlsInfo, anniversaryDate, loveDeclaration } = COUPLE_CONFIG;
       }
       const bdiff = nextBday.getTime() - now.getTime();
       const bDays = Math.ceil(bdiff / (1000 * 60 * 60 * 24));
-      return bDays === 0 ? 'Hôm nay sinh nhật! 🎉' : `còn ${bDays} ngày nữa`;
+      return bDays === 0 ? 'Hôm nay sinh nhật! 🎉' : `còn ${bDays} ngày`;
     }
 
     const aiBdayEl = document.getElementById('bday-ai-counter');

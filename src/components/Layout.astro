@@ -172,7 +172,6 @@ const ogImageUrl = new URL('/assets/og.png', site).toString();
             <a href="#habit-tracker">21 Ngày Tiếng Anh</a>
             <a href="#bucket-list">Bucket List Đôi Lứa</a>
             <a href="#memories">Kỷ Niệm Giữa Ngân Hà</a>
-            <a href="javascript:void(0)" class="btn-open-sync-trigger" style="color: #7dd3fc; margin-top: 4px;">☁️ Đồng Bộ Dữ Liệu</a>
           </div>
 
           <div class="footer-col">
@@ -439,5 +438,24 @@ const ogImageUrl = new URL('/assets/og.png', site).toString();
       document.addEventListener('astro:page-load', initHeaderLockAction);
       document.addEventListener('astro:after-swap', initHeaderLockAction);
     </script>
+    <!-- Native-like Mobile Bottom Navigation Bar -->
+    <nav class="mobile-bottom-app-bar" id="mobile-bottom-bar" aria-label="Mobile bottom navigation">
+      <button type="button" class="bottom-tab-btn is-active" data-target="tab-pane-overview">
+        <span class="bottom-tab-icon">💖</span>
+        <span class="bottom-tab-label">Tinh Cầu</span>
+      </button>
+      <button type="button" class="bottom-tab-btn" data-target="tab-pane-habits">
+        <span class="bottom-tab-icon">✨</span>
+        <span class="bottom-tab-label">21 Ngày</span>
+      </button>
+      <button type="button" class="bottom-tab-btn" data-target="tab-pane-bucket">
+        <span class="bottom-tab-icon">💫</span>
+        <span class="bottom-tab-label">Bucket</span>
+      </button>
+      <button type="button" class="bottom-tab-btn" data-target="tab-pane-memories">
+        <span class="bottom-tab-icon">📸</span>
+        <span class="bottom-tab-label">Kỷ Niệm</span>
+      </button>
+    </nav>
   </body>
 </html>
