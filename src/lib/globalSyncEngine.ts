@@ -124,12 +124,27 @@ export function initGlobalSyncEngine(): void {
       }
     }
 
-    // 7. Custom Passcode / Mật mã tình yêu
+    // 7. Custom Passcode / Mật mã tình yêu & Passcode Version
     if (cloudData.passcode !== undefined && typeof cloudData.passcode === 'string') {
       const current = localStorage.getItem('couple_custom_passcode');
       if (current !== cloudData.passcode) {
         localStorage.setItem('couple_custom_passcode', cloudData.passcode);
         hasChanges = true;
+      }
+    }
+
+    if (cloudData.passcodeVersion !== undefined && typeof cloudData.passcodeVersion === 'number') {
+      const localVersionStr = localStorage.getItem('couple_auth_passcode_version');
+      const cloudVersionStr = String(cloudData.passcodeVersion);
+
+      // Nếu máy này đang mở khoá nhưng phiên bản passcode cục bộ khác phiên bản cloud -> Buộc khoá lại
+      if (localVersionStr && localVersionStr !== cloudVersionStr) {
+        localStorage.setItem('couple_auth_passcode_version', cloudVersionStr);
+        if (typeof (window as any).lockCoupleApp === 'function') {
+          (window as any).lockCoupleApp('Mật mã PIN đã được đổi từ thiết bị khác. Vui lòng nhập mã PIN mới! 🔒');
+        }
+      } else if (!localVersionStr) {
+        localStorage.setItem('couple_auth_passcode_version', cloudVersionStr);
       }
     }
 

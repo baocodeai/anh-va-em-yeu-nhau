@@ -76,6 +76,7 @@ export interface CoupleCloudPayload {
   memories?: any[];
   trashBin?: any[];
   passcode?: string;
+  passcodeVersion?: number;
   avatars?: {
     ai?: string;
     maze?: string;
@@ -111,6 +112,7 @@ export function normalizeCoupleCloudPayload(raw: any): CoupleCloudPayload {
     memories: raw.memories !== undefined ? normalizeArray(raw.memories) : undefined,
     trashBin: raw.trashBin !== undefined ? normalizeArray(raw.trashBin) : undefined,
     passcode: typeof raw.passcode === 'string' ? raw.passcode : undefined,
+    passcodeVersion: typeof raw.passcodeVersion === 'number' ? raw.passcodeVersion : undefined,
     avatars: raw.avatars && typeof raw.avatars === 'object' ? raw.avatars : undefined,
     lastUpdatedBy: typeof raw.lastUpdatedBy === 'string' ? raw.lastUpdatedBy : undefined,
     updatedAt: typeof raw.updatedAt === 'string' ? raw.updatedAt : undefined
@@ -167,6 +169,7 @@ export async function pushDataToFirebase(payload: CoupleCloudPayload): Promise<b
       'habit21',
       'trashBin',
       'passcode',
+      'passcodeVersion',
       'avatars'
     ];
 

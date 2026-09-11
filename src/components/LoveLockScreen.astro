@@ -715,6 +715,7 @@ const { boysInfo, girlsInfo } = COUPLE_CONFIG;
   import { pushDataToFirebase } from '../lib/firebaseClient';
 
   const AUTH_STORAGE_KEY = 'couple_auth_unlocked';
+  const AUTH_VERSION_KEY = 'couple_auth_passcode_version';
   const CUSTOM_PASSCODE_KEY = 'couple_custom_passcode';
   const SALT = 'ai_maze_star_galaxy_2026';
   // Salted SHA-256 hash for initial security (Zero plaintext passcodes in repository) - Default PIN: 2908
@@ -843,6 +844,8 @@ const { boysInfo, girlsInfo } = COUPLE_CONFIG;
       const remember = cbRemember ? cbRemember.checked : true;
       if (remember) {
         localStorage.setItem(AUTH_STORAGE_KEY, 'true');
+        const currentVer = localStorage.getItem(AUTH_VERSION_KEY) || '1';
+        localStorage.setItem(AUTH_VERSION_KEY, currentVer);
       }
 
       dots.forEach((dot) => dot.classList.add('is-success'));
@@ -1007,11 +1010,18 @@ const { boysInfo, girlsInfo } = COUPLE_CONFIG;
             return;
           }
 
-          // Save new PIN
+          // Save new PIN & Version locally for this device
+          const newVersion = Date.now();
           localStorage.setItem(CUSTOM_PASSCODE_KEY, newVal);
+          localStorage.setItem(AUTH_VERSION_KEY, String(newVersion));
+          localStorage.setItem(AUTH_STORAGE_KEY, 'true');
           
           // Push to Firebase Realtime Database
-          await pushDataToFirebase({ passcode: newVal, lastUpdatedBy: 'PasscodeUpdate' });
+          await pushDataToFirebase({ 
+            passcode: newVal, 
+            passcodeVersion: newVersion, 
+            lastUpdatedBy: 'PasscodeUpdate' 
+          });
 
           changePinMsg.className = 'change-pin-msg msg-success';
           changePinMsg.textContent = '✨ Đổi mã PIN thành công! Đang lưu lên Cloud...';
@@ -1048,8 +1058,8 @@ const { boysInfo, girlsInfo } = COUPLE_CONFIG;
       });
     }
 
-    // Global Lock App Function (Accessible by Header lock button)
-    (window as any).lockCoupleApp = () => {
+    // Global Lock App Function (Accessible by Header lock button & SyncEngine)
+    (window as any).lockCoupleApp = (customMsg?: string) => {
       localStorage.removeItem(AUTH_STORAGE_KEY);
       document.documentElement.classList.add('couple-is-locked');
       overlay.classList.remove('is-unlocking');
@@ -1057,7 +1067,7 @@ const { boysInfo, girlsInfo } = COUPLE_CONFIG;
       resetInput(false);
       if (statusMsg) {
         statusMsg.className = 'passcode-status-msg';
-        statusMsg.textContent = 'Tinh cầu đã được khóa lại an toàn 🔒';
+        statusMsg.textContent = customMsg || 'Tinh cầu đã được khóa lại an toàn 🔒';
       }
       if (lockIcon) lockIcon.textContent = '🔒';
       if (lockStatusText) lockStatusText.textContent = 'Cổng Tinh Cầu Riêng Tư';
