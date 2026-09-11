@@ -25,12 +25,20 @@ export function initGlobalSyncEngine(): void {
     if (!cloudData) return;
     let hasChanges = false;
 
+    const safeSetItem = (key: string, value: string) => {
+      try {
+        localStorage.setItem(key, value);
+      } catch (err) {
+        console.warn(`[SyncEngine] LocalStorage quota exceeded for key ${key}:`, err);
+      }
+    };
+
     // 1. Memories / Bài viết kỷ niệm
     if (cloudData.memories !== undefined && Array.isArray(cloudData.memories)) {
       const current = localStorage.getItem('couple_memories');
       const next = JSON.stringify(cloudData.memories);
       if (current !== next) {
-        localStorage.setItem('couple_memories', next);
+        safeSetItem('couple_memories', next);
         hasChanges = true;
       }
     }
@@ -40,7 +48,7 @@ export function initGlobalSyncEngine(): void {
       const current = localStorage.getItem('couple_bucket_list');
       const next = JSON.stringify(cloudData.bucketList);
       if (current !== next) {
-        localStorage.setItem('couple_bucket_list', next);
+        safeSetItem('couple_bucket_list', next);
         hasChanges = true;
       }
     }
@@ -50,7 +58,7 @@ export function initGlobalSyncEngine(): void {
       const current = localStorage.getItem('couple_bucket_categories');
       const next = JSON.stringify(cloudData.bucketCategories);
       if (current !== next) {
-        localStorage.setItem('couple_bucket_categories', next);
+        safeSetItem('couple_bucket_categories', next);
         hasChanges = true;
       }
     }
@@ -60,7 +68,7 @@ export function initGlobalSyncEngine(): void {
       const current = localStorage.getItem('couple_habit_21');
       const next = JSON.stringify(cloudData.habit21);
       if (current !== next) {
-        localStorage.setItem('couple_habit_21', next);
+        safeSetItem('couple_habit_21', next);
         hasChanges = true;
       }
     }
@@ -69,7 +77,7 @@ export function initGlobalSyncEngine(): void {
     if (cloudData.habitStartDate !== undefined && typeof cloudData.habitStartDate === 'string') {
       const current = localStorage.getItem('couple_habit_start_date');
       if (current !== cloudData.habitStartDate) {
-        localStorage.setItem('couple_habit_start_date', cloudData.habitStartDate);
+        safeSetItem('couple_habit_start_date', cloudData.habitStartDate);
         hasChanges = true;
       }
     }
@@ -79,7 +87,7 @@ export function initGlobalSyncEngine(): void {
       const current = localStorage.getItem('couple_habit_start_date_locked');
       const next = cloudData.habitStartDateLocked ? 'true' : 'false';
       if (current !== next) {
-        localStorage.setItem('couple_habit_start_date_locked', next);
+        safeSetItem('couple_habit_start_date_locked', next);
         hasChanges = true;
       }
     }
@@ -89,7 +97,7 @@ export function initGlobalSyncEngine(): void {
       const current = localStorage.getItem('couple_habit_shields');
       const next = JSON.stringify(cloudData.habitShields);
       if (current !== next) {
-        localStorage.setItem('couple_habit_shields', next);
+        safeSetItem('couple_habit_shields', next);
         hasChanges = true;
       }
     }
@@ -99,7 +107,7 @@ export function initGlobalSyncEngine(): void {
       const current = localStorage.getItem('couple_habit_target_days');
       const next = String(cloudData.habitTargetDays);
       if (current !== next) {
-        localStorage.setItem('couple_habit_target_days', next);
+        safeSetItem('couple_habit_target_days', next);
         hasChanges = true;
       }
     }
@@ -109,7 +117,7 @@ export function initGlobalSyncEngine(): void {
       const current = localStorage.getItem('couple_trash_bin');
       const next = JSON.stringify(cloudData.trashBin);
       if (current !== next) {
-        localStorage.setItem('couple_trash_bin', next);
+        safeSetItem('couple_trash_bin', next);
         hasChanges = true;
       }
     }
@@ -119,7 +127,7 @@ export function initGlobalSyncEngine(): void {
       const current = localStorage.getItem('couple_avatars');
       const next = JSON.stringify(cloudData.avatars);
       if (current !== next) {
-        localStorage.setItem('couple_avatars', next);
+        safeSetItem('couple_avatars', next);
         hasChanges = true;
       }
     }
@@ -128,7 +136,7 @@ export function initGlobalSyncEngine(): void {
     if (cloudData.passcode !== undefined && typeof cloudData.passcode === 'string') {
       const current = localStorage.getItem('couple_custom_passcode');
       if (current !== cloudData.passcode) {
-        localStorage.setItem('couple_custom_passcode', cloudData.passcode);
+        safeSetItem('couple_custom_passcode', cloudData.passcode);
         hasChanges = true;
       }
     }
@@ -139,12 +147,12 @@ export function initGlobalSyncEngine(): void {
 
       // Nếu máy này đang mở khoá nhưng phiên bản passcode cục bộ khác phiên bản cloud -> Buộc khoá lại
       if (localVersionStr && localVersionStr !== cloudVersionStr) {
-        localStorage.setItem('couple_auth_passcode_version', cloudVersionStr);
+        safeSetItem('couple_auth_passcode_version', cloudVersionStr);
         if (typeof (window as any).lockCoupleApp === 'function') {
           (window as any).lockCoupleApp('Mật mã PIN đã được đổi từ thiết bị khác. Vui lòng nhập mã PIN mới! 🔒');
         }
       } else if (!localVersionStr) {
-        localStorage.setItem('couple_auth_passcode_version', cloudVersionStr);
+        safeSetItem('couple_auth_passcode_version', cloudVersionStr);
       }
     }
 

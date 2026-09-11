@@ -155,6 +155,51 @@ export function sanitizeForFirebase(obj: any): any {
   return obj;
 }
 
+export function normalizeMemories(rawMemories: any): any[] {
+  if (!rawMemories) return [];
+  const list = normalizeArray(rawMemories);
+  return list.map((mem: any) => {
+    if (!mem || typeof mem !== 'object') return mem;
+    const rawGallery = mem.galleryImages;
+    const normalizedGallery = Array.isArray(rawGallery)
+      ? rawGallery
+      : rawGallery && typeof rawGallery === 'object'
+      ? Object.values(rawGallery)
+      : [];
+
+    return {
+      ...mem,
+      id: String(mem.id || `mem-${Date.now()}`),
+      title: String(mem.title || ''),
+      caption: typeof mem.caption === 'string' ? mem.caption : '',
+      imageUrl: typeof mem.imageUrl === 'string' ? mem.imageUrl : '/photos/anniversary.svg',
+      date: typeof mem.date === 'string' ? mem.date : undefined,
+      location: typeof mem.location === 'string' ? mem.location : undefined,
+      journalContent: typeof mem.journalContent === 'string' ? mem.journalContent : '',
+      mood: typeof mem.mood === 'string' ? mem.mood : undefined,
+      weather: typeof mem.weather === 'string' ? mem.weather : undefined,
+      author: mem.author || 'both',
+      isPinned: Boolean(mem.isPinned),
+      galleryImages: normalizedGallery
+        .filter((img: any) => img && (img.url || typeof img === 'string'))
+        .map((img: any, idx: number) => {
+          if (typeof img === 'string') {
+            return {
+              id: `g-${idx + 1}`,
+              url: img,
+              caption: ''
+            };
+          }
+          return {
+            id: String(img.id || `g-${idx + 1}-${Date.now()}`),
+            url: String(img.url || ''),
+            caption: typeof img.caption === 'string' ? img.caption : ''
+          };
+        })
+    };
+  });
+}
+
 export function normalizeCoupleCloudPayload(raw: any): CoupleCloudPayload {
   if (!raw || typeof raw !== 'object') return {};
   return {
@@ -168,7 +213,7 @@ export function normalizeCoupleCloudPayload(raw: any): CoupleCloudPayload {
       maze: typeof raw.habitShields.maze === 'number' ? raw.habitShields.maze : 2
     } : undefined,
     habitTargetDays: typeof raw.habitTargetDays === 'number' ? raw.habitTargetDays : undefined,
-    memories: raw.memories !== undefined ? normalizeArray(raw.memories) : undefined,
+    memories: raw.memories !== undefined ? normalizeMemories(raw.memories) : undefined,
     trashBin: raw.trashBin !== undefined ? normalizeArray(raw.trashBin) : undefined,
     passcode: typeof raw.passcode === 'string' ? raw.passcode : undefined,
     passcodeVersion: typeof raw.passcodeVersion === 'number' ? raw.passcodeVersion : undefined,

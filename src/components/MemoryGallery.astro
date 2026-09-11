@@ -206,11 +206,10 @@ const defaultMemoriesJSON = JSON.stringify(PHOTO_MEMORIES).replace(/</g, '\\u003
                   <h4 class="zen-empty-title">Chưa có ảnh bìa</h4>
                   <p class="zen-empty-text">Tải ảnh hoặc dán URL ảnh bìa chính</p>
                   <div class="zen-empty-btns">
-                    <label class="btn-love zen-empty-btn" title="Tải ảnh bìa (hoặc nhiều ảnh) từ máy">
+                    <label class="btn-love zen-empty-btn" title="Tải ảnh bìa (hoặc nhiều ảnh) từ máy" for="form-mem-file">
                       <span>🖼️ Tải Ảnh</span>
-                      <input type="file" id="form-mem-file" accept="image/*" multiple style="display: none;" />
-                      <input type="file" id="btn-change-mem-file" accept="image/*" style="display: none;" />
                     </label>
+                    <input type="file" id="form-mem-file" accept="image/*" multiple style="display: none;" />
                     <button type="button" class="btn-outline-love zen-empty-btn" id="btn-toggle-cover-url-empty" title="Dán link ảnh từ Internet">
                       <span>🌐 Dán URL</span>
                     </button>
@@ -221,10 +220,10 @@ const defaultMemoriesJSON = JSON.stringify(PHOTO_MEMORIES).replace(/</g, '\\u003
 
                 <!-- Cover Quick Actions Overlay (when image loaded) -->
                 <div class="zen-cover-actions" id="zen-cover-active-actions" style="display: none;">
-                  <label class="zen-cover-btn" title="Đổi sang ảnh bìa khác">
+                  <label class="zen-cover-btn" title="Đổi sang ảnh bìa khác" for="form-mem-file-active">
                     <span>🖼️ Đổi ảnh</span>
-                    <input type="file" id="form-mem-file-active" accept="image/*" style="display: none;" />
                   </label>
+                  <input type="file" id="form-mem-file-active" accept="image/*" style="display: none;" />
                   <button type="button" class="zen-cover-btn" id="btn-toggle-cover-url" title="Dán link ảnh từ Internet">
                     <span>🌐 Dán URL</span>
                   </button>
@@ -254,10 +253,10 @@ const defaultMemoriesJSON = JSON.stringify(PHOTO_MEMORIES).replace(/</g, '\\u003
                   <span class="zen-gallery-title">Kho Ảnh Chuyến Đi</span>
                   <span class="zen-gallery-count" id="zen-gallery-count-badge">0 ảnh</span>
                 </div>
-                <label class="btn-outline-love file-pick-label btn-sm-custom" style="cursor: pointer;" title="Chọn cùng lúc nhiều ảnh từ thiết bị">
+                <label class="btn-outline-love file-pick-label btn-sm-custom" style="cursor: pointer;" title="Chọn cùng lúc nhiều ảnh từ thiết bị" for="form-mem-add-gallery-file">
                   <span>+ Tải nhiều ảnh 📸</span>
-                  <input type="file" id="form-mem-add-gallery-file" accept="image/*" multiple style="display: none;" />
                 </label>
+                <input type="file" id="form-mem-add-gallery-file" accept="image/*" multiple style="display: none;" />
               </div>
               
               <p class="zen-gallery-sub">Nhấn <strong>[📋 Chèn]</strong> để đưa ảnh vào bài viết bên phải.</p>
@@ -3083,10 +3082,26 @@ Hai đứa mình dạo bước bên nhau..."
     return div.innerHTML;
   }
 
+  function getUninsertedGalleryPhotos(gallery: any, rawContent: string): JournalPhoto[] {
+    const list: JournalPhoto[] = Array.isArray(gallery)
+      ? gallery
+      : gallery && typeof gallery === 'object'
+      ? Object.values(gallery)
+      : [];
+    if (list.length === 0) return [];
+    const insertedIndices = new Set<number>();
+    const matches = (rawContent || '').matchAll(/\[(?:photo|ảnh):(\d+)(?:\s*\|\s*.*?)?\]/gi);
+    for (const m of matches) {
+      const idx = parseInt(m[1], 10) - 1;
+      insertedIndices.add(idx);
+    }
+    return list.filter((_, idx) => !insertedIndices.has(idx));
+  }
+
   // =========================================================================
   // LIGHTWEIGHT MARKDOWN PARSER (For Reader & Live Preview)
   // =========================================================================
-  function renderMarkdownToHtml(raw: string, defaultAlt = 'Kỷ niệm', customGallery?: JournalPhoto[]): string {
+  function renderMarkdownToHtml(raw: string, defaultAlt = 'Kỷ niệm', customGallery?: any): string {
     if (!raw || !raw.trim()) return '';
 
     const text = raw.replace(/\r\n/g, '\n');
@@ -3098,6 +3113,13 @@ Hai đứa mình dạo bước bên nhau..."
     let inBlockquote = false;
     let blockquoteLines: string[] = [];
 
+    const rawGallery = customGallery || currentAttachedGallery || [];
+    const galleryList: JournalPhoto[] = Array.isArray(rawGallery)
+      ? rawGallery
+      : rawGallery && typeof rawGallery === 'object'
+      ? Object.values(rawGallery)
+      : [];
+
     const formatInline = (str: string) => {
       let res = str
         .replace(/\*\*(.*?)\*\*/g, '<strong class="journal-bold">$1</strong>')
@@ -3107,7 +3129,6 @@ Hai đứa mình dạo bước bên nhau..."
       // Handle inline [photo:X] or [ảnh:X]
       res = res.replace(/\[(?:photo|ảnh):(\d+)(?:\s*\|\s*(.*?))?\]/gi, (match, pNum, pCap) => {
         const pIdx = parseInt(pNum, 10) - 1;
-        const galleryList = customGallery || currentAttachedGallery || [];
         const photoObj = galleryList[pIdx];
         if (photoObj && photoObj.url) {
           const alt = pCap?.trim() || photoObj.caption || defaultAlt || `Ảnh ${pIdx + 1}`;
@@ -3167,7 +3188,6 @@ Hai đứa mình dạo bước bên nhau..."
         flushBlockquote();
         const photoIndex = parseInt(photoTagMatch[1], 10) - 1;
         const customCap = photoTagMatch[2]?.trim();
-        const galleryList = customGallery || currentAttachedGallery || [];
         const photoObj = galleryList[photoIndex];
         if (photoObj && photoObj.url) {
           const alt = customCap || photoObj.caption || defaultAlt || `Ảnh ${photoIndex + 1}`;
@@ -3251,19 +3271,81 @@ Hai đứa mình dạo bước bên nhau..."
     return htmlBlocks.join('\n');
   }
 
-  function getStoredMemories(): PhotoMemory[] {
-    try {
-      const stored = localStorage.getItem(MEMORIES_STORAGE_KEY);
-      if (stored) return JSON.parse(stored);
-    } catch {}
-    const initial = (window as any).__INITIAL_MEMORIES__ || [];
-    localStorage.setItem(MEMORIES_STORAGE_KEY, JSON.stringify(initial));
-    return initial;
+  function normalizeMemoriesLocal(list: any[]): PhotoMemory[] {
+    if (!list) return [];
+    const arr = Array.isArray(list) ? list : Object.values(list);
+    return arr.map((mem: any) => {
+      if (!mem || typeof mem !== 'object') return mem;
+      const rawGallery = mem.galleryImages;
+      const normalizedGallery = Array.isArray(rawGallery)
+        ? rawGallery
+        : rawGallery && typeof rawGallery === 'object'
+        ? Object.values(rawGallery)
+        : [];
+      return {
+        ...mem,
+        id: String(mem.id || `mem-${Date.now()}`),
+        title: String(mem.title || ''),
+        caption: typeof mem.caption === 'string' ? mem.caption : '',
+        imageUrl: typeof mem.imageUrl === 'string' ? mem.imageUrl : '/photos/anniversary.svg',
+        galleryImages: normalizedGallery
+          .filter((img: any) => img && (img.url || typeof img === 'string'))
+          .map((img: any, idx: number) => {
+            if (typeof img === 'string') return { id: `g-${idx + 1}`, url: img, caption: '' };
+            return {
+              id: String(img.id || `g-${idx + 1}`),
+              url: String(img.url || ''),
+              caption: typeof img.caption === 'string' ? img.caption : ''
+            };
+          })
+      };
+    });
   }
 
-  function saveStoredMemories(list: PhotoMemory[]) {
-    localStorage.setItem(MEMORIES_STORAGE_KEY, JSON.stringify(list));
-    pushDataToFirebase({ memories: list, lastUpdatedBy: 'Memories' }).catch(() => {});
+  let inMemoryMemoriesCache: PhotoMemory[] | null = null;
+
+  function getStoredMemories(): PhotoMemory[] {
+    if (inMemoryMemoriesCache && inMemoryMemoriesCache.length > 0) {
+      return inMemoryMemoriesCache;
+    }
+    try {
+      const stored = localStorage.getItem(MEMORIES_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        const normalized = normalizeMemoriesLocal(parsed);
+        inMemoryMemoriesCache = normalized;
+        return normalized;
+      }
+    } catch {}
+    const initial = (window as any).__INITIAL_MEMORIES__ || [];
+    const normalized = normalizeMemoriesLocal(initial);
+    inMemoryMemoriesCache = normalized;
+    try {
+      localStorage.setItem(MEMORIES_STORAGE_KEY, JSON.stringify(normalized));
+    } catch {}
+    return normalized;
+  }
+
+  async function saveStoredMemories(list: PhotoMemory[]): Promise<boolean> {
+    inMemoryMemoriesCache = list;
+    try {
+      localStorage.setItem(MEMORIES_STORAGE_KEY, JSON.stringify(list));
+    } catch (err) {
+      console.warn('[Storage] Dung lượng LocalStorage đạt giới hạn, lưu cache bộ nhớ & đẩy lên Firebase Cloud:', err);
+      try {
+        // Fallback: Lưu 15 bài gần nhất cho bộ nhớ đệm trình duyệt
+        const cached = list.slice(0, 15);
+        localStorage.setItem(MEMORIES_STORAGE_KEY, JSON.stringify(cached));
+      } catch {}
+    }
+
+    try {
+      await pushDataToFirebase({ memories: list, lastUpdatedBy: 'Memories' });
+      return true;
+    } catch (err) {
+      console.error('[Firebase] Lỗi lưu kỷ niệm lên đám mây:', err);
+      return false;
+    }
   }
 
   // =========================================================================
@@ -3305,20 +3387,25 @@ Hai đứa mình dạo bước bên nhau..."
       }
 
       // 2. Attached Gallery Photos
-      if (mem.galleryImages && Array.isArray(mem.galleryImages)) {
-        mem.galleryImages.forEach((img, idx) => {
-          if (img.url) {
-            allPhotos.push({
-              id: `${mem.id}-gallery-${img.id || idx}`,
-              url: img.url,
-              caption: img.caption || mem.caption || '',
-              photoType: 'gallery',
-              photoIndex: idx + 1,
-              memory: mem
-            });
-          }
-        });
-      }
+      const rawGallery = mem.galleryImages;
+      const galleryList: JournalPhoto[] = Array.isArray(rawGallery)
+        ? rawGallery
+        : rawGallery && typeof rawGallery === 'object'
+        ? Object.values(rawGallery)
+        : [];
+
+      galleryList.forEach((img, idx) => {
+        if (img && img.url) {
+          allPhotos.push({
+            id: `${mem.id}-gallery-${img.id || idx}`,
+            url: img.url,
+            caption: img.caption || mem.caption || '',
+            photoType: 'gallery',
+            photoIndex: idx + 1,
+            memory: mem
+          });
+        }
+      });
     });
 
     return allPhotos;
@@ -3491,7 +3578,13 @@ Hai đứa mình dạo bước bên nhau..."
       card.className = `polaroid-card romantic-card tilt-${(index % 4) + 1} ${isPinned ? 'is-pinned' : ''}`;
       card.setAttribute('data-id', photo.id);
 
-      const galleryCount = photo.galleryImages?.length || 0;
+      const rawGallery = photo.galleryImages;
+      const galleryList: JournalPhoto[] = Array.isArray(rawGallery)
+        ? rawGallery
+        : rawGallery && typeof rawGallery === 'object'
+        ? Object.values(rawGallery)
+        : [];
+      const galleryCount = galleryList.length;
       const moodBadge = photo.mood ? `<span class="polaroid-mood-badge">${escapeHtml(photo.mood)}</span>` : '';
       const photoCountBadge = galleryCount > 0 ? `<span class="polaroid-photo-count">📸 +${galleryCount} ảnh</span>` : '';
       const pinBadge = isPinned ? `<div class="polaroid-pin-badge" title="Bài kỷ niệm được ghim lên đầu">📌 Đã ghim</div>` : '';
@@ -3694,9 +3787,9 @@ Hai đứa mình dạo bước bên nhau..."
     }
 
     // Story Body with Markdown Parser
+    const rawContent = photo.journalContent || photo.caption || '';
     const contentEl = document.getElementById('reader-content');
     if (contentEl) {
-      const rawContent = photo.journalContent || photo.caption || '';
       const renderedHtml = renderMarkdownToHtml(rawContent, photo.title, photo.galleryImages || []);
 
       if (!renderedHtml) {
@@ -3720,14 +3813,15 @@ Hai đứa mình dạo bước bên nhau..."
       }
     }
 
-    // Attached Gallery Showcase at bottom
+    // Attached Gallery Showcase at bottom (Only show photos not already embedded inline)
     const gallerySec = document.getElementById('reader-gallery-section');
     const galleryGrid = document.getElementById('reader-gallery-grid');
     if (gallerySec && galleryGrid) {
-      if (photo.galleryImages && photo.galleryImages.length > 0) {
+      const uninsertedPhotos = getUninsertedGalleryPhotos(photo.galleryImages || [], rawContent);
+      if (uninsertedPhotos.length > 0) {
         gallerySec.style.display = 'block';
         galleryGrid.innerHTML = '';
-        photo.galleryImages.forEach((img) => {
+        uninsertedPhotos.forEach((img) => {
           const itemCard = document.createElement('div');
           itemCard.className = 'gallery-photo-card';
           itemCard.innerHTML = `
@@ -3800,15 +3894,16 @@ Hai đứa mình dạo bước bên nhau..."
     }
 
     let galleryHtml = '';
-    if (currentAttachedGallery && currentAttachedGallery.length > 0) {
+    const uninsertedLivePhotos = getUninsertedGalleryPhotos(currentAttachedGallery || [], content);
+    if (uninsertedLivePhotos && uninsertedLivePhotos.length > 0) {
       galleryHtml = `
         <div class="journal-gallery-section" style="margin: 2rem 0; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08);">
           <div class="journal-gallery-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 1rem;">
             <span class="gallery-title-icon" style="font-size: 1.2rem;">📸</span>
-            <h4 class="gallery-section-title" style="font-size: 1.1rem; font-weight: 700; color: #fda4af; margin: 0;">Khoảnh Khắc Cùng Ngày (${currentAttachedGallery.length} ảnh)</h4>
+            <h4 class="gallery-section-title" style="font-size: 1.1rem; font-weight: 700; color: #fda4af; margin: 0;">Khoảnh Khắc Cùng Ngày (${uninsertedLivePhotos.length} ảnh)</h4>
           </div>
           <div class="journal-gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem;">
-            ${currentAttachedGallery.map((img, idx) => `
+            ${uninsertedLivePhotos.map((img, idx) => `
               <div class="gallery-photo-card journal-inline-img-wrap" data-src="${img.url}" data-caption="${escapeHtml(img.caption || `Ảnh ${idx + 1}`)}" style="border-radius: 12px; overflow: hidden; background: #020617; border: 1px solid rgba(244, 63, 94, 0.28);">
                 <img src="${img.url}" alt="${escapeHtml(img.caption || `Ảnh ${idx + 1}`)}" class="gallery-photo-img" style="height: 140px; width: 100%; object-fit: cover; display: block;" />
                 ${img.caption ? `<p class="gallery-photo-caption" style="padding: 6px 10px; font-size: 0.78rem; text-align: center; color: #cbd5e1; margin: 0; background: rgba(15, 23, 42, 0.95); font-style: italic;">${escapeHtml(img.caption)}</p>` : ''}
@@ -4128,7 +4223,13 @@ Hai đứa mình dạo bước bên nhau..."
     updateMemPhotoPreview(currentUploadedMemPhoto);
 
     // Deep copy attached gallery
-    currentAttachedGallery = (photo.galleryImages || []).map((img) => ({ ...img }));
+    const rawGallery = photo.galleryImages;
+    const galleryList: JournalPhoto[] = Array.isArray(rawGallery)
+      ? rawGallery
+      : rawGallery && typeof rawGallery === 'object'
+      ? Object.values(rawGallery)
+      : [];
+    currentAttachedGallery = galleryList.map((img) => ({ ...img }));
     renderAttachedGalleryEditor();
     setStudioViewMode('editor');
     setMobilePane('left');
@@ -4317,7 +4418,7 @@ Hai đứa mình dạo bước bên nhau..."
       });
     });
 
-    async function compressAndResizeImage(file: File, maxDim = 1400, quality = 0.82): Promise<string> {
+    async function compressAndResizeImage(file: File, maxDim = 1100, quality = 0.76): Promise<string> {
       if (!file || !file.type.startsWith('image/')) return '';
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -4331,7 +4432,7 @@ Hai đứa mình dạo bước bên nhau..."
               return;
             }
             
-            // Giảm kích thước ảnh quá khổ (4K, 12MP...) về độ phân giải chuẩn Retina nhẹ nhàng
+            // Giảm kích thước ảnh quá khổ về độ phân giải Retina gọn nhẹ tối ưu tốc độ & dung lượng
             if (width > maxDim || height > maxDim) {
               if (width > height) {
                 height = Math.round((height * maxDim) / width);
@@ -4377,32 +4478,41 @@ Hai đứa mình dạo bước bên nhau..."
       livePreviewTimer = setTimeout(updateLivePreview, delay);
     }
 
+    let isUploadingGalleryImage = false;
+
     // Toolbar direct image file picker handler (Supports multiple photos)
     const tbImgFilePicker = document.getElementById('form-mem-toolbar-img-file') as HTMLInputElement | null;
     if (tbImgFilePicker) {
       tbImgFilePicker.addEventListener('change', async (e: any) => {
+        if (isUploadingGalleryImage) return;
         const files: FileList = e.target.files;
         if (!files || files.length === 0) return;
         const validFiles = Array.from(files).filter((f) => f.type.startsWith('image/'));
         if (validFiles.length === 0) return;
 
-        const tokensToInsert: string[] = [];
-        for (const file of validFiles) {
-          const dataUrl = await compressAndResizeImage(file);
-          if (dataUrl) {
-            currentAttachedGallery.push({
-              id: 'g-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
-              url: dataUrl,
-              caption: file.name.replace(/\.[^/.]+$/, '') || 'Kỷ niệm'
-            });
-            tokensToInsert.push(`[photo:${currentAttachedGallery.length}]`);
+        isUploadingGalleryImage = true;
+        try {
+          const tokensToInsert: string[] = [];
+          for (let idx = 0; idx < validFiles.length; idx++) {
+            const file = validFiles[idx];
+            const dataUrl = await compressAndResizeImage(file, 960, 0.72);
+            if (dataUrl && !currentAttachedGallery.some((img) => img.url === dataUrl)) {
+              currentAttachedGallery.push({
+                id: 'g-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+                url: dataUrl,
+                caption: file.name.replace(/\.[^/.]+$/, '') || 'Kỷ niệm'
+              });
+              tokensToInsert.push(`[photo:${currentAttachedGallery.length}]`);
+            }
           }
+          renderAttachedGalleryEditor();
+          if (tokensToInsert.length > 0) {
+            insertAtCursor(`\n\n${tokensToInsert.join('\n\n')}\n\n`);
+          }
+        } finally {
+          tbImgFilePicker.value = '';
+          isUploadingGalleryImage = false;
         }
-        renderAttachedGalleryEditor();
-        if (tokensToInsert.length > 0) {
-          insertAtCursor(`\n\n${tokensToInsert.join('\n\n')}\n\n`);
-        }
-        tbImgFilePicker.value = '';
       });
     }
 
@@ -4484,7 +4594,6 @@ Hai đứa mình dạo bước bên nhau..."
     // Dropzone & Drag-and-drop & URL for Cover Image (Supports multiple photos)
     const heroWrap = document.getElementById('zen-cover-hero-wrap');
     const fileInput = document.getElementById('form-mem-file') as HTMLInputElement | null;
-    const changeFileBtn = document.getElementById('btn-change-mem-file') as HTMLInputElement | null;
     const activeFileInput = document.getElementById('form-mem-file-active') as HTMLInputElement | null;
     const urlInput = document.getElementById('form-mem-url') as HTMLInputElement | null;
     const clearPhotoBtn = document.getElementById('btn-clear-mem-photo');
@@ -4493,49 +4602,58 @@ Hai đứa mình dạo bước bên nhau..."
     const coverUrlBar = document.getElementById('zen-cover-url-bar');
     const confirmCoverUrlBtn = document.getElementById('btn-confirm-cover-url');
 
+    let isProcessingCoverFiles = false;
     const handleCoverFiles = async (files: FileList | File[]) => {
+      if (isProcessingCoverFiles) return;
       const validFiles = Array.from(files).filter((f) => f && f.type.startsWith('image/'));
       if (validFiles.length === 0) return;
 
-      // 1. First image becomes Cover photo (tự động nén thông minh)
-      const firstDataUrl = await compressAndResizeImage(validFiles[0]);
-      if (firstDataUrl) {
-        currentUploadedMemPhoto = firstDataUrl;
-        updateMemPhotoPreview(currentUploadedMemPhoto);
-      }
-
-      // 2. Extra images (if uploaded multiple) automatically go to Attached Gallery
-      if (validFiles.length > 1) {
-        for (let i = 1; i < validFiles.length; i++) {
-          const extraUrl = await compressAndResizeImage(validFiles[i]);
-          if (extraUrl) {
-            currentAttachedGallery.push({
-              id: 'g-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
-              url: extraUrl,
-              caption: validFiles[i].name.replace(/\.[^/.]+$/, '') || 'Kỷ niệm'
-            });
-          }
+      isProcessingCoverFiles = true;
+      try {
+        // 1. First image becomes Cover photo (tự động nén thông minh)
+        const firstDataUrl = await compressAndResizeImage(validFiles[0], 1150, 0.78);
+        if (firstDataUrl) {
+          currentUploadedMemPhoto = firstDataUrl;
+          updateMemPhotoPreview(currentUploadedMemPhoto);
         }
-        renderAttachedGalleryEditor();
+
+        // 2. Extra images (if uploaded multiple) automatically go to Attached Gallery
+        if (validFiles.length > 1) {
+          for (let i = 1; i < validFiles.length; i++) {
+            const extraUrl = await compressAndResizeImage(validFiles[i], 960, 0.72);
+            if (extraUrl && !currentAttachedGallery.some((img) => img.url === extraUrl)) {
+              currentAttachedGallery.push({
+                id: 'g-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+                url: extraUrl,
+                caption: validFiles[i].name.replace(/\.[^/.]+$/, '') || 'Kỷ niệm'
+              });
+            }
+          }
+          renderAttachedGalleryEditor();
+        }
+        updateLivePreview();
+      } finally {
+        isProcessingCoverFiles = false;
       }
-      updateLivePreview();
     };
 
     if (fileInput) {
       fileInput.addEventListener('change', (e: any) => {
-        if (e.target.files) handleCoverFiles(e.target.files);
-      });
-    }
-
-    if (changeFileBtn) {
-      changeFileBtn.addEventListener('change', (e: any) => {
-        if (e.target.files) handleCoverFiles(e.target.files);
+        if (e.target.files && e.target.files.length > 0) {
+          const files = Array.from(e.target.files) as File[];
+          fileInput.value = '';
+          handleCoverFiles(files);
+        }
       });
     }
 
     if (activeFileInput) {
       activeFileInput.addEventListener('change', (e: any) => {
-        if (e.target.files) handleCoverFiles(e.target.files);
+        if (e.target.files && e.target.files.length > 0) {
+          const files = Array.from(e.target.files) as File[];
+          activeFileInput.value = '';
+          handleCoverFiles(files);
+        }
       });
     }
 
@@ -4596,7 +4714,7 @@ Hai đứa mình dạo bước bên nhau..."
         currentUploadedMemPhoto = '';
         if (urlInput) urlInput.value = '';
         if (fileInput) fileInput.value = '';
-        if (changeFileBtn) changeFileBtn.value = '';
+        if (activeFileInput) activeFileInput.value = '';
         if (coverUrlBar) coverUrlBar.style.display = 'none';
         updateMemPhotoPreview('');
         updateLivePreview();
@@ -4607,24 +4725,31 @@ Hai đứa mình dạo bước bên nhau..."
     const addGalleryFileBtn = document.getElementById('form-mem-add-gallery-file') as HTMLInputElement | null;
     if (addGalleryFileBtn) {
       addGalleryFileBtn.addEventListener('change', async (e: any) => {
+        if (isUploadingGalleryImage) return;
         const files: FileList = e.target.files;
         if (!files || files.length === 0) return;
         const validFiles = Array.from(files).filter((f) => f.type.startsWith('image/'));
         if (validFiles.length === 0) return;
 
-        for (const file of validFiles) {
-          const dataUrl = await compressAndResizeImage(file);
-          if (dataUrl) {
-            currentAttachedGallery.push({
-              id: 'g-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
-              url: dataUrl,
-              caption: file.name.replace(/\.[^/.]+$/, '') || 'Kỷ niệm'
-            });
+        isUploadingGalleryImage = true;
+        try {
+          for (let i = 0; i < validFiles.length; i++) {
+            const file = validFiles[i];
+            const dataUrl = await compressAndResizeImage(file, 960, 0.72);
+            if (dataUrl && !currentAttachedGallery.some((img) => img.url === dataUrl)) {
+              currentAttachedGallery.push({
+                id: 'g-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+                url: dataUrl,
+                caption: file.name.replace(/\.[^/.]+$/, '') || 'Kỷ niệm'
+              });
+            }
           }
+          renderAttachedGalleryEditor();
+          updateLivePreview();
+        } finally {
+          addGalleryFileBtn.value = '';
+          isUploadingGalleryImage = false;
         }
-        addGalleryFileBtn.value = '';
-        renderAttachedGalleryEditor();
-        updateLivePreview();
       });
     }
 
@@ -4649,10 +4774,15 @@ Hai đứa mình dạo bước bên nhau..."
 
     // Form submit & Save Memory handler
     const form = document.getElementById('memory-form');
-    const btnSaveMem = document.getElementById('btn-save-mem');
+    const btnSaveMem = document.getElementById('btn-save-mem') as HTMLButtonElement | null;
 
-    function handleSaveMemory(e?: Event) {
+    async function handleSaveMemory(e?: Event) {
       if (e) e.preventDefault();
+
+      if (isUploadingGalleryImage || isProcessingCoverFiles) {
+        alert('🌸 Hệ thống đang nén và hoàn tất xử lý các bức ảnh, bạn đợi vài giây rồi bấm Lưu nhé!');
+        return;
+      }
 
       const idEl = document.getElementById('form-mem-id') as HTMLInputElement | null;
       const titleEl = document.getElementById('form-mem-title') as HTMLTextAreaElement | null;
@@ -4693,57 +4823,69 @@ Hai đứa mình dạo bước bên nhau..."
         return;
       }
 
-      const list = getStoredMemories();
+      if (btnSaveMem) {
+        btnSaveMem.disabled = true;
+        btnSaveMem.innerHTML = '<span>⏳ Đang lưu kỷ niệm...</span>';
+      }
 
-      if (id) {
-        const idx = list.findIndex((p) => p.id === id);
-        if (idx !== -1) {
-          const updatedItem: PhotoMemory = {
-            ...list[idx],
+      try {
+        const list = getStoredMemories();
+
+        if (id) {
+          const idx = list.findIndex((p) => p.id === id);
+          if (idx !== -1) {
+            const updatedItem: PhotoMemory = {
+              ...list[idx],
+              title,
+              date,
+              location,
+              author,
+              mood,
+              weather,
+              caption,
+              journalContent,
+              isPinned,
+              imageUrl: currentUploadedMemPhoto || list[idx].imageUrl || '/photos/anniversary.svg',
+              galleryImages: [...currentAttachedGallery]
+            };
+            list[idx] = updatedItem;
+
+            // If currently viewing in reader, update reader view
+            if (currentViewingPhoto && currentViewingPhoto.id === id) {
+              currentViewingPhoto = updatedItem;
+            }
+          }
+        } else {
+          const newMem: PhotoMemory = {
+            id: 'mem-' + Date.now(),
             title,
-            date,
-            location,
+            date: date || new Date().toLocaleDateString('vi-VN'),
+            location: location || 'Bên nhau',
             author,
             mood,
             weather,
             caption,
             journalContent,
             isPinned,
-            imageUrl: currentUploadedMemPhoto || list[idx].imageUrl || '/photos/anniversary.svg',
+            imageUrl: currentUploadedMemPhoto || '/photos/anniversary.svg',
             galleryImages: [...currentAttachedGallery]
           };
-          list[idx] = updatedItem;
-
-          // If currently viewing in reader, update reader view
-          if (currentViewingPhoto && currentViewingPhoto.id === id) {
-            currentViewingPhoto = updatedItem;
-          }
+          list.unshift(newMem);
         }
-      } else {
-        const newMem: PhotoMemory = {
-          id: 'mem-' + Date.now(),
-          title,
-          date: date || new Date().toLocaleDateString('vi-VN'),
-          location: location || 'Bên nhau',
-          author,
-          mood,
-          weather,
-          caption,
-          journalContent,
-          isPinned,
-          imageUrl: currentUploadedMemPhoto || '/photos/anniversary.svg',
-          galleryImages: [...currentAttachedGallery]
-        };
-        list.unshift(newMem);
-      }
 
-      saveStoredMemories(list);
-      renderMemories();
-      if (currentPhotoFilter || currentPhotoSearchQuery) {
-        renderAllPhotosStream();
-      }
+        await saveStoredMemories(list);
+        renderMemories();
+        if (currentPhotoFilter || currentPhotoSearchQuery) {
+          renderAllPhotosStream();
+        }
 
-      if (crudModal) crudModal.classList.remove('is-open');
+        if (crudModal) crudModal.classList.remove('is-open');
+      } finally {
+        if (btnSaveMem) {
+          btnSaveMem.disabled = false;
+          btnSaveMem.innerHTML = '<span>💖 Lưu Trang Nhật Ký</span>';
+        }
+      }
     }
 
     if (form) {
@@ -4752,15 +4894,25 @@ Hai đứa mình dạo bước bên nhau..."
     if (btnSaveMem) {
       btnSaveMem.addEventListener('click', handleSaveMemory);
     }
+  }
 
-    // Realtime sync listener
+  // Global window listeners (attached once)
+  let isGlobalMemListenersBound = false;
+  function setupGlobalMemListeners() {
+    if (isGlobalMemListenersBound) return;
+    isGlobalMemListenersBound = true;
+
     window.addEventListener('couple-cloud-updated', (e: any) => {
       const cloudData = e.detail;
       if (cloudData && cloudData.memories) {
-        localStorage.setItem(MEMORIES_STORAGE_KEY, JSON.stringify(cloudData.memories));
+        const normalized = normalizeMemoriesLocal(cloudData.memories);
+        inMemoryMemoriesCache = normalized;
+        try {
+          localStorage.setItem(MEMORIES_STORAGE_KEY, JSON.stringify(normalized));
+        } catch {}
         renderMemories();
         if (currentViewingPhoto) {
-          const refreshed = cloudData.memories.find((m: any) => m.id === currentViewingPhoto?.id);
+          const refreshed = inMemoryMemoriesCache.find((m: any) => m.id === currentViewingPhoto?.id);
           if (refreshed) {
             currentViewingPhoto = refreshed;
             const readerModal = document.getElementById('journal-reader-modal');
@@ -4772,7 +4924,6 @@ Hai đứa mình dạo bước bên nhau..."
       }
     });
 
-    // Item restored from trash listener
     window.addEventListener('couple-item-restored', (e: any) => {
       if (e.detail?.type === 'memory') {
         renderMemories();
@@ -4780,7 +4931,20 @@ Hai đứa mình dạo bước bên nhau..."
     });
   }
 
-  initMemoryInteractive();
-  document.addEventListener('astro:page-load', initMemoryInteractive);
-  document.addEventListener('astro:after-swap', initMemoryInteractive);
+  function setupMemoryPage() {
+    renderMemories();
+    const crudModal = document.getElementById('memory-crud-modal');
+    if (crudModal && crudModal.dataset.eventsBound === 'true') {
+      return;
+    }
+    if (crudModal) {
+      crudModal.dataset.eventsBound = 'true';
+    }
+    initMemoryInteractive();
+    setupGlobalMemListeners();
+  }
+
+  setupMemoryPage();
+  document.addEventListener('astro:page-load', setupMemoryPage);
+  document.addEventListener('astro:after-swap', setupMemoryPage);
 </script>
