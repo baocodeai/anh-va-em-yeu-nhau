@@ -65,6 +65,7 @@ export function initFirebaseClient(): Database | null {
 export interface CoupleCloudPayload {
   habit21?: any[];
   bucketList?: any[];
+  bucketCategories?: string[];
   memories?: any[];
   trashBin?: any[];
   avatars?: {
