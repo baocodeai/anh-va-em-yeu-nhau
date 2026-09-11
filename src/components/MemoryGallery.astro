@@ -4318,17 +4318,64 @@ Hai đứa mình dạo bước bên nhau..."
       });
     });
 
-    function readFileAsDataURL(file: File): Promise<string> {
+    async function compressAndResizeImage(file: File, maxDim = 1400, quality = 0.82): Promise<string> {
+      if (!file || !file.type.startsWith('image/')) return '';
       return new Promise((resolve) => {
-        if (!file || !file.type.startsWith('image/')) {
-          resolve('');
-          return;
-        }
         const reader = new FileReader();
-        reader.onload = (event) => resolve((event.target?.result as string) || '');
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            let width = img.naturalWidth || img.width;
+            let height = img.naturalHeight || img.height;
+            if (width <= 0 || height <= 0) {
+              resolve((e.target?.result as string) || '');
+              return;
+            }
+            
+            // Giảm kích thước ảnh quá khổ (4K, 12MP...) về độ phân giải chuẩn Retina nhẹ nhàng
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+              resolve((e.target?.result as string) || '');
+              return;
+            }
+
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, 0, 0, width, height);
+
+            const mimeType = file.type === 'image/png' ? 'image/webp' : 'image/jpeg';
+            try {
+              const dataUrl = canvas.toDataURL(mimeType, quality);
+              resolve(dataUrl);
+            } catch {
+              resolve(canvas.toDataURL('image/jpeg', quality));
+            }
+          };
+          img.onerror = () => resolve((e.target?.result as string) || '');
+          img.src = (e.target?.result as string) || '';
+        };
         reader.onerror = () => resolve('');
         reader.readAsDataURL(file);
       });
+    }
+
+    let livePreviewTimer: ReturnType<typeof setTimeout> | null = null;
+    function debouncedUpdateLivePreview(delay = 80) {
+      if (livePreviewTimer) clearTimeout(livePreviewTimer);
+      livePreviewTimer = setTimeout(updateLivePreview, delay);
     }
 
     // Toolbar direct image file picker handler (Supports multiple photos)
@@ -4342,7 +4389,7 @@ Hai đứa mình dạo bước bên nhau..."
 
         const tokensToInsert: string[] = [];
         for (const file of validFiles) {
-          const dataUrl = await readFileAsDataURL(file);
+          const dataUrl = await compressAndResizeImage(file);
           if (dataUrl) {
             currentAttachedGallery.push({
               id: 'g-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
@@ -4375,17 +4422,17 @@ Hai đứa mình dạo bước bên nhau..."
     if (zenEditorBtn) zenEditorBtn.addEventListener('click', () => setStudioViewMode('editor'));
     if (zenPreviewBtn) zenPreviewBtn.addEventListener('click', () => setStudioViewMode('preview'));
 
-    // Live preview update on inputs
+    // Live preview update on inputs (Debounced for 60fps smooth typing)
     const contentTextarea = document.getElementById('form-mem-content');
     if (contentTextarea) {
-      contentTextarea.addEventListener('input', updateLivePreview);
+      contentTextarea.addEventListener('input', () => debouncedUpdateLivePreview(80));
     }
 
     const liveInputs = ['form-mem-title', 'form-mem-date', 'form-mem-loc', 'form-mem-author', 'form-mem-mood', 'form-mem-weather', 'form-mem-caption'];
     liveInputs.forEach((id) => {
       const el = document.getElementById(id);
       if (el) {
-        el.addEventListener('input', updateLivePreview);
+        el.addEventListener('input', () => debouncedUpdateLivePreview(80));
         el.addEventListener('change', updateLivePreview);
       }
     });
@@ -4451,8 +4498,8 @@ Hai đứa mình dạo bước bên nhau..."
       const validFiles = Array.from(files).filter((f) => f && f.type.startsWith('image/'));
       if (validFiles.length === 0) return;
 
-      // 1. First image becomes Cover photo
-      const firstDataUrl = await readFileAsDataURL(validFiles[0]);
+      // 1. First image becomes Cover photo (tự động nén thông minh)
+      const firstDataUrl = await compressAndResizeImage(validFiles[0]);
       if (firstDataUrl) {
         currentUploadedMemPhoto = firstDataUrl;
         updateMemPhotoPreview(currentUploadedMemPhoto);
@@ -4461,7 +4508,7 @@ Hai đứa mình dạo bước bên nhau..."
       // 2. Extra images (if uploaded multiple) automatically go to Attached Gallery
       if (validFiles.length > 1) {
         for (let i = 1; i < validFiles.length; i++) {
-          const extraUrl = await readFileAsDataURL(validFiles[i]);
+          const extraUrl = await compressAndResizeImage(validFiles[i]);
           if (extraUrl) {
             currentAttachedGallery.push({
               id: 'g-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
@@ -4567,7 +4614,7 @@ Hai đứa mình dạo bước bên nhau..."
         if (validFiles.length === 0) return;
 
         for (const file of validFiles) {
-          const dataUrl = await readFileAsDataURL(file);
+          const dataUrl = await compressAndResizeImage(file);
           if (dataUrl) {
             currentAttachedGallery.push({
               id: 'g-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
