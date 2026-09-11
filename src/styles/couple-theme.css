@@ -790,3 +790,67 @@
     display: block !important;
   }
 }
+
+/* =========================================================================
+   MOBILE RESPONSIVENESS & TOUCH OPTIMIZATION (< 768px & < 480px)
+   ========================================================================= */
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 768px) {
+  .couple-site-header {
+    padding: 0.6rem 1rem;
+  }
+
+  .couple-wrapper {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  /* Form and Button Mobile Touch Target Tuning */
+  .btn-love,
+  .btn-outline-love,
+  .btn-dz-action,
+  .mobile-tab-btn {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Form inputs mobile font size (prevents iOS auto-zoom on input focus) */
+  input[type="text"],
+  input[type="date"],
+  input[type="number"],
+  input[type="search"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Toast Notification on Mobile Screens */
+  .couple-toast-container {
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    align-items: stretch;
+  }
+
+  .couple-toast {
+    max-width: 100%;
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 0.84rem;
+    gap: 10px;
+    border-radius: 16px;
+  }
+
+  .couple-toast .toast-msg {
+    font-size: 0.82rem;
+    white-space: normal;
+  }
+}
+
