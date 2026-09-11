@@ -866,15 +866,48 @@ const categories = [
   }
 
   @media (max-width: 640px) {
+    .section-title {
+      font-size: 1.6rem;
+    }
+    .bucket-controls-bar {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.8rem;
+      margin-bottom: 1.4rem;
+    }
+    .bucket-filters-wrap {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      padding-bottom: 6px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .bucket-filters-wrap::-webkit-scrollbar {
+      display: none;
+    }
+    .filter-btn {
+      white-space: nowrap;
+      font-size: 0.82rem;
+      padding: 6px 14px;
+    }
+    .bucket-sort-wrap {
+      justify-content: space-between;
+      width: 100%;
+    }
     :global(.bucket-check-row) {
       flex-direction: column;
       align-items: stretch;
       gap: 0.8rem;
+      padding: 1rem 1.1rem;
     }
     :global(.check-right-actions) {
       justify-content: flex-end;
       border-top: 1px solid rgba(255, 255, 255, 0.06);
       padding-top: 0.5rem;
+    }
+    .crud-grid-2col {
+      grid-template-columns: 1fr;
+      gap: 0.9rem;
     }
   }
 </style>

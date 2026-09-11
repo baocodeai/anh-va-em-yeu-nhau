@@ -497,60 +497,170 @@ const { boysInfo, girlsInfo, anniversaryDate, loveDeclaration } = COUPLE_CONFIG;
 
   @media (max-width: 768px) {
     .love-counter-container {
-      padding: 2.4rem 1.6rem;
+      padding: 2.2rem 1.2rem;
     }
     .avatar-ring {
-      width: 145px;
-      height: 145px;
+      width: 130px;
+      height: 130px;
     }
     .orbit-container {
-      width: 84px;
-      height: 84px;
+      width: 76px;
+      height: 76px;
     }
     .couple-avatars-row {
-      gap: 1.8rem;
+      gap: 1.2rem;
+      margin-bottom: 2rem;
     }
     .partner-name {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
     }
   }
 
-  @media (max-width: 520px) {
+  @media (max-width: 540px) {
     .love-counter-container {
-      padding: 2rem 1.1rem;
-    }
-    .time-blocks-grid {
-      padding: 0.8rem 1rem;
-      gap: 0.3rem;
-    }
-    .time-block {
-      min-width: 44px;
-    }
-    .time-val {
-      font-size: 1.55rem;
-    }
-    .avatar-ring {
-      width: 115px;
-      height: 115px;
-      padding: 4px;
-    }
-    .avatar-edit-overlay-btn {
-      width: 34px;
-      height: 34px;
-      font-size: 0.95rem;
-    }
-    .orbit-container {
-      width: 66px;
-      height: 66px;
+      padding: 1.6rem 0.8rem;
+      margin: 1rem auto 2rem;
+      border-radius: 20px;
     }
     .couple-avatars-row {
-      gap: 0.9rem;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap !important;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      width: 100%;
+      max-width: 380px;
+      margin: 0 auto 1.8rem;
+    }
+    .partner-avatar-wrap {
+      flex: 1;
+      min-width: 0;
+      gap: 6px;
+      text-align: center;
+    }
+    .avatar-ring {
+      width: 92px;
+      height: 92px;
+      padding: 3px;
+      margin: 0 auto;
+    }
+    .avatar-edit-overlay-btn {
+      width: 28px;
+      height: 28px;
+      font-size: 0.75rem;
+      bottom: 0;
+      right: 0;
+    }
+    .partner-info-mini {
+      width: 100%;
+      gap: 2px;
     }
     .partner-name {
-      font-size: 1.25rem;
+      font-size: 1.05rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .partner-tagline {
+      font-size: 0.72rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .partner-bday {
+      font-size: 0.7rem;
+      white-space: nowrap;
+    }
+    .love-center-beacon {
+      flex-shrink: 0;
+      gap: 0.5rem;
+      padding: 0 4px;
+    }
+    .orbit-container {
+      width: 52px;
+      height: 52px;
+    }
+    .orbit-heart svg {
+      width: 28px;
+      height: 28px;
+    }
+    .anniversary-badge {
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      white-space: nowrap;
+    }
+    .timer-title {
       font-size: 0.82rem;
+      margin-bottom: 0.9rem;
+    }
+    .time-blocks-grid {
+      display: flex;
+      width: 100%;
+      max-width: 340px;
+      margin: 0 auto;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.7rem 0.6rem;
+      gap: 2px;
+      border-radius: 14px;
+    }
+    .time-block {
+      flex: 1;
+      min-width: 0;
+    }
+    .time-val {
+      font-size: 1.45rem;
+    }
+    .time-label {
+      font-size: 0.65rem;
+      margin-top: 2px;
+    }
+    .time-colon {
+      font-size: 1.2rem;
+      margin-bottom: 0.7rem;
+    }
+    .love-declaration-text {
+      font-size: 0.92rem;
+      margin-top: 1.2rem;
+      padding: 0 0.5rem;
+    }
+    .birthday-pill-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.2rem;
+      padding-top: 1rem;
+      width: 100%;
+    }
+    .bday-card {
+      width: 100%;
+      max-width: 280px;
+      justify-content: center;
+      padding: 0.45rem 0.8rem;
+      font-size: 0.78rem;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .avatar-ring {
+      width: 78px;
+      height: 78px;
+    }
+    .orbit-container {
+      width: 44px;
+      height: 44px;
+    }
+    .orbit-heart svg {
+      width: 22px;
+      height: 22px;
+    }
+    .partner-name {
+      font-size: 0.95rem;
+    }
+    .time-val {
+      font-size: 1.25rem;
     }
   }
 </style>

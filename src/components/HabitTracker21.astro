@@ -1114,6 +1114,9 @@ Routine - Thói quen ngọt ngào - Learning English with you is my sweetest rou
   }
 
   @media (max-width: 768px) {
+    .habit-overview-card {
+      padding: 1.4rem 1rem;
+    }
     .zen-scrollable-content,
     .zen-footer-bar {
       padding-left: 1.2rem;
@@ -1130,6 +1133,81 @@ Routine - Thói quen ngọt ngào - Learning English with you is my sweetest rou
     }
     .zen-title-textarea {
       font-size: 1.4rem;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .section-title {
+      font-size: 1.6rem;
+    }
+    .section-desc {
+      font-size: 0.88rem;
+    }
+    .habit-overview-card {
+      padding: 1.2rem 0.6rem;
+      border-radius: 18px;
+    }
+    .progress-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.3rem;
+      margin-bottom: 1.2rem;
+    }
+    .stat-number {
+      font-size: 1.4rem;
+    }
+    .stat-total {
+      font-size: 0.85rem;
+    }
+    .stat-name {
+      font-size: 0.65rem;
+      text-align: center;
+    }
+    .constellation-guide-text {
+      font-size: 0.82rem;
+      margin-bottom: 0.8rem;
+    }
+    .constellation-nodes-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      max-width: 320px;
+      margin: 0 auto;
+      justify-items: center;
+    }
+    :global(.day-node-btn) {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      min-height: 36px;
+      font-size: 0.8rem;
+    }
+    .day-detail-panel {
+      padding: 1.2rem 0.8rem;
+      border-radius: 16px;
+    }
+    :global(.panel-header-row) {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+      padding-bottom: 1rem;
+    }
+    :global(.panel-title) {
+      font-size: 1.35rem;
+    }
+    :global(.panel-action-btns) {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
+    :global(.vocab-table-wrap) {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    :global(.vocab-table) {
+      font-size: 0.82rem;
+      min-width: 280px;
     }
   }
 </style>
