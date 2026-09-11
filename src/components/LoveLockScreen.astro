@@ -811,9 +811,16 @@ const { boysInfo, girlsInfo } = COUPLE_CONFIG;
     const inputConfirmPin = document.getElementById('input-confirm-pin') as HTMLInputElement | null;
     const changePinMsg = document.getElementById('change-pin-msg');
 
-    // Ensure open by default unless explicitly locked in session
-    document.documentElement.classList.remove('couple-is-locked');
-    overlay.classList.remove('is-active');
+    // Check authentication status on startup / page-load
+    const isUnlocked = localStorage.getItem(AUTH_STORAGE_KEY) === 'true' || sessionStorage.getItem(AUTH_STORAGE_KEY) === 'true';
+    if (!isUnlocked) {
+      document.documentElement.classList.add('couple-is-locked');
+      overlay.classList.add('is-active');
+      overlay.classList.remove('is-unlocking');
+    } else {
+      document.documentElement.classList.remove('couple-is-locked');
+      overlay.classList.remove('is-active', 'is-unlocking');
+    }
 
     function updateDotsUI() {
       const len = currentEnteredCode.length;
@@ -846,6 +853,8 @@ const { boysInfo, girlsInfo } = COUPLE_CONFIG;
         localStorage.setItem(AUTH_STORAGE_KEY, 'true');
         const currentVer = localStorage.getItem(AUTH_VERSION_KEY) || '1';
         localStorage.setItem(AUTH_VERSION_KEY, currentVer);
+      } else {
+        sessionStorage.setItem(AUTH_STORAGE_KEY, 'true');
       }
 
       dots.forEach((dot) => dot.classList.add('is-success'));
@@ -1061,6 +1070,7 @@ const { boysInfo, girlsInfo } = COUPLE_CONFIG;
     // Global Lock App Function (Accessible by Header lock button & SyncEngine)
     (window as any).lockCoupleApp = (customMsg?: string) => {
       localStorage.removeItem(AUTH_STORAGE_KEY);
+      sessionStorage.removeItem(AUTH_STORAGE_KEY);
       document.documentElement.classList.add('couple-is-locked');
       overlay.classList.remove('is-unlocking');
       overlay.classList.add('is-active');
