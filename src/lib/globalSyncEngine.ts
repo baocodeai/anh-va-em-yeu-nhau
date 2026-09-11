@@ -65,6 +65,15 @@ export function initGlobalSyncEngine(): void {
       }
     }
 
+    // 4.1. 21 Days Start Date / Ngày bắt đầu
+    if (cloudData.habitStartDate !== undefined && typeof cloudData.habitStartDate === 'string') {
+      const current = localStorage.getItem('couple_habit_start_date');
+      if (current !== cloudData.habitStartDate) {
+        localStorage.setItem('couple_habit_start_date', cloudData.habitStartDate);
+        hasChanges = true;
+      }
+    }
+
     // 5. Trash Bin / Thùng rác
     if (cloudData.trashBin !== undefined && Array.isArray(cloudData.trashBin)) {
       const current = localStorage.getItem('couple_trash_bin');

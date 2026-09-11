@@ -1,7 +1,11 @@
 ---
-import { HABIT_21_DAYS } from '../data/habit21Days';
+import { HABIT_21_DAYS, DEFAULT_HABIT_START_DATE } from '../data/habit21Days';
+import { COUPLE_CONFIG } from '../couple.config';
 
 const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
+const defaultStartDate = DEFAULT_HABIT_START_DATE;
+const coupleBoysInfoJSON = JSON.stringify(COUPLE_CONFIG.boysInfo).replace(/</g, '\\u003c');
+const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g, '\\u003c');
 ---
 
 <section class="habit-tracker-section" id="habit-tracker">
@@ -11,8 +15,68 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
     </div>
     <h2 class="section-title gradient-love-text">21 Ngày Cùng Em Rèn Thói Quen Tiếng Anh</h2>
     <p class="section-desc">
-      Mỗi ngày là một vì sao được thắp sáng. Hãy cùng nhau kiên trì mỗi ngày và đánh dấu hoàn thành chặng đường 21 ngày của hai đứa!
+      Mỗi ngày là một vì sao chỉ được thắp sáng khi <strong>CẢ HAI ĐỨA</strong> cùng tích hoàn thành. Hãy cùng nhau kiên trì mỗi ngày để chạm tới vạch đích 21 ngày nhé!
     </p>
+  </div>
+
+  <!-- Start Date Setup & Timeline Hub Card -->
+  <div class="habit-start-date-card romantic-card">
+    <div class="date-card-header">
+      <div class="date-header-left">
+        <span class="date-header-icon">📅</span>
+        <div>
+          <h3 class="date-card-title gradient-rose-text">Lịch Trình &amp; Ngày Bắt Đầu 21 Ngày</h3>
+          <p class="date-card-sub">Hệ thống sẽ tự động phân bổ 21 ngày học tương ứng theo lịch thực tế</p>
+        </div>
+      </div>
+      <div class="date-today-badge-wrap">
+        <span class="badge-love" id="habit-today-pill">✨ Hôm nay: Đang tính...</span>
+      </div>
+    </div>
+
+    <div class="date-picker-control-row">
+      <div class="date-input-group">
+        <label for="habit-start-date-input" class="date-input-label">Chọn ngày bắt đầu (Ngày 1):</label>
+        <div class="input-with-button">
+          <input
+            type="date"
+            id="habit-start-date-input"
+            class="habit-date-input"
+            value={defaultStartDate}
+          />
+          <button type="button" class="btn-love btn-sm" id="btn-save-start-date">
+            <span>💾 Lưu Ngày</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="quick-preset-btns">
+        <span class="preset-label">Chọn nhanh:</span>
+        <button type="button" class="btn-preset-pill" id="btn-preset-today">⚡ Hôm Nay</button>
+        <button type="button" class="btn-preset-pill" id="btn-preset-anniversary">💌 Kỷ Niệm (15/08)</button>
+        <button type="button" class="btn-preset-pill" id="btn-preset-default">🔄 Mặc Định (20/08)</button>
+      </div>
+    </div>
+
+    <!-- Calculated Timeline Summary -->
+    <div class="timeline-summary-bar">
+      <div class="timeline-item">
+        <span class="timeline-dot dot-start"></span>
+        <span class="timeline-label">Ngày 1 (Bắt đầu):</span>
+        <strong class="timeline-val gradient-cyan-text" id="display-start-date">--/--/----</strong>
+      </div>
+      <div class="timeline-sep">➜</div>
+      <div class="timeline-item">
+        <span class="timeline-dot dot-end"></span>
+        <span class="timeline-label">Ngày 21 (Về đích):</span>
+        <strong class="timeline-val gradient-rose-text" id="display-end-date">--/--/----</strong>
+      </div>
+      <div class="timeline-sep">•</div>
+      <div class="timeline-item">
+        <span class="timeline-label">Tiến trình theo lịch:</span>
+        <span class="timeline-val" id="display-calendar-progress" style="color: #fbbf24;">Đang tính...</span>
+      </div>
+    </div>
   </div>
 
   <!-- Progress Overview Card -->
@@ -22,15 +86,19 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
         <span class="stat-number gradient-rose-text" id="habit-stat-completed">
           --<span class="stat-total">/21</span>
         </span>
-        <span class="stat-name">Ngày Đã Hoàn Thành</span>
+        <span class="stat-name">Hoàn Thành Cả Hai 💖</span>
       </div>
       <div class="stat-box">
         <span class="stat-number gradient-cyan-text" id="habit-stat-percent">--%</span>
         <span class="stat-name">Hành Trình Tinh Cầu</span>
       </div>
       <div class="stat-box">
-        <span class="stat-number" id="habit-stat-remaining" style="color: #fbbf24;">--</span>
-        <span class="stat-name">Ngày Còn Lại</span>
+        <span class="stat-number" id="habit-stat-ai" style="color: #38bdf8;">--<span class="stat-total">/21</span></span>
+        <span class="stat-name">AI (Anh) Đã Tích 🚀</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-number" id="habit-stat-maze" style="color: #f43f5e;">--<span class="stat-total">/21</span></span>
+        <span class="stat-name">Maze (Em) Đã Tích 🌸</span>
       </div>
     </div>
 
@@ -39,9 +107,17 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
       <div class="progress-bar-fill" id="habit-progress-bar" style="width: 0%;"></div>
     </div>
 
+    <!-- Dual Check Requirement Note -->
+    <div class="dual-check-legend">
+      <div class="legend-item"><span class="legend-symbol symbol-done">★</span> <span>Cả 2 đã tích (Đã hoàn thành)</span></div>
+      <div class="legend-item"><span class="legend-symbol symbol-ai">👦</span> <span>AI đã tích (Chờ Maze)</span></div>
+      <div class="legend-item"><span class="legend-symbol symbol-maze">👧</span> <span>Maze đã tích (Chờ AI)</span></div>
+      <div class="legend-item"><span class="legend-symbol symbol-today">✨</span> <span>Hôm nay</span></div>
+    </div>
+
     <!-- 21-Day Constellation Track -->
     <div class="constellation-nav-wrap">
-      <p class="constellation-guide-text">⭐ Bấm vào một ngày để xem và đánh dấu hoàn thành:</p>
+      <p class="constellation-guide-text">⭐ Nhấn vào một ngày để xem chi tiết và cả hai cùng tích hoàn thành:</p>
       <div class="constellation-nodes-grid" id="day-selector-strip">
         <!-- 21 node buttons dynamically rendered / updated by script -->
       </div>
@@ -57,13 +133,16 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
 </section>
 
 <!-- Inject initial data -->
-<script is:inline define:vars={{ defaultHabitJSON }}>
+<script is:inline define:vars={{ defaultHabitJSON, defaultStartDate, coupleBoysInfoJSON, coupleGirlsInfoJSON }}>
   window.__INITIAL_HABIT_21__ = JSON.parse(defaultHabitJSON);
+  window.__DEFAULT_HABIT_START_DATE__ = defaultStartDate;
+  window.__COUPLE_BOYS_INFO__ = JSON.parse(coupleBoysInfoJSON);
+  window.__COUPLE_GIRLS_INFO__ = JSON.parse(coupleGirlsInfoJSON);
 </script>
 
 <style>
   .habit-tracker-section {
-    max-width: 920px;
+    max-width: 960px;
     margin: 3.5rem auto;
     padding: 0 1.2rem;
   }
@@ -81,11 +160,179 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
   }
 
   .section-desc {
-    max-width: 680px;
+    max-width: 720px;
     margin: 0 auto;
     color: #94a3b8;
     line-height: 1.6;
-    font-size: 1rem;
+    font-size: 1.02rem;
+  }
+
+  .section-desc strong {
+    color: #fda4af;
+  }
+
+  /* Start Date Card */
+  .habit-start-date-card {
+    padding: 1.6rem 2rem;
+    margin-bottom: 1.8rem;
+    background: radial-gradient(circle at 10% 0%, rgba(56, 189, 248, 0.12) 0%, rgba(11, 17, 32, 0.88) 100%);
+    border: 1px solid rgba(56, 189, 248, 0.28);
+    border-radius: 20px;
+  }
+
+  .date-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .date-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+
+  .date-header-icon {
+    font-size: 1.8rem;
+  }
+
+  .date-card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 2px;
+  }
+
+  .date-card-sub {
+    font-size: 0.84rem;
+    color: #94a3b8;
+    margin: 0;
+  }
+
+  .date-picker-control-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1.5rem;
+    margin-bottom: 1.2rem;
+    flex-wrap: wrap;
+    padding: 1rem 1.2rem;
+    background: rgba(15, 23, 42, 0.6);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .date-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .date-input-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #cbd5e1;
+  }
+
+  .input-with-button {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .habit-date-input {
+    background: rgba(2, 6, 23, 0.8);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: #ffffff;
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    font-weight: 600;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .habit-date-input:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+  }
+
+  .btn-sm {
+    min-height: 36px;
+    padding: 6px 16px;
+    font-size: 0.85rem;
+  }
+
+  .quick-preset-btns {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .preset-label {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    margin-right: 2px;
+  }
+
+  .btn-preset-pill {
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #cbd5e1;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-preset-pill:hover {
+    background: rgba(244, 63, 94, 0.2);
+    border-color: #fda4af;
+    color: #ffffff;
+  }
+
+  .timeline-summary-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    flex-wrap: wrap;
+    padding-top: 0.8rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .timeline-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .timeline-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .dot-start {
+    background: #38bdf8;
+    box-shadow: 0 0 8px #38bdf8;
+  }
+
+  .dot-end {
+    background: #f43f5e;
+    box-shadow: 0 0 8px #f43f5e;
+  }
+
+  .timeline-sep {
+    color: #475569;
   }
 
   /* Overview Card */
@@ -115,22 +362,22 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
   }
 
   .stat-number {
-    font-size: 2.4rem;
+    font-size: 2.2rem;
     font-weight: 800;
     font-family: var(--mono);
     line-height: 1;
   }
 
   .stat-total {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: #64748b;
   }
 
   .stat-name {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: #94a3b8;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
     font-weight: 600;
   }
 
@@ -140,7 +387,7 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
     background: rgba(30, 41, 59, 0.85);
     border-radius: 9999px;
     overflow: hidden;
-    margin-bottom: 2rem;
+    margin-bottom: 1.4rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
   }
@@ -153,9 +400,38 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
     box-shadow: 0 0 16px rgba(244, 63, 94, 0.7);
   }
 
+  .dual-check-legend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.2rem;
+    margin-bottom: 1.6rem;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    flex-wrap: wrap;
+    background: rgba(15, 23, 42, 0.5);
+    padding: 8px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .legend-symbol {
+    font-size: 0.9rem;
+  }
+
+  .symbol-done {
+    color: #fbbf24;
+  }
+
   /* 21 Nodes */
   .constellation-guide-text {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     color: #cbd5e1;
     margin-bottom: 1.2rem;
     text-align: center;
@@ -166,29 +442,43 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
   }
 
   :global(.day-node-btn) {
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
-    min-height: 48px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    width: 54px;
+    height: 58px;
+    min-width: 54px;
+    min-height: 58px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
     background: rgba(11, 17, 32, 0.85);
     backdrop-filter: blur(10px);
     color: #cbd5e1;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     user-select: none;
     font-family: var(--mono);
+    padding: 2px;
+  }
+
+  :global(.day-node-btn .node-num) {
+    font-size: 1.05rem;
+    line-height: 1.1;
+  }
+
+  :global(.day-node-btn .node-date) {
+    font-size: 0.65rem;
+    color: #94a3b8;
+    margin-top: 2px;
+    font-weight: 500;
   }
 
   :global(.day-node-btn:hover) {
@@ -202,23 +492,76 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
     border-color: #38bdf8;
     box-shadow: 0 0 22px rgba(56, 189, 248, 0.7), inset 0 0 10px rgba(56, 189, 248, 0.35);
     color: #ffffff;
-    transform: scale(1.14);
+    transform: scale(1.12);
+    z-index: 2;
   }
 
-  :global(.day-node-btn.is-completed) {
+  /* Both completed */
+  :global(.day-node-btn.is-fully-completed) {
     background: linear-gradient(135deg, rgba(244, 63, 94, 0.4), rgba(192, 132, 252, 0.5));
-    border-color: rgba(244, 63, 94, 0.7);
+    border-color: rgba(244, 63, 94, 0.75);
     color: #ffffff;
     box-shadow: 0 0 16px rgba(244, 63, 94, 0.35);
   }
 
+  :global(.day-node-btn.is-fully-completed .node-date) {
+    color: #fbcfe8;
+  }
+
+  /* AI only completed */
+  :global(.day-node-btn.is-ai-only) {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(15, 23, 42, 0.85));
+    border-color: rgba(56, 189, 248, 0.6);
+  }
+
+  /* Maze only completed */
+  :global(.day-node-btn.is-maze-only) {
+    background: linear-gradient(135deg, rgba(244, 63, 94, 0.25), rgba(15, 23, 42, 0.85));
+    border-color: rgba(244, 63, 94, 0.6);
+  }
+
+  :global(.day-node-btn.is-today-node) {
+    border-color: #fbbf24;
+    animation: pulseToday 2s infinite ease-in-out;
+  }
+
+  @keyframes pulseToday {
+    0%, 100% { box-shadow: 0 0 10px rgba(251, 191, 36, 0.4); }
+    50% { box-shadow: 0 0 22px rgba(251, 191, 36, 0.8); }
+  }
+
   :global(.day-star-badge) {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    font-size: 0.85rem;
+    color: #fbbf24;
+    text-shadow: 0 0 8px rgba(251, 191, 36, 0.95);
+  }
+
+  :global(.partner-node-pill) {
     position: absolute;
     top: -5px;
     right: -5px;
-    font-size: 0.8rem;
-    color: #fbbf24;
-    text-shadow: 0 0 8px rgba(251, 191, 36, 0.95);
+    font-size: 0.7rem;
+    line-height: 1;
+    background: rgba(15, 23, 42, 0.9);
+    border-radius: 50%;
+    padding: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  :global(.today-mini-badge) {
+    position: absolute;
+    bottom: -6px;
+    background: #fbbf24;
+    color: #0b1120;
+    font-size: 0.55rem;
+    font-weight: 800;
+    padding: 1px 4px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 
   /* Active Day Panel */
@@ -237,9 +580,7 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
   :global(.panel-main-content) {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 1.8rem;
-    text-align: center;
+    gap: 1.6rem;
   }
 
   :global(.panel-top-row) {
@@ -282,69 +623,251 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
     cursor: not-allowed;
   }
 
-  :global(.panel-info-body) {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 0.5rem 0;
+  :global(.panel-heading-wrap) {
+    text-align: center;
+    margin: 0.2rem 0;
   }
 
   :global(.day-heading) {
-    font-size: 2.4rem;
+    font-size: 2.2rem;
     font-weight: 800;
     color: #ffffff;
-    margin: 0;
+    margin: 0 0 4px;
     letter-spacing: -0.02em;
     line-height: 1.2;
   }
 
-  :global(.panel-actions-center) {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  :global(.day-date-sub) {
+    font-size: 1rem;
+    color: #94a3b8;
+    margin: 0;
+    font-weight: 500;
+  }
+
+  /* Dual Partner Checklist Grid */
+  :global(.dual-partner-cards-grid) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
     width: 100%;
   }
 
-  :global(.btn-toggle-day-status) {
+  :global(.partner-check-card) {
+    background: rgba(15, 23, 42, 0.7);
+    border-radius: 18px;
+    padding: 1.6rem 1.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  :global(.partner-check-card.card-ai) {
+    border-color: rgba(56, 189, 248, 0.25);
+  }
+
+  :global(.partner-check-card.card-ai.is-checked) {
+    background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.2) 0%, rgba(15, 23, 42, 0.85) 100%);
+    border-color: rgba(56, 189, 248, 0.6);
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.2);
+  }
+
+  :global(.partner-check-card.card-maze) {
+    border-color: rgba(244, 63, 94, 0.25);
+  }
+
+  :global(.partner-check-card.card-maze.is-checked) {
+    background: radial-gradient(circle at 50% 0%, rgba(244, 63, 94, 0.2) 0%, rgba(15, 23, 42, 0.85) 100%);
+    border-color: rgba(244, 63, 94, 0.6);
+    box-shadow: 0 0 25px rgba(244, 63, 94, 0.2);
+  }
+
+  :global(.card-partner-header) {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  :global(.partner-avatar-img) {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid;
+  }
+
+  :global(.card-ai .partner-avatar-img) {
+    border-color: #38bdf8;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+  }
+
+  :global(.card-maze .partner-avatar-img) {
+    border-color: #f43f5e;
+    box-shadow: 0 0 12px rgba(244, 63, 94, 0.4);
+  }
+
+  :global(.partner-title-wrap) {
+    text-align: left;
+  }
+
+  :global(.partner-main-name) {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  :global(.partner-role-tag) {
+    font-size: 0.76rem;
+    color: #94a3b8;
+  }
+
+  :global(.partner-status-pill) {
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  :global(.status-pill-pending) {
+    background: rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+  }
+
+  :global(.status-pill-done-ai) {
+    background: rgba(56, 189, 248, 0.2);
+    color: #7dd3fc;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+  }
+
+  :global(.status-pill-done-maze) {
+    background: rgba(244, 63, 94, 0.2);
+    color: #fda4af;
+    border: 1px solid rgba(244, 63, 94, 0.4);
+  }
+
+  :global(.btn-partner-toggle) {
+    width: 100%;
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
-    padding: 15px 38px;
-    font-size: 1.15rem;
-    font-weight: 700;
+    gap: 8px;
+    border: none;
+  }
+
+  :global(.btn-ai-toggle.btn-pending) {
+    background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 18px rgba(56, 189, 248, 0.35);
+  }
+
+  :global(.btn-ai-toggle.btn-pending:hover) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(56, 189, 248, 0.55);
+  }
+
+  :global(.btn-ai-toggle.btn-checked) {
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: #7dd3fc;
+  }
+
+  :global(.btn-ai-toggle.btn-checked:hover) {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #fca5a5;
+  }
+
+  :global(.btn-maze-toggle.btn-pending) {
+    background: linear-gradient(135deg, #e11d48 0%, #f43f5e 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 18px rgba(244, 63, 94, 0.35);
+  }
+
+  :global(.btn-maze-toggle.btn-pending:hover) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(244, 63, 94, 0.55);
+  }
+
+  :global(.btn-maze-toggle.btn-checked) {
+    background: rgba(244, 63, 94, 0.15);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    color: #fda4af;
+  }
+
+  :global(.btn-maze-toggle.btn-checked:hover) {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #fca5a5;
+  }
+
+  /* Completion & Encouragement Banner */
+  :global(.day-status-feedback-banner) {
+    padding: 1.1rem 1.4rem;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  :global(.banner-fully-completed) {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(244, 63, 94, 0.2) 100%);
+    border: 1px solid rgba(34, 197, 94, 0.4);
+    color: #86efac;
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
+  }
+
+  :global(.banner-waiting) {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+  }
+
+  :global(.banner-highlight-partner) {
+    color: #fda4af;
+  }
+
+  :global(.quick-joint-action-row) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 0.5rem;
+  }
+
+  :global(.btn-joint-toggle) {
+    background: transparent;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    color: #94a3b8;
+    font-size: 0.84rem;
+    padding: 6px 16px;
     border-radius: 9999px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: none;
-    outline: none;
+    transition: all 0.2s ease;
   }
 
-  :global(.btn-toggle-day-status.btn-mark-pending) {
-    background: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #c084fc 100%);
-    color: #ffffff;
-    box-shadow: 0 4px 25px rgba(244, 63, 94, 0.45);
-  }
-
-  :global(.btn-toggle-day-status.btn-mark-pending:hover) {
-    transform: translateY(-2px) scale(1.04);
-    box-shadow: 0 8px 32px rgba(244, 63, 94, 0.65);
-  }
-
-  :global(.btn-toggle-day-status.btn-mark-completed) {
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(16, 185, 129, 0.25) 100%);
-    color: #86efac;
-    border: 1px solid rgba(34, 197, 94, 0.4);
-    box-shadow: 0 4px 20px rgba(34, 197, 94, 0.25);
-  }
-
-  :global(.btn-toggle-day-status.btn-mark-completed:hover) {
-    transform: translateY(-2px);
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(244, 63, 94, 0.25) 100%);
-    border-color: rgba(244, 63, 94, 0.5);
+  :global(.btn-joint-toggle:hover) {
+    border-color: #fda4af;
     color: #fda4af;
-    box-shadow: 0 4px 20px rgba(244, 63, 94, 0.3);
+    background: rgba(244, 63, 94, 0.1);
   }
 
   @media (max-width: 768px) {
@@ -354,16 +877,28 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
     .habit-overview-card {
       padding: 1.5rem 1.2rem;
     }
+    .habit-start-date-card {
+      padding: 1.4rem 1.2rem;
+    }
+    .date-picker-control-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .input-with-button {
+      width: 100%;
+    }
+    .habit-date-input {
+      flex: 1;
+    }
     .day-detail-panel {
       padding: 1.6rem 1.2rem;
     }
+    :global(.dual-partner-cards-grid) {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
     :global(.day-heading) {
       font-size: 1.8rem;
-    }
-    :global(.btn-toggle-day-status) {
-      width: 100%;
-      padding: 14px 20px;
-      font-size: 1.05rem;
     }
   }
 </style>
@@ -372,11 +907,66 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
   import { pushDataToFirebase } from '../lib/firebaseClient';
 
   const HABIT_STORAGE_KEY = 'couple_habit_21';
+  const START_DATE_STORAGE_KEY = 'couple_habit_start_date';
+
+  function getBoysAvatar(): string {
+    try {
+      const stored = localStorage.getItem('couple_avatars');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.ai) return parsed.ai;
+      }
+    } catch {}
+    return (window as any).__COUPLE_BOYS_INFO__?.avatar || '/assets/ai.png';
+  }
+
+  function getGirlsAvatar(): string {
+    try {
+      const stored = localStorage.getItem('couple_avatars');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.maze) return parsed.maze;
+      }
+    } catch {}
+    return (window as any).__COUPLE_GIRLS_INFO__?.avatar || '/assets/maze.jpg';
+  }
+
+  function getStoredStartDate(): string {
+    try {
+      const stored = localStorage.getItem(START_DATE_STORAGE_KEY);
+      if (stored && /^\d{4}-\d{2}-\d{2}$/.test(stored)) return stored;
+    } catch {}
+    return (window as any).__DEFAULT_HABIT_START_DATE__ || '2026-08-20';
+  }
+
+  function saveStoredStartDate(dateStr: string) {
+    localStorage.setItem(START_DATE_STORAGE_KEY, dateStr);
+    pushDataToFirebase({ habitStartDate: dateStr, lastUpdatedBy: 'HabitTracker' }).catch(() => {});
+  }
 
   function getStoredHabits(): any[] {
     try {
       const stored = localStorage.getItem(HABIT_STORAGE_KEY);
-      if (stored) return JSON.parse(stored);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Normalize items if needed
+          return parsed.map((item, idx) => {
+            const aiCompleted = item.aiCompleted !== undefined ? Boolean(item.aiCompleted) : Boolean(item.completed);
+            const mazeCompleted = item.mazeCompleted !== undefined ? Boolean(item.mazeCompleted) : Boolean(item.completed);
+            const completed = aiCompleted && mazeCompleted;
+            return {
+              day: item.day || idx + 1,
+              aiCompleted,
+              aiCompletedDate: item.aiCompletedDate || (aiCompleted ? item.completedDate : undefined),
+              mazeCompleted,
+              mazeCompletedDate: item.mazeCompletedDate || (mazeCompleted ? item.completedDate : undefined),
+              completed,
+              completedDate: item.completedDate
+            };
+          });
+        }
+      }
     } catch {}
     const initial = (window as any).__INITIAL_HABIT_21__ || [];
     localStorage.setItem(HABIT_STORAGE_KEY, JSON.stringify(initial));
@@ -388,23 +978,123 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
     pushDataToFirebase({ habit21: list, lastUpdatedBy: 'HabitTracker' }).catch(() => {});
   }
 
+  // Calculate day date based on start date
+  function getDayCalendarInfo(startDateStr: string, dayNumber: number) {
+    try {
+      const [y, m, d] = startDateStr.split('-').map(Number);
+      const date = new Date(y, m - 1, d);
+      date.setDate(date.getDate() + (dayNumber - 1));
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const iso = `${year}-${month}-${day}`;
+      const shortDisplay = `${day}/${month}`;
+      const fullDisplay = `${day}/${month}/${year}`;
+
+      const dayNames = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+      const dayOfWeek = dayNames[date.getDay()];
+
+      return {
+        iso,
+        shortDisplay,
+        fullDisplay,
+        dayOfWeek,
+        headingDate: `${dayOfWeek}, ${fullDisplay}`
+      };
+    } catch {
+      return {
+        iso: '',
+        shortDisplay: `N+${dayNumber}`,
+        fullDisplay: `Ngày ${dayNumber}`,
+        dayOfWeek: '',
+        headingDate: `Ngày ${dayNumber}`
+      };
+    }
+  }
+
+  function getTodayIso(): string {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
   let currentSelectedDay = 1;
 
   function renderHabitUI() {
     const list: any[] = getStoredHabits();
+    const startDate = getStoredStartDate();
+    const todayIso = getTodayIso();
     const totalDays = 21;
+
+    // Calculate dates for day 1 and day 21
+    const startDayInfo = getDayCalendarInfo(startDate, 1);
+    const endDayInfo = getDayCalendarInfo(startDate, 21);
+
+    // Update Start Date Header UI
+    const inputStartDate = document.getElementById('habit-start-date-input') as HTMLInputElement | null;
+    if (inputStartDate && inputStartDate.value !== startDate) {
+      inputStartDate.value = startDate;
+    }
+
+    const displayStartEl = document.getElementById('display-start-date');
+    const displayEndEl = document.getElementById('display-end-date');
+    const displayCalendarProgress = document.getElementById('display-calendar-progress');
+    const habitTodayPill = document.getElementById('habit-today-pill');
+
+    if (displayStartEl) displayStartEl.textContent = startDayInfo.fullDisplay;
+    if (displayEndEl) displayEndEl.textContent = endDayInfo.fullDisplay;
+
+    // Find which day is "Today"
+    let todayDayNum: number | null = null;
+    for (let i = 1; i <= totalDays; i++) {
+      const dInfo = getDayCalendarInfo(startDate, i);
+      if (dInfo.iso === todayIso) {
+        todayDayNum = i;
+        break;
+      }
+    }
+
+    if (habitTodayPill) {
+      const [ty, tm, td] = todayIso.split('-');
+      const formattedToday = `${td}/${tm}/${ty}`;
+      if (todayDayNum !== null) {
+        habitTodayPill.innerHTML = `✨ Hôm nay: <strong>${formattedToday} (Ngày ${todayDayNum}/21)</strong>`;
+      } else {
+        habitTodayPill.innerHTML = `✨ Hôm nay: <strong>${formattedToday}</strong>`;
+      }
+    }
+
+    if (displayCalendarProgress) {
+      if (todayDayNum !== null) {
+        displayCalendarProgress.textContent = `Hôm nay là Ngày ${todayDayNum}/21 🚀`;
+      } else if (todayIso < startDayInfo.iso) {
+        displayCalendarProgress.textContent = `Chưa đến ngày bắt đầu (sắp khởi hành!) ⏳`;
+      } else {
+        displayCalendarProgress.textContent = `Đã qua mốc 21 ngày 🎉`;
+      }
+    }
+
+    // Calculate Stats
+    // Day is only fully completed if both AI & Maze completed
     const completedCount = list.filter((d) => d.completed).length;
+    const aiCount = list.filter((d) => d.aiCompleted).length;
+    const mazeCount = list.filter((d) => d.mazeCompleted).length;
     const percentage = Math.round((completedCount / totalDays) * 100);
 
     // Update Overview Stats
     const completedEl = document.getElementById('habit-stat-completed');
     const percentEl = document.getElementById('habit-stat-percent');
-    const remainingEl = document.getElementById('habit-stat-remaining');
+    const aiStatEl = document.getElementById('habit-stat-ai');
+    const mazeStatEl = document.getElementById('habit-stat-maze');
     const progressBar = document.getElementById('habit-progress-bar');
 
     if (completedEl) completedEl.innerHTML = `${completedCount}<span class="stat-total">/${totalDays}</span>`;
     if (percentEl) percentEl.textContent = `${percentage}%`;
-    if (remainingEl) remainingEl.textContent = `${totalDays - completedCount}`;
+    if (aiStatEl) aiStatEl.innerHTML = `${aiCount}<span class="stat-total">/${totalDays}</span>`;
+    if (mazeStatEl) mazeStatEl.innerHTML = `${mazeCount}<span class="stat-total">/${totalDays}</span>`;
     if (progressBar) progressBar.style.width = `${percentage}%`;
 
     // Render 21 Constellation Node Buttons
@@ -412,14 +1102,34 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
     if (strip) {
       strip.innerHTML = '';
       list.forEach((dayItem) => {
+        const dInfo = getDayCalendarInfo(startDate, dayItem.day);
+        const isToday = dInfo.iso === todayIso;
+
+        let statusClass = 'is-pending';
+        let badgeHtml = '';
+
+        if (dayItem.completed) {
+          statusClass = 'is-fully-completed';
+          badgeHtml = '<span class="day-star-badge">★</span>';
+        } else if (dayItem.aiCompleted) {
+          statusClass = 'is-ai-only';
+          badgeHtml = '<span class="partner-node-pill" title="AI đã tích">👦</span>';
+        } else if (dayItem.mazeCompleted) {
+          statusClass = 'is-maze-only';
+          badgeHtml = '<span class="partner-node-pill" title="Maze đã tích">👧</span>';
+        }
+
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = `day-node-btn ${dayItem.completed ? 'is-completed' : 'is-pending'} ${dayItem.day === currentSelectedDay ? 'is-active' : ''}`;
+        btn.className = `day-node-btn ${statusClass} ${dayItem.day === currentSelectedDay ? 'is-active' : ''} ${isToday ? 'is-today-node' : ''}`;
         btn.setAttribute('data-day', String(dayItem.day));
-        btn.title = `Ngày ${dayItem.day}: ${dayItem.completed ? 'Đã hoàn thành' : 'Chờ hoàn thành'}`;
+        btn.title = `Ngày ${dayItem.day} (${dInfo.shortDisplay}): ${dayItem.completed ? 'Cả hai đã hoàn thành' : dayItem.aiCompleted ? 'AI đã tích (chờ Maze)' : dayItem.mazeCompleted ? 'Maze đã tích (chờ AI)' : 'Chờ hoàn thành'}`;
+        
         btn.innerHTML = `
-          <span class="day-num">${dayItem.day}</span>
-          ${dayItem.completed ? '<span class="day-star-badge">★</span>' : ''}
+          <span class="node-num">${dayItem.day}</span>
+          <span class="node-date">${dInfo.shortDisplay}</span>
+          ${badgeHtml}
+          ${isToday ? '<span class="today-mini-badge">Nay</span>' : ''}
         `;
 
         btn.addEventListener('click', () => {
@@ -436,16 +1146,48 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
     const dayData = list.find((d) => d.day === currentSelectedDay) || list[0];
     if (!panel || !dayData) return;
 
-    const formattedCompletedDate = dayData.completedDate
-      ? dayData.completedDate.split('-').reverse().join('/')
-      : 'Ghi nhận';
+    const currentDayInfo = getDayCalendarInfo(startDate, dayData.day);
+    const isCurrentDayToday = currentDayInfo.iso === todayIso;
+    const boysAvatar = getBoysAvatar();
+    const girlsAvatar = getGirlsAvatar();
+
+    let topBadgeHtml = '';
+    let feedbackBannerHtml = '';
+
+    if (dayData.completed) {
+      topBadgeHtml = `<span class="badge-love badge-green">🎉 ĐÃ HOÀN THÀNH BỞI CẢ HAI</span>`;
+      feedbackBannerHtml = `
+        <div class="day-status-feedback-banner banner-fully-completed">
+          <span>💖 <strong>Tuyệt vời!</strong> AI & Maze đã cùng nhau hoàn thành Ngày ${dayData.day}! Ngôi sao ngày này đã chính thức được thắp sáng trên dải ngân hà! ⭐</span>
+        </div>
+      `;
+    } else if (dayData.aiCompleted && !dayData.mazeCompleted) {
+      topBadgeHtml = `<span class="badge-love" style="background: rgba(56, 189, 248, 0.2); border-color: #38bdf8; color: #7dd3fc;">⏳ AI ĐÃ TÍCH — ĐANG CHỜ MAZE</span>`;
+      feedbackBannerHtml = `
+        <div class="day-status-feedback-banner banner-waiting">
+          <span>🚀 <strong>AI đã hoàn thành phần của mình!</strong> Hãy nhắc <strong class="banner-highlight-partner">Maze</strong> vào tích để cùng thắp sáng Ngày ${dayData.day} nhé! 🌸</span>
+        </div>
+      `;
+    } else if (!dayData.aiCompleted && dayData.mazeCompleted) {
+      topBadgeHtml = `<span class="badge-love" style="background: rgba(244, 63, 94, 0.2); border-color: #f43f5e; color: #fda4af;">⏳ MAZE ĐÃ TÍCH — ĐANG CHỜ AI</span>`;
+      feedbackBannerHtml = `
+        <div class="day-status-feedback-banner banner-waiting">
+          <span>🌸 <strong>Maze đã hoàn thành phần của mình!</strong> Hãy nhắc <strong class="banner-highlight-partner">AI</strong> vào tích để cùng thắp sáng Ngày ${dayData.day} nhé! 🚀</span>
+        </div>
+      `;
+    } else {
+      topBadgeHtml = `<span class="badge-love badge-gold">⏳ CẢ HAI CHƯA ĐÁNH DẤU</span>`;
+      feedbackBannerHtml = `
+        <div class="day-status-feedback-banner banner-waiting">
+          <span>💫 Cả 2 cùng rèn luyện tiếng Anh hôm nay nhé! <em>(Phải cả AI và Maze cùng tích mới được tính là hoàn thành)</em></span>
+        </div>
+      `;
+    }
 
     panel.innerHTML = `
       <div class="panel-main-content">
         <div class="panel-top-row">
-          <span class="badge-love ${dayData.completed ? 'badge-green' : 'badge-gold'}">
-            ${dayData.completed ? `✓ Đã Hoàn Thành (${formattedCompletedDate})` : '⏳ Đang Chờ Hoàn Thành'}
-          </span>
+          ${topBadgeHtml}
 
           <div class="day-nav-group">
             <button type="button" class="btn-day-nav" id="btn-prev-day" ${dayData.day <= 1 ? 'disabled' : ''}>
@@ -457,34 +1199,142 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
           </div>
         </div>
 
-        <div class="panel-info-body">
+        <div class="panel-heading-wrap">
           <h3 class="day-heading gradient-love-text">
             Ngày ${dayData.day}
           </h3>
+          <p class="day-date-sub">
+            📅 ${currentDayInfo.headingDate} ${isCurrentDayToday ? '• <strong style="color: #fbbf24;">✨ HÔM NAY</strong>' : ''}
+          </p>
         </div>
 
-        <div class="panel-actions-center">
-          <button 
-            type="button" 
-            class="btn-toggle-day-status ${dayData.completed ? 'btn-mark-completed' : 'btn-mark-pending'}" 
-            id="btn-toggle-day"
-          >
-            ${dayData.completed ? '✓ Đã Hoàn Thành (Bấm để bỏ đánh dấu)' : '★ Đánh Dấu Hoàn Thành'}
+        <!-- Dual Partner Checklist 2-Column Grid -->
+        <div class="dual-partner-cards-grid">
+          <!-- Card 1: AI (Anh) -->
+          <div class="partner-check-card card-ai ${dayData.aiCompleted ? 'is-checked' : ''}">
+            <div class="card-partner-header">
+              <img src="${boysAvatar}" alt="AI" class="partner-avatar-img" />
+              <div class="partner-title-wrap">
+                <h4 class="partner-main-name gradient-cyan-text">AI (Anh) 🚀</h4>
+                <span class="partner-role-tag">Chàng Kỹ Sư Vũ Trụ</span>
+              </div>
+            </div>
+
+            <div class="partner-status-row">
+              <span class="partner-status-pill ${dayData.aiCompleted ? 'status-pill-done-ai' : 'status-pill-pending'}">
+                ${dayData.aiCompleted ? `✓ Đã tích hoàn thành ${dayData.aiCompletedDate ? '(' + dayData.aiCompletedDate.split('-').reverse().join('/') + ')' : ''}` : '⏳ Chưa tích hoàn thành'}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              class="btn-partner-toggle btn-ai-toggle ${dayData.aiCompleted ? 'btn-checked' : 'btn-pending'}"
+              id="btn-toggle-ai"
+            >
+              ${dayData.aiCompleted ? '✓ AI Đã Xong (Bấm để hủy)' : '👦 AI Tích Đã Xong ✨'}
+            </button>
+          </div>
+
+          <!-- Card 2: Maze (Em) -->
+          <div class="partner-check-card card-maze ${dayData.mazeCompleted ? 'is-checked' : ''}">
+            <div class="card-partner-header">
+              <img src="${girlsAvatar}" alt="Maze" class="partner-avatar-img" />
+              <div class="partner-title-wrap">
+                <h4 class="partner-main-name gradient-rose-text">Maze (Em) 🌸</h4>
+                <span class="partner-role-tag">Nàng Tinh Cầu Rực Rỡ</span>
+              </div>
+            </div>
+
+            <div class="partner-status-row">
+              <span class="partner-status-pill ${dayData.mazeCompleted ? 'status-pill-done-maze' : 'status-pill-pending'}">
+                ${dayData.mazeCompleted ? `✓ Đã tích hoàn thành ${dayData.mazeCompletedDate ? '(' + dayData.mazeCompletedDate.split('-').reverse().join('/') + ')' : ''}` : '⏳ Chưa tích hoàn thành'}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              class="btn-partner-toggle btn-maze-toggle ${dayData.mazeCompleted ? 'btn-checked' : 'btn-pending'}"
+              id="btn-toggle-maze"
+            >
+              ${dayData.mazeCompleted ? '✓ Maze Đã Xong (Bấm để hủy)' : '👧 Maze Tích Đã Xong 💖'}
+            </button>
+          </div>
+        </div>
+
+        <!-- Feedback & Guidance Banner -->
+        ${feedbackBannerHtml}
+
+        <!-- Quick Joint Action -->
+        <div class="quick-joint-action-row">
+          <button type="button" class="btn-joint-toggle" id="btn-quick-joint-toggle">
+            ${dayData.completed ? '🔄 Bỏ tích cả hai người' : '💖 Cả hai cùng tích hoàn thành (Phím tắt)'}
           </button>
         </div>
       </div>
     `;
 
-    // Toggle button event
-    const toggleBtn = panel.querySelector('#btn-toggle-day');
-    if (toggleBtn) {
-      toggleBtn.addEventListener('click', () => {
-        dayData.completed = !dayData.completed;
+    // AI toggle event
+    const aiToggleBtn = panel.querySelector('#btn-toggle-ai');
+    if (aiToggleBtn) {
+      aiToggleBtn.addEventListener('click', () => {
+        dayData.aiCompleted = !dayData.aiCompleted;
+        if (dayData.aiCompleted) {
+          dayData.aiCompletedDate = new Date().toISOString().slice(0, 10);
+        } else {
+          dayData.aiCompletedDate = undefined;
+        }
+
+        // Check if both completed
+        dayData.completed = Boolean(dayData.aiCompleted && dayData.mazeCompleted);
         if (dayData.completed) {
           dayData.completedDate = new Date().toISOString().slice(0, 10);
         } else {
           dayData.completedDate = undefined;
         }
+
+        saveStoredHabits(list);
+        renderHabitUI();
+      });
+    }
+
+    // Maze toggle event
+    const mazeToggleBtn = panel.querySelector('#btn-toggle-maze');
+    if (mazeToggleBtn) {
+      mazeToggleBtn.addEventListener('click', () => {
+        dayData.mazeCompleted = !dayData.mazeCompleted;
+        if (dayData.mazeCompleted) {
+          dayData.mazeCompletedDate = new Date().toISOString().slice(0, 10);
+        } else {
+          dayData.mazeCompletedDate = undefined;
+        }
+
+        // Check if both completed
+        dayData.completed = Boolean(dayData.aiCompleted && dayData.mazeCompleted);
+        if (dayData.completed) {
+          dayData.completedDate = new Date().toISOString().slice(0, 10);
+        } else {
+          dayData.completedDate = undefined;
+        }
+
+        saveStoredHabits(list);
+        renderHabitUI();
+      });
+    }
+
+    // Quick Joint toggle event
+    const jointToggleBtn = panel.querySelector('#btn-quick-joint-toggle');
+    if (jointToggleBtn) {
+      jointToggleBtn.addEventListener('click', () => {
+        const willComplete = !dayData.completed;
+        const nowIso = new Date().toISOString().slice(0, 10);
+
+        dayData.aiCompleted = willComplete;
+        dayData.mazeCompleted = willComplete;
+        dayData.completed = willComplete;
+        dayData.aiCompletedDate = willComplete ? nowIso : undefined;
+        dayData.mazeCompletedDate = willComplete ? nowIso : undefined;
+        dayData.completedDate = willComplete ? nowIso : undefined;
+
         saveStoredHabits(list);
         renderHabitUI();
       });
@@ -514,6 +1364,59 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
   }
 
   function initHabitInteractive() {
+    // Save Start Date Button
+    const saveStartDateBtn = document.getElementById('btn-save-start-date');
+    const startDateInput = document.getElementById('habit-start-date-input') as HTMLInputElement | null;
+
+    if (saveStartDateBtn && startDateInput) {
+      saveStartDateBtn.addEventListener('click', () => {
+        const val = startDateInput.value;
+        if (val && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
+          saveStoredStartDate(val);
+          renderHabitUI();
+          alert(`✅ Đã lưu ngày bắt đầu: ${val.split('-').reverse().join('/')}! Lịch 21 ngày đã được cập nhật.`);
+        } else {
+          alert('Vui lòng chọn ngày hợp lệ!');
+        }
+      });
+
+      // Auto update on change
+      startDateInput.addEventListener('change', () => {
+        const val = startDateInput.value;
+        if (val && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
+          saveStoredStartDate(val);
+          renderHabitUI();
+        }
+      });
+    }
+
+    // Quick Presets
+    const presetToday = document.getElementById('btn-preset-today');
+    if (presetToday) {
+      presetToday.addEventListener('click', () => {
+        const today = getTodayIso();
+        saveStoredStartDate(today);
+        renderHabitUI();
+      });
+    }
+
+    const presetAnniversary = document.getElementById('btn-preset-anniversary');
+    if (presetAnniversary) {
+      presetAnniversary.addEventListener('click', () => {
+        saveStoredStartDate('2026-08-15');
+        renderHabitUI();
+      });
+    }
+
+    const presetDefault = document.getElementById('btn-preset-default');
+    if (presetDefault) {
+      presetDefault.addEventListener('click', () => {
+        const def = (window as any).__DEFAULT_HABIT_START_DATE__ || '2026-08-20';
+        saveStoredStartDate(def);
+        renderHabitUI();
+      });
+    }
+
     // Listen for Realtime Cloud Updates from Firebase
     window.addEventListener('couple-cloud-updated', () => {
       renderHabitUI();

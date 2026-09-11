@@ -64,6 +64,7 @@ export function initFirebaseClient(): Database | null {
 
 export interface CoupleCloudPayload {
   habit21?: any[];
+  habitStartDate?: string;
   bucketList?: any[];
   bucketCategories?: string[];
   memories?: any[];
@@ -94,6 +95,7 @@ export function normalizeCoupleCloudPayload(raw: any): CoupleCloudPayload {
     bucketList: raw.bucketList !== undefined ? normalizeArray(raw.bucketList) : undefined,
     bucketCategories: raw.bucketCategories !== undefined ? normalizeArray(raw.bucketCategories) : undefined,
     habit21: raw.habit21 !== undefined ? normalizeArray(raw.habit21) : undefined,
+    habitStartDate: typeof raw.habitStartDate === 'string' ? raw.habitStartDate : undefined,
     memories: raw.memories !== undefined ? normalizeArray(raw.memories) : undefined,
     trashBin: raw.trashBin !== undefined ? normalizeArray(raw.trashBin) : undefined,
     passcode: typeof raw.passcode === 'string' ? raw.passcode : undefined,

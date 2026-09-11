@@ -614,6 +614,7 @@
         const bucketList = JSON.parse(localStorage.getItem('couple_bucket_list') || '[]');
         const bucketCategories = JSON.parse(localStorage.getItem('couple_bucket_categories') || '[]');
         const habit21 = JSON.parse(localStorage.getItem('couple_habit_21') || '[]');
+        const habitStartDate = localStorage.getItem('couple_habit_start_date') || undefined;
         const memories = JSON.parse(localStorage.getItem('couple_memories') || '[]');
         const trashBin = JSON.parse(localStorage.getItem('couple_trash_bin') || '[]');
         const avatars = JSON.parse(localStorage.getItem('couple_avatars') || '{}');
@@ -623,6 +624,7 @@
           bucketList,
           bucketCategories,
           habit21,
+          habitStartDate,
           memories,
           trashBin,
           avatars,
@@ -672,6 +674,14 @@
           }
         }
 
+        if (cloudData.habitStartDate && typeof cloudData.habitStartDate === 'string') {
+          const currentStartDate = localStorage.getItem('couple_habit_start_date');
+          if (currentStartDate !== cloudData.habitStartDate) {
+            localStorage.setItem('couple_habit_start_date', cloudData.habitStartDate);
+            shouldNotify = true;
+          }
+        }
+
         if (cloudData.memories && Array.isArray(cloudData.memories)) {
           const currentMems = localStorage.getItem('couple_memories');
           const newMems = JSON.stringify(cloudData.memories);
@@ -714,6 +724,7 @@
           couple: 'AI & Maze',
           exportDate: new Date().toISOString(),
           habit21: JSON.parse(localStorage.getItem('couple_habit_21') || '[]'),
+          habitStartDate: localStorage.getItem('couple_habit_start_date') || null,
           bucketList: JSON.parse(localStorage.getItem('couple_bucket_list') || '[]'),
           memories: JSON.parse(localStorage.getItem('couple_memories') || '[]'),
           trashBin: JSON.parse(localStorage.getItem('couple_trash_bin') || '[]'),
@@ -739,6 +750,7 @@
             const data = JSON.parse(event.target?.result as string);
             if (data.bucketList) localStorage.setItem('couple_bucket_list', JSON.stringify(data.bucketList));
             if (data.habit21) localStorage.setItem('couple_habit_21', JSON.stringify(data.habit21));
+            if (data.habitStartDate) localStorage.setItem('couple_habit_start_date', data.habitStartDate);
             if (data.memories) localStorage.setItem('couple_memories', JSON.stringify(data.memories));
             if (data.trashBin) localStorage.setItem('couple_trash_bin', JSON.stringify(data.trashBin));
             if (data.avatars) localStorage.setItem('couple_avatars', JSON.stringify(data.avatars));
@@ -774,6 +786,7 @@
         if (confirmed) {
           localStorage.removeItem('couple_bucket_list');
           localStorage.removeItem('couple_habit_21');
+          localStorage.removeItem('couple_habit_start_date');
           window.location.reload();
         }
       });
