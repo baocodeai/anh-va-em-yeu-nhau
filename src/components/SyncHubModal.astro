@@ -615,6 +615,8 @@
         const bucketCategories = JSON.parse(localStorage.getItem('couple_bucket_categories') || '[]');
         const habit21 = JSON.parse(localStorage.getItem('couple_habit_21') || '[]');
         const habitStartDate = localStorage.getItem('couple_habit_start_date') || undefined;
+        const habitShields = JSON.parse(localStorage.getItem('couple_habit_shields') || '{"ai":2,"maze":2}');
+        const habitTargetDays = Number(localStorage.getItem('couple_habit_target_days') || '21');
         const memories = JSON.parse(localStorage.getItem('couple_memories') || '[]');
         const trashBin = JSON.parse(localStorage.getItem('couple_trash_bin') || '[]');
         const avatars = JSON.parse(localStorage.getItem('couple_avatars') || '{}');
@@ -625,6 +627,8 @@
           bucketCategories,
           habit21,
           habitStartDate,
+          habitShields,
+          habitTargetDays,
           memories,
           trashBin,
           avatars,
@@ -682,6 +686,24 @@
           }
         }
 
+        if (cloudData.habitShields && typeof cloudData.habitShields === 'object') {
+          const currentShields = localStorage.getItem('couple_habit_shields');
+          const newShields = JSON.stringify(cloudData.habitShields);
+          if (currentShields !== newShields) {
+            localStorage.setItem('couple_habit_shields', newShields);
+            shouldNotify = true;
+          }
+        }
+
+        if (cloudData.habitTargetDays !== undefined && typeof cloudData.habitTargetDays === 'number') {
+          const currentTarget = localStorage.getItem('couple_habit_target_days');
+          const newTarget = String(cloudData.habitTargetDays);
+          if (currentTarget !== newTarget) {
+            localStorage.setItem('couple_habit_target_days', newTarget);
+            shouldNotify = true;
+          }
+        }
+
         if (cloudData.memories && Array.isArray(cloudData.memories)) {
           const currentMems = localStorage.getItem('couple_memories');
           const newMems = JSON.stringify(cloudData.memories);
@@ -725,6 +747,8 @@
           exportDate: new Date().toISOString(),
           habit21: JSON.parse(localStorage.getItem('couple_habit_21') || '[]'),
           habitStartDate: localStorage.getItem('couple_habit_start_date') || null,
+          habitShields: JSON.parse(localStorage.getItem('couple_habit_shields') || '{"ai":2,"maze":2}'),
+          habitTargetDays: Number(localStorage.getItem('couple_habit_target_days') || '21'),
           bucketList: JSON.parse(localStorage.getItem('couple_bucket_list') || '[]'),
           memories: JSON.parse(localStorage.getItem('couple_memories') || '[]'),
           trashBin: JSON.parse(localStorage.getItem('couple_trash_bin') || '[]'),
@@ -751,6 +775,8 @@
             if (data.bucketList) localStorage.setItem('couple_bucket_list', JSON.stringify(data.bucketList));
             if (data.habit21) localStorage.setItem('couple_habit_21', JSON.stringify(data.habit21));
             if (data.habitStartDate) localStorage.setItem('couple_habit_start_date', data.habitStartDate);
+            if (data.habitShields) localStorage.setItem('couple_habit_shields', JSON.stringify(data.habitShields));
+            if (data.habitTargetDays) localStorage.setItem('couple_habit_target_days', String(data.habitTargetDays));
             if (data.memories) localStorage.setItem('couple_memories', JSON.stringify(data.memories));
             if (data.trashBin) localStorage.setItem('couple_trash_bin', JSON.stringify(data.trashBin));
             if (data.avatars) localStorage.setItem('couple_avatars', JSON.stringify(data.avatars));
@@ -787,6 +813,8 @@
           localStorage.removeItem('couple_bucket_list');
           localStorage.removeItem('couple_habit_21');
           localStorage.removeItem('couple_habit_start_date');
+          localStorage.removeItem('couple_habit_shields');
+          localStorage.removeItem('couple_habit_target_days');
           window.location.reload();
         }
       });

@@ -1,9 +1,11 @@
 ---
-import { HABIT_21_DAYS, DEFAULT_HABIT_START_DATE } from '../data/habit21Days';
+import { HABIT_21_DAYS, DEFAULT_HABIT_START_DATE, HABIT_MILESTONES, DEFAULT_SHIELDS } from '../data/habit21Days';
 import { COUPLE_CONFIG } from '../couple.config';
 
 const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
 const defaultStartDate = DEFAULT_HABIT_START_DATE;
+const defaultMilestonesJSON = JSON.stringify(HABIT_MILESTONES).replace(/</g, '\\u003c');
+const defaultShieldsJSON = JSON.stringify(DEFAULT_SHIELDS).replace(/</g, '\\u003c');
 const coupleBoysInfoJSON = JSON.stringify(COUPLE_CONFIG.boysInfo).replace(/</g, '\\u003c');
 const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g, '\\u003c');
 ---
@@ -11,12 +13,46 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
 <section class="habit-tracker-section" id="habit-tracker">
   <div class="section-header-wrap">
     <div class="badge-love mb-2">
-      <span>✨ Tinh Cầu Số 21</span>
+      <span>✨ Tinh Cầu Thói Quen Vô Tận</span>
     </div>
     <h2 class="section-title gradient-love-text">21 Ngày Cùng Em Rèn Thói Quen Tiếng Anh</h2>
     <p class="section-desc">
-      Mỗi ngày là một vì sao chỉ được thắp sáng khi <strong>CẢ HAI ĐỨA</strong> cùng tích hoàn thành. Hãy cùng nhau kiên trì mỗi ngày để chạm tới vạch đích 21 ngày nhé!
+      Hành trình rèn luyện đồng pha của <strong>AI (Mặt Trăng 🌙)</strong> &amp; <strong>Maze (Trái Đất 🌍)</strong>. Cùng nhau thắp sáng từng vì sao, bảo vệ chuỗi ngày bằng <strong>Khiên Hộ Mệnh 🛡️</strong> và nâng đỡ nhau qua <strong>Tích Bù Yêu Thương 💖</strong>.
     </p>
+  </div>
+
+  <!-- Milestone Infinity Roadmap Selector -->
+  <div class="milestone-roadmap-card romantic-card">
+    <div class="roadmap-header">
+      <span class="roadmap-icon">🌌</span>
+      <div>
+        <h3 class="roadmap-title gradient-cyan-text">Hành Trình Mở Rộng — Infinity Roadmap</h3>
+        <p class="roadmap-desc">Chọn chặng đường thử thách của hai đứa giữa dải ngân hà:</p>
+      </div>
+    </div>
+
+    <div class="milestone-tabs-grid" id="milestone-tabs-container">
+      {HABIT_MILESTONES.map((m) => (
+        <button
+          type="button"
+          class={`milestone-tab-btn ${m.days === 21 ? 'is-active' : ''}`}
+          data-days={String(m.days)}
+        >
+          <span class="milestone-tab-icon">{m.icon}</span>
+          <div class="milestone-tab-info">
+            <span class="milestone-tab-badge">{m.badge}</span>
+            <strong class="milestone-tab-title">{m.title} ({m.days}N)</strong>
+          </div>
+        </button>
+      ))}
+    </div>
+
+    <div class="milestone-active-desc-box" id="milestone-desc-box">
+      <span class="desc-box-icon" id="milestone-info-icon">🌱</span>
+      <span class="desc-box-text" id="milestone-info-text">
+        <strong>Chặng 1 (21 Ngày):</strong> Phá vỡ sức ỳ ban đầu và hình thành liên kết thói quen đầu tiên giữa AI &amp; Maze.
+      </span>
+    </div>
   </div>
 
   <!-- Start Date Setup & Timeline Hub Card -->
@@ -25,7 +61,8 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       <div class="date-header-left">
         <span class="date-header-icon">📅</span>
         <div>
-          <h3 class="date-card-title gradient-rose-text">Lịch Trình Và Ngày Bắt Đầu 21 Ngày</h3>
+          <h3 class="date-card-title gradient-rose-text">Lịch Trình &amp; Ngày Bắt Đầu</h3>
+          <p class="date-card-sub">Hệ thống tự động phân bổ lịch thực tế tương ứng theo từng ngày</p>
         </div>
       </div>
       <div class="date-today-badge-wrap">
@@ -67,7 +104,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       <div class="timeline-sep">➜</div>
       <div class="timeline-item">
         <span class="timeline-dot dot-end"></span>
-        <span class="timeline-label">Ngày 21 (Về đích):</span>
+        <span class="timeline-label" id="display-end-label">Ngày 21 (Về đích):</span>
         <strong class="timeline-val gradient-rose-text" id="display-end-date">--/--/----</strong>
       </div>
       <div class="timeline-sep">•</div>
@@ -78,26 +115,33 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     </div>
   </div>
 
-  <!-- Progress Overview Card -->
+  <!-- Progress Overview & Shield Inventory Card -->
   <div class="habit-overview-card romantic-card">
     <div class="progress-stats-row">
       <div class="stat-box">
         <span class="stat-number gradient-rose-text" id="habit-stat-completed">
-          --<span class="stat-total">/21</span>
+          --<span class="stat-total" id="habit-stat-total-label">/21</span>
         </span>
-        <span class="stat-name">Hoàn Thành Cả Hai 💖</span>
+        <span class="stat-name">Hoàn Thành Đồng Pha 💖</span>
       </div>
       <div class="stat-box">
         <span class="stat-number gradient-cyan-text" id="habit-stat-percent">--%</span>
-        <span class="stat-name">Hành Trình Tinh Cầu</span>
+        <span class="stat-name">Tiến Độ Tinh Cầu</span>
       </div>
       <div class="stat-box">
-        <span class="stat-number" id="habit-stat-ai" style="color: #38bdf8;">--<span class="stat-total">/21</span></span>
-        <span class="stat-name">AI (Anh) Đã Tích 🚀</span>
+        <span class="stat-number" id="habit-stat-ai" style="color: #38bdf8;">--</span>
+        <span class="stat-name">AI Đã Tích 🚀</span>
       </div>
       <div class="stat-box">
-        <span class="stat-number" id="habit-stat-maze" style="color: #f43f5e;">--<span class="stat-total">/21</span></span>
-        <span class="stat-name">Maze (Em) Đã Tích 🌸</span>
+        <span class="stat-number" id="habit-stat-maze" style="color: #f43f5e;">--</span>
+        <span class="stat-name">Maze Đã Tích 🌸</span>
+      </div>
+      <div class="stat-box shield-stat-box">
+        <div class="shield-inventory-mini">
+          <span class="shield-pill pill-ai-shield" id="display-ai-shields" title="Khiên bảo vệ của AI">🛡️ AI: 2/2</span>
+          <span class="shield-pill pill-maze-shield" id="display-maze-shields" title="Khiên bảo vệ của Maze">🛡️ Maze: 2/2</span>
+        </div>
+        <span class="stat-name">Khiên Hộ Mệnh 🛡️</span>
       </div>
     </div>
 
@@ -106,19 +150,36 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       <div class="progress-bar-fill" id="habit-progress-bar" style="width: 0%;"></div>
     </div>
 
-    <!-- Dual Check Requirement Note -->
+    <!-- Cosmic Portal Milestone Congratulation Container -->
+    <div class="cosmic-portal-banner" id="cosmic-portal-box" style="display: none;">
+      <div class="portal-particles-glow"></div>
+      <div class="portal-content">
+        <div class="portal-badge">🌌 CỔNG KHÔNG - THỜI GIAN ĐÃ MỞ!</div>
+        <h4 class="portal-title gradient-love-text">Chúc Mừng AI &amp; Maze Đã Hoàn Thành Trọn Vẹn Chặng Đường! 🎉</h4>
+        <p class="portal-sub">
+          Hai đứa đã cùng nhau thắp sáng toàn bộ vì tinh tú của chặng này. Bạn có muốn bước tiếp vào chặng tiếp theo không?
+        </p>
+        <button type="button" class="btn-love portal-advance-btn" id="btn-portal-advance">
+          <span>🚀 Mở Khóa Chặng Tiếp Theo</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Dual Check Requirement & Shields Legend -->
     <div class="dual-check-legend">
-      <div class="legend-item"><span class="legend-symbol symbol-done">★</span> <span>Cả 2 đã tích (Đã hoàn thành)</span></div>
-      <div class="legend-item"><span class="legend-symbol symbol-ai">👦</span> <span>AI đã tích (Chờ Maze)</span></div>
-      <div class="legend-item"><span class="legend-symbol symbol-maze">👧</span> <span>Maze đã tích (Chờ AI)</span></div>
+      <div class="legend-item"><span class="legend-symbol symbol-done">★</span> <span>Cả 2 đã tích</span></div>
+      <div class="legend-item"><span class="legend-symbol symbol-shield">🛡️</span> <span>Khiên Hộ Mệnh</span></div>
+      <div class="legend-item"><span class="legend-symbol symbol-rescue">💖</span> <span>Tích Bù Yêu Thương</span></div>
+      <div class="legend-item"><span class="legend-symbol symbol-ai">👦</span> <span>AI đã tích</span></div>
+      <div class="legend-item"><span class="legend-symbol symbol-maze">👧</span> <span>Maze đã tích</span></div>
       <div class="legend-item"><span class="legend-symbol symbol-today">✨</span> <span>Hôm nay</span></div>
     </div>
 
-    <!-- 21-Day Constellation Track -->
+    <!-- Constellation Track Grid -->
     <div class="constellation-nav-wrap">
-      <p class="constellation-guide-text">⭐ Nhấn vào một ngày để xem chi tiết và cả hai cùng tích hoàn thành:</p>
+      <p class="constellation-guide-text" id="constellation-guide-heading">⭐ Nhấn vào một ngày để xem chi tiết, tích hoàn thành hoặc dùng khiên bảo vệ:</p>
       <div class="constellation-nodes-grid" id="day-selector-strip">
-        <!-- 21 node buttons dynamically rendered / updated by script -->
+        <!-- Node buttons dynamically rendered by client script -->
       </div>
     </div>
   </div>
@@ -132,16 +193,18 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
 </section>
 
 <!-- Inject initial data -->
-<script is:inline define:vars={{ defaultHabitJSON, defaultStartDate, coupleBoysInfoJSON, coupleGirlsInfoJSON }}>
+<script is:inline define:vars={{ defaultHabitJSON, defaultStartDate, defaultMilestonesJSON, defaultShieldsJSON, coupleBoysInfoJSON, coupleGirlsInfoJSON }}>
   window.__INITIAL_HABIT_21__ = JSON.parse(defaultHabitJSON);
   window.__DEFAULT_HABIT_START_DATE__ = defaultStartDate;
+  window.__HABIT_MILESTONES__ = JSON.parse(defaultMilestonesJSON);
+  window.__DEFAULT_SHIELDS__ = JSON.parse(defaultShieldsJSON);
   window.__COUPLE_BOYS_INFO__ = JSON.parse(coupleBoysInfoJSON);
   window.__COUPLE_GIRLS_INFO__ = JSON.parse(coupleGirlsInfoJSON);
 </script>
 
 <style>
   .habit-tracker-section {
-    max-width: 960px;
+    max-width: 980px;
     margin: 3.5rem auto;
     padding: 0 1.2rem;
   }
@@ -159,7 +222,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
   }
 
   .section-desc {
-    max-width: 720px;
+    max-width: 740px;
     margin: 0 auto;
     color: #94a3b8;
     line-height: 1.6;
@@ -168,6 +231,112 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
 
   .section-desc strong {
     color: #fda4af;
+  }
+
+  /* Milestone Infinity Roadmap */
+  .milestone-roadmap-card {
+    padding: 1.6rem 2rem;
+    margin-bottom: 1.8rem;
+    background: radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.12) 0%, rgba(11, 17, 32, 0.9) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 20px;
+  }
+
+  .roadmap-header {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .roadmap-icon {
+    font-size: 1.8rem;
+  }
+
+  .roadmap-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 2px;
+  }
+
+  .roadmap-desc {
+    font-size: 0.84rem;
+    color: #94a3b8;
+    margin: 0;
+  }
+
+  .milestone-tabs-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 1rem;
+  }
+
+  .milestone-tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: left;
+    color: #cbd5e1;
+  }
+
+  .milestone-tab-btn:hover {
+    border-color: #c084fc;
+    background: rgba(168, 85, 247, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .milestone-tab-btn.is-active {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(244, 63, 94, 0.25));
+    border-color: #c084fc;
+    box-shadow: 0 0 16px rgba(168, 85, 247, 0.35);
+    color: #ffffff;
+  }
+
+  .milestone-tab-icon {
+    font-size: 1.3rem;
+  }
+
+  .milestone-tab-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .milestone-tab-badge {
+    font-size: 0.65rem;
+    color: #d8b4fe;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+  }
+
+  .milestone-tab-title {
+    font-size: 0.85rem;
+    line-height: 1.2;
+  }
+
+  .milestone-active-desc-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(30, 41, 59, 0.4);
+    border-radius: 10px;
+    padding: 8px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.84rem;
+    color: #cbd5e1;
+    line-height: 1.5;
+  }
+
+  .desc-box-icon {
+    font-size: 1.2rem;
   }
 
   /* Start Date Card */
@@ -348,7 +517,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     display: flex;
     justify-content: space-around;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1.2rem;
     margin-bottom: 1.8rem;
     flex-wrap: wrap;
   }
@@ -380,6 +549,36 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     font-weight: 600;
   }
 
+  .shield-stat-box {
+    gap: 4px;
+  }
+
+  .shield-inventory-mini {
+    display: flex;
+    gap: 6px;
+  }
+
+  .shield-pill {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: var(--mono);
+    border: 1px solid;
+  }
+
+  .pill-ai-shield {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: rgba(56, 189, 248, 0.4);
+    color: #7dd3fc;
+  }
+
+  .pill-maze-shield {
+    background: rgba(244, 63, 94, 0.15);
+    border-color: rgba(244, 63, 94, 0.4);
+    color: #fda4af;
+  }
+
   .progress-bar-container {
     width: 100%;
     height: 12px;
@@ -397,6 +596,56 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     border-radius: 9999px;
     transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 0 16px rgba(244, 63, 94, 0.7);
+  }
+
+  /* Cosmic Portal Banner */
+  .cosmic-portal-banner {
+    background: radial-gradient(circle at 50% 50%, rgba(192, 132, 252, 0.25) 0%, rgba(15, 23, 42, 0.95) 100%);
+    border: 2px solid #c084fc;
+    border-radius: 18px;
+    padding: 1.6rem 1.8rem;
+    margin-bottom: 1.6rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 35px rgba(192, 132, 252, 0.4);
+    animation: portalPulse 3s infinite ease-in-out;
+  }
+
+  @keyframes portalPulse {
+    0%, 100% { box-shadow: 0 0 25px rgba(192, 132, 252, 0.3); border-color: #c084fc; }
+    50% { box-shadow: 0 0 45px rgba(244, 63, 94, 0.6); border-color: #f43f5e; }
+  }
+
+  .portal-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    background: linear-gradient(90deg, #c084fc, #f43f5e);
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 800;
+    border-radius: 9999px;
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.05em;
+  }
+
+  .portal-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin: 0 0 6px;
+  }
+
+  .portal-sub {
+    font-size: 0.92rem;
+    color: #e2e8f0;
+    max-width: 620px;
+    margin: 0 auto 1.2rem;
+  }
+
+  .portal-advance-btn {
+    padding: 12px 28px;
+    font-size: 1rem;
+    font-weight: 700;
   }
 
   .dual-check-legend {
@@ -442,6 +691,9 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     flex-wrap: wrap;
     justify-content: center;
     gap: 10px;
+    max-height: 480px;
+    overflow-y: auto;
+    padding: 6px 4px;
   }
 
   :global(.day-node-btn) {
@@ -507,6 +759,18 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     color: #fbcfe8;
   }
 
+  :global(.day-node-btn.is-shielded) {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.35), rgba(168, 85, 247, 0.35));
+    border-color: #38bdf8;
+    box-shadow: 0 0 18px rgba(56, 189, 248, 0.4);
+  }
+
+  :global(.day-node-btn.is-rescued) {
+    background: linear-gradient(135deg, rgba(244, 63, 94, 0.35), rgba(251, 113, 133, 0.35));
+    border-color: #f43f5e;
+    box-shadow: 0 0 18px rgba(244, 63, 94, 0.4);
+  }
+
   /* AI only completed */
   :global(.day-node-btn.is-ai-only) {
     background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(15, 23, 42, 0.85));
@@ -536,6 +800,20 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     font-size: 0.85rem;
     color: #fbbf24;
     text-shadow: 0 0 8px rgba(251, 191, 36, 0.95);
+  }
+
+  :global(.day-shield-badge) {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    font-size: 0.8rem;
+  }
+
+  :global(.day-rescue-badge) {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    font-size: 0.8rem;
   }
 
   :global(.partner-node-pill) {
@@ -660,7 +938,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 1rem;
+    gap: 0.9rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
@@ -814,6 +1092,30 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     color: #fca5a5;
   }
 
+  :global(.btn-use-shield-mini) {
+    background: transparent;
+    border: 1px dashed rgba(56, 189, 248, 0.4);
+    color: #7dd3fc;
+    font-size: 0.78rem;
+    padding: 4px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  :global(.btn-use-shield-mini:hover) {
+    background: rgba(56, 189, 248, 0.2);
+  }
+
+  :global(.card-maze .btn-use-shield-mini) {
+    border-color: rgba(244, 63, 94, 0.4);
+    color: #fda4af;
+  }
+
+  :global(.card-maze .btn-use-shield-mini:hover) {
+    background: rgba(244, 63, 94, 0.2);
+  }
+
   /* Completion & Encouragement Banner */
   :global(.day-status-feedback-banner) {
     padding: 1.1rem 1.4rem;
@@ -834,44 +1136,76 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     box-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
   }
 
+  :global(.banner-shielded) {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: #7dd3fc;
+  }
+
+  :global(.banner-rescued) {
+    background: linear-gradient(135deg, rgba(244, 63, 94, 0.2) 0%, rgba(251, 113, 133, 0.2) 100%);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    color: #fda4af;
+  }
+
   :global(.banner-waiting) {
     background: rgba(30, 41, 59, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: #cbd5e1;
   }
 
-  :global(.banner-highlight-partner) {
-    color: #fda4af;
+  /* Rescue Note Quote */
+  :global(.rescue-quote-box) {
+    background: rgba(15, 23, 42, 0.8);
+    border-left: 3px solid #f43f5e;
+    padding: 10px 14px;
+    border-radius: 0 10px 10px 0;
+    font-size: 0.88rem;
+    font-style: italic;
+    color: #fbcfe8;
+    text-align: left;
+    width: 100%;
   }
 
-  :global(.quick-joint-action-row) {
+  /* Interactive Action Bar */
+  :global(.panel-bottom-actions-row) {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 1rem;
+    flex-wrap: wrap;
     padding-top: 0.5rem;
   }
 
-  :global(.btn-joint-toggle) {
-    background: transparent;
-    border: 1px dashed rgba(255, 255, 255, 0.2);
-    color: #94a3b8;
+  :global(.btn-action-pill) {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #cbd5e1;
     font-size: 0.84rem;
-    padding: 6px 16px;
+    font-weight: 600;
+    padding: 8px 18px;
     border-radius: 9999px;
     cursor: pointer;
     transition: all 0.2s ease;
   }
 
-  :global(.btn-joint-toggle:hover) {
+  :global(.btn-action-pill:hover) {
     border-color: #fda4af;
+    color: #ffffff;
+    background: rgba(244, 63, 94, 0.15);
+  }
+
+  :global(.btn-action-rescue) {
+    border-color: rgba(244, 63, 94, 0.4);
     color: #fda4af;
-    background: rgba(244, 63, 94, 0.1);
   }
 
   @media (max-width: 768px) {
     .section-title {
       font-size: 1.7rem;
+    }
+    .milestone-tabs-grid {
+      grid-template-columns: repeat(2, 1fr);
     }
     .habit-overview-card {
       padding: 1.5rem 1.2rem;
@@ -907,6 +1241,8 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
 
   const HABIT_STORAGE_KEY = 'couple_habit_21';
   const START_DATE_STORAGE_KEY = 'couple_habit_start_date';
+  const SHIELDS_STORAGE_KEY = 'couple_habit_shields';
+  const TARGET_DAYS_STORAGE_KEY = 'couple_habit_target_days';
 
   function getBoysAvatar(): string {
     try {
@@ -943,33 +1279,88 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     pushDataToFirebase({ habitStartDate: dateStr, lastUpdatedBy: 'HabitTracker' }).catch(() => {});
   }
 
-  function getStoredHabits(): any[] {
+  function getStoredTargetDays(): number {
+    try {
+      const stored = localStorage.getItem(TARGET_DAYS_STORAGE_KEY);
+      if (stored && !isNaN(Number(stored))) return Number(stored);
+    } catch {}
+    return 21;
+  }
+
+  function saveStoredTargetDays(days: number) {
+    localStorage.setItem(TARGET_DAYS_STORAGE_KEY, String(days));
+    pushDataToFirebase({ habitTargetDays: days, lastUpdatedBy: 'HabitTracker' }).catch(() => {});
+  }
+
+  function getStoredShields(): { ai: number; maze: number } {
+    try {
+      const stored = localStorage.getItem(SHIELDS_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return {
+          ai: typeof parsed.ai === 'number' ? parsed.ai : 2,
+          maze: typeof parsed.maze === 'number' ? parsed.maze : 2
+        };
+      }
+    } catch {}
+    return { ai: 2, maze: 2 };
+  }
+
+  function saveStoredShields(shields: { ai: number; maze: number }) {
+    localStorage.setItem(SHIELDS_STORAGE_KEY, JSON.stringify(shields));
+    pushDataToFirebase({ habitShields: shields, lastUpdatedBy: 'HabitTracker' }).catch(() => {});
+  }
+
+  function getStoredHabits(targetDays: number): any[] {
+    let list: any[] = [];
     try {
       const stored = localStorage.getItem(HABIT_STORAGE_KEY);
       if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          // Normalize items if needed
-          return parsed.map((item, idx) => {
-            const aiCompleted = item.aiCompleted !== undefined ? Boolean(item.aiCompleted) : Boolean(item.completed);
-            const mazeCompleted = item.mazeCompleted !== undefined ? Boolean(item.mazeCompleted) : Boolean(item.completed);
-            const completed = aiCompleted && mazeCompleted;
-            return {
-              day: item.day || idx + 1,
-              aiCompleted,
-              aiCompletedDate: item.aiCompletedDate || (aiCompleted ? item.completedDate : undefined),
-              mazeCompleted,
-              mazeCompletedDate: item.mazeCompletedDate || (mazeCompleted ? item.completedDate : undefined),
-              completed,
-              completedDate: item.completedDate
-            };
-          });
-        }
+        list = JSON.parse(stored);
       }
     } catch {}
-    const initial = (window as any).__INITIAL_HABIT_21__ || [];
-    localStorage.setItem(HABIT_STORAGE_KEY, JSON.stringify(initial));
-    return initial;
+
+    if (!Array.isArray(list) || list.length === 0) {
+      list = (window as any).__INITIAL_HABIT_21__ || [];
+    }
+
+    if (list.length < targetDays) {
+      const currentLen = list.length;
+      for (let i = currentLen + 1; i <= targetDays; i++) {
+        list.push({
+          day: i,
+          aiCompleted: false,
+          mazeCompleted: false,
+          completed: false
+        });
+      }
+    }
+
+    return list.map((item, idx) => {
+      const aiCompleted = Boolean(item.aiCompleted);
+      const mazeCompleted = Boolean(item.mazeCompleted);
+      const aiShieldUsed = Boolean(item.aiShieldUsed);
+      const mazeShieldUsed = Boolean(item.mazeShieldUsed);
+      const isRescued = Boolean(item.rescuedBy);
+
+      const isAIHandled = aiCompleted || aiShieldUsed;
+      const isMazeHandled = mazeCompleted || mazeShieldUsed;
+      const completed = (isAIHandled && isMazeHandled) || isRescued;
+
+      return {
+        day: item.day || idx + 1,
+        aiCompleted,
+        aiCompletedDate: item.aiCompletedDate,
+        mazeCompleted,
+        mazeCompletedDate: item.mazeCompletedDate,
+        aiShieldUsed,
+        mazeShieldUsed,
+        rescuedBy: item.rescuedBy,
+        rescueNote: item.rescueNote,
+        completed,
+        completedDate: item.completedDate
+      };
+    });
   }
 
   function saveStoredHabits(list: any[]) {
@@ -977,7 +1368,6 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     pushDataToFirebase({ habit21: list, lastUpdatedBy: 'HabitTracker' }).catch(() => {});
   }
 
-  // Calculate day date based on start date
   function getDayCalendarInfo(startDateStr: string, dayNumber: number) {
     try {
       const [y, m, d] = startDateStr.split('-').map(Number);
@@ -1023,16 +1413,30 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
   let currentSelectedDay = 1;
 
   function renderHabitUI() {
-    const list: any[] = getStoredHabits();
+    const targetDays = getStoredTargetDays();
+    const list: any[] = getStoredHabits(targetDays).slice(0, targetDays);
     const startDate = getStoredStartDate();
+    const shields = getStoredShields();
     const todayIso = getTodayIso();
-    const totalDays = 21;
 
-    // Calculate dates for day 1 and day 21
     const startDayInfo = getDayCalendarInfo(startDate, 1);
-    const endDayInfo = getDayCalendarInfo(startDate, 21);
+    const endDayInfo = getDayCalendarInfo(startDate, targetDays);
 
-    // Update Start Date Header UI
+    document.querySelectorAll('.milestone-tab-btn').forEach((btn: any) => {
+      const btnDays = Number(btn.getAttribute('data-days'));
+      btn.classList.toggle('is-active', btnDays === targetDays);
+    });
+
+    const milestones = (window as any).__HABIT_MILESTONES__ || [];
+    const activeMilestone = milestones.find((m: any) => m.days === targetDays) || milestones[0];
+    const descBoxIcon = document.getElementById('milestone-info-icon');
+    const descBoxText = document.getElementById('milestone-info-text');
+
+    if (descBoxIcon && activeMilestone) descBoxIcon.textContent = activeMilestone.icon;
+    if (descBoxText && activeMilestone) {
+      descBoxText.innerHTML = `<strong>${activeMilestone.badge} (${activeMilestone.days} Ngày):</strong> ${activeMilestone.description}`;
+    }
+
     const inputStartDate = document.getElementById('habit-start-date-input') as HTMLInputElement | null;
     if (inputStartDate && inputStartDate.value !== startDate) {
       inputStartDate.value = startDate;
@@ -1040,15 +1444,16 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
 
     const displayStartEl = document.getElementById('display-start-date');
     const displayEndEl = document.getElementById('display-end-date');
+    const displayEndLabel = document.getElementById('display-end-label');
     const displayCalendarProgress = document.getElementById('display-calendar-progress');
     const habitTodayPill = document.getElementById('habit-today-pill');
 
     if (displayStartEl) displayStartEl.textContent = startDayInfo.fullDisplay;
     if (displayEndEl) displayEndEl.textContent = endDayInfo.fullDisplay;
+    if (displayEndLabel) displayEndLabel.textContent = `Ngày ${targetDays} (Về đích):`;
 
-    // Find which day is "Today"
     let todayDayNum: number | null = null;
-    for (let i = 1; i <= totalDays; i++) {
+    for (let i = 1; i <= targetDays; i++) {
       const dInfo = getDayCalendarInfo(startDate, i);
       if (dInfo.iso === todayIso) {
         todayDayNum = i;
@@ -1060,7 +1465,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       const [ty, tm, td] = todayIso.split('-');
       const formattedToday = `${td}/${tm}/${ty}`;
       if (todayDayNum !== null) {
-        habitTodayPill.innerHTML = `✨ Hôm nay: <strong>${formattedToday} (Ngày ${todayDayNum}/21)</strong>`;
+        habitTodayPill.innerHTML = `✨ Hôm nay: <strong>${formattedToday} (Ngày ${todayDayNum}/${targetDays})</strong>`;
       } else {
         habitTodayPill.innerHTML = `✨ Hôm nay: <strong>${formattedToday}</strong>`;
       }
@@ -1068,35 +1473,46 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
 
     if (displayCalendarProgress) {
       if (todayDayNum !== null) {
-        displayCalendarProgress.textContent = `Hôm nay là Ngày ${todayDayNum}/21 🚀`;
+        displayCalendarProgress.textContent = `Hôm nay là Ngày ${todayDayNum}/${targetDays} 🚀`;
       } else if (todayIso < startDayInfo.iso) {
         displayCalendarProgress.textContent = `Chưa đến ngày bắt đầu (sắp khởi hành!) ⏳`;
       } else {
-        displayCalendarProgress.textContent = `Đã qua mốc 21 ngày 🎉`;
+        displayCalendarProgress.textContent = `Đã qua mốc ${targetDays} ngày 🎉`;
       }
     }
 
-    // Calculate Stats
-    // Day is only fully completed if both AI & Maze completed
     const completedCount = list.filter((d) => d.completed).length;
-    const aiCount = list.filter((d) => d.aiCompleted).length;
-    const mazeCount = list.filter((d) => d.mazeCompleted).length;
-    const percentage = Math.round((completedCount / totalDays) * 100);
+    const aiCount = list.filter((d) => d.aiCompleted || d.aiShieldUsed || d.rescuedBy).length;
+    const mazeCount = list.filter((d) => d.mazeCompleted || d.mazeShieldUsed || d.rescuedBy).length;
+    const percentage = Math.round((completedCount / targetDays) * 100);
 
-    // Update Overview Stats
     const completedEl = document.getElementById('habit-stat-completed');
+    const totalLabelEl = document.getElementById('habit-stat-total-label');
     const percentEl = document.getElementById('habit-stat-percent');
     const aiStatEl = document.getElementById('habit-stat-ai');
     const mazeStatEl = document.getElementById('habit-stat-maze');
     const progressBar = document.getElementById('habit-progress-bar');
+    const aiShieldsEl = document.getElementById('display-ai-shields');
+    const mazeShieldsEl = document.getElementById('display-maze-shields');
 
-    if (completedEl) completedEl.innerHTML = `${completedCount}<span class="stat-total">/${totalDays}</span>`;
+    if (completedEl) completedEl.innerHTML = `${completedCount}<span class="stat-total" id="habit-stat-total-label">/${targetDays}</span>`;
+    if (totalLabelEl) totalLabelEl.textContent = `/${targetDays}`;
     if (percentEl) percentEl.textContent = `${percentage}%`;
-    if (aiStatEl) aiStatEl.innerHTML = `${aiCount}<span class="stat-total">/${totalDays}</span>`;
-    if (mazeStatEl) mazeStatEl.innerHTML = `${mazeCount}<span class="stat-total">/${totalDays}</span>`;
+    if (aiStatEl) aiStatEl.innerHTML = `${aiCount}<span class="stat-total">/${targetDays}</span>`;
+    if (mazeStatEl) mazeStatEl.innerHTML = `${mazeCount}<span class="stat-total">/${targetDays}</span>`;
     if (progressBar) progressBar.style.width = `${percentage}%`;
+    if (aiShieldsEl) aiShieldsEl.textContent = `🛡️ AI: ${shields.ai}/2`;
+    if (mazeShieldsEl) mazeShieldsEl.textContent = `🛡️ Maze: ${shields.maze}/2`;
 
-    // Render 21 Constellation Node Buttons
+    const portalBox = document.getElementById('cosmic-portal-box');
+    if (portalBox) {
+      if (completedCount >= targetDays && targetDays < 365) {
+        portalBox.style.display = 'block';
+      } else {
+        portalBox.style.display = 'none';
+      }
+    }
+
     const strip = document.getElementById('day-selector-strip');
     if (strip) {
       strip.innerHTML = '';
@@ -1107,7 +1523,13 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
         let statusClass = 'is-pending';
         let badgeHtml = '';
 
-        if (dayItem.completed) {
+        if (dayItem.rescuedBy) {
+          statusClass = 'is-rescued';
+          badgeHtml = '<span class="day-rescue-badge" title="Đã được học bù / gánh thay">💖</span>';
+        } else if (dayItem.aiShieldUsed || dayItem.mazeShieldUsed) {
+          statusClass = 'is-shielded';
+          badgeHtml = '<span class="day-shield-badge" title="Khiên hộ mệnh bảo vệ">🛡️</span>';
+        } else if (dayItem.completed) {
           statusClass = 'is-fully-completed';
           badgeHtml = '<span class="day-star-badge">★</span>';
         } else if (dayItem.aiCompleted) {
@@ -1122,8 +1544,8 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
         btn.type = 'button';
         btn.className = `day-node-btn ${statusClass} ${dayItem.day === currentSelectedDay ? 'is-active' : ''} ${isToday ? 'is-today-node' : ''}`;
         btn.setAttribute('data-day', String(dayItem.day));
-        btn.title = `Ngày ${dayItem.day} (${dInfo.shortDisplay}): ${dayItem.completed ? 'Cả hai đã hoàn thành' : dayItem.aiCompleted ? 'AI đã tích (chờ Maze)' : dayItem.mazeCompleted ? 'Maze đã tích (chờ AI)' : 'Chờ hoàn thành'}`;
-        
+        btn.title = `Ngày ${dayItem.day} (${dInfo.shortDisplay})`;
+
         btn.innerHTML = `
           <span class="node-num">${dayItem.day}</span>
           <span class="node-date">${dInfo.shortDisplay}</span>
@@ -1140,7 +1562,6 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       });
     }
 
-    // Render Active Panel Detail
     const panel = document.getElementById('active-day-panel');
     const dayData = list.find((d) => d.day === currentSelectedDay) || list[0];
     if (!panel || !dayData) return;
@@ -1153,32 +1574,49 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     let topBadgeHtml = '';
     let feedbackBannerHtml = '';
 
-    if (dayData.completed) {
-      topBadgeHtml = `<span class="badge-love badge-green">🎉 ĐÃ HOÀN THÀNH BỞI CẢ HAI</span>`;
+    if (dayData.rescuedBy) {
+      const rescuerName = dayData.rescuedBy === 'ai' ? 'AI (Anh 🚀)' : 'Maze (Em 🌸)';
+      topBadgeHtml = `<span class="badge-love" style="background: rgba(244, 63, 94, 0.25); border-color: #f43f5e; color: #fda4af;">💖 ĐÃ ĐƯỢC HỌC BÙ BỞI ${rescuerName.toUpperCase()}</span>`;
+      feedbackBannerHtml = `
+        <div class="day-status-feedback-banner banner-rescued">
+          <span>💖 <strong>Tích Bù Yêu Thương!</strong> Ngày này đã được ${rescuerName} gánh thay với trọn vẹn tình yêu!</span>
+        </div>
+        ${dayData.rescueNote ? `<div class="rescue-quote-box">💌 Lời nhắn yêu thương: "${dayData.rescueNote}"</div>` : ''}
+      `;
+    } else if (dayData.aiShieldUsed || dayData.mazeShieldUsed) {
+      const shieldUser = dayData.aiShieldUsed && dayData.mazeShieldUsed ? 'Cả hai' : dayData.aiShieldUsed ? 'AI' : 'Maze';
+      topBadgeHtml = `<span class="badge-love" style="background: rgba(56, 189, 248, 0.25); border-color: #38bdf8; color: #7dd3fc;">🛡️ KHIÊN HỘ MỆNH KÍCH HOẠT (${shieldUser})</span>`;
+      feedbackBannerHtml = `
+        <div class="day-status-feedback-banner banner-shielded">
+          <span>🛡️ <strong>Khiên Bảo Vệ Đang Hoạt Động!</strong> Năng lượng ngày này đã được bảo lưu trọn vẹn vì sự cố bất khả kháng. Chuỗi sao tinh cầu vẫn an toàn! ✨</span>
+        </div>
+      `;
+    } else if (dayData.completed) {
+      topBadgeHtml = `<span class="badge-love badge-green">🎉 ĐÃ HOÀN THÀNH ĐỒNG PHA</span>`;
       feedbackBannerHtml = `
         <div class="day-status-feedback-banner banner-fully-completed">
-          <span>💖 <strong>Tuyệt vời!</strong> AI & Maze đã cùng nhau hoàn thành Ngày ${dayData.day}! Ngôi sao ngày này đã chính thức được thắp sáng trên dải ngân hà! ⭐</span>
+          <span>💖 <strong>Tuyệt vời!</strong> Cả AI &amp; Maze đã cùng nhau chinh phục Ngày ${dayData.day}! Ngôi sao ngày này đã chính thức tỏa sáng rực rỡ! ⭐</span>
         </div>
       `;
     } else if (dayData.aiCompleted && !dayData.mazeCompleted) {
       topBadgeHtml = `<span class="badge-love" style="background: rgba(56, 189, 248, 0.2); border-color: #38bdf8; color: #7dd3fc;">⏳ AI ĐÃ TÍCH — ĐANG CHỜ MAZE</span>`;
       feedbackBannerHtml = `
         <div class="day-status-feedback-banner banner-waiting">
-          <span>🚀 <strong>AI đã hoàn thành phần của mình!</strong> Hãy nhắc <strong class="banner-highlight-partner">Maze</strong> vào tích để cùng thắp sáng Ngày ${dayData.day} nhé! 🌸</span>
+          <span>🚀 <strong>AI đã hoàn thành phần của mình!</strong> Nhắc <strong style="color: #fda4af;">Maze</strong> vào tích để cùng thắp sáng Ngày ${dayData.day} nhé! 🌸</span>
         </div>
       `;
     } else if (!dayData.aiCompleted && dayData.mazeCompleted) {
       topBadgeHtml = `<span class="badge-love" style="background: rgba(244, 63, 94, 0.2); border-color: #f43f5e; color: #fda4af;">⏳ MAZE ĐÃ TÍCH — ĐANG CHỜ AI</span>`;
       feedbackBannerHtml = `
         <div class="day-status-feedback-banner banner-waiting">
-          <span>🌸 <strong>Maze đã hoàn thành phần của mình!</strong> Hãy nhắc <strong class="banner-highlight-partner">AI</strong> vào tích để cùng thắp sáng Ngày ${dayData.day} nhé! 🚀</span>
+          <span>🌸 <strong>Maze đã hoàn thành phần của mình!</strong> Nhắc <strong style="color: #7dd3fc;">AI</strong> vào tích để cùng thắp sáng Ngày ${dayData.day} nhé! 🚀</span>
         </div>
       `;
     } else {
       topBadgeHtml = `<span class="badge-love badge-gold">⏳ CẢ HAI CHƯA ĐÁNH DẤU</span>`;
       feedbackBannerHtml = `
         <div class="day-status-feedback-banner banner-waiting">
-          <span>💫 Cả 2 cùng rèn luyện tiếng Anh hôm nay nhé! <em>(Phải cả AI và Maze cùng tích mới được tính là hoàn thành)</em></span>
+          <span>💫 Cả 2 cùng rèn luyện tiếng Anh hôm nay nhé! <em>(Phải cả AI và Maze cùng tích hoặc dùng khiên bảo vệ)</em></span>
         </div>
       `;
     }
@@ -1192,7 +1630,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
             <button type="button" class="btn-day-nav" id="btn-prev-day" ${dayData.day <= 1 ? 'disabled' : ''}>
               ‹ Ngày trước
             </button>
-            <button type="button" class="btn-day-nav" id="btn-next-day" ${dayData.day >= 21 ? 'disabled' : ''}>
+            <button type="button" class="btn-day-nav" id="btn-next-day" ${dayData.day >= targetDays ? 'disabled' : ''}>
               Ngày tiếp ›
             </button>
           </div>
@@ -1210,18 +1648,18 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
         <!-- Dual Partner Checklist 2-Column Grid -->
         <div class="dual-partner-cards-grid">
           <!-- Card 1: AI (Anh) -->
-          <div class="partner-check-card card-ai ${dayData.aiCompleted ? 'is-checked' : ''}">
+          <div class="partner-check-card card-ai ${dayData.aiCompleted || dayData.aiShieldUsed || dayData.rescuedBy ? 'is-checked' : ''}">
             <div class="card-partner-header">
               <img src="${boysAvatar}" alt="AI" class="partner-avatar-img" />
               <div class="partner-title-wrap">
                 <h4 class="partner-main-name gradient-cyan-text">AI (Anh) 🚀</h4>
-                <span class="partner-role-tag">Chàng Kỹ Sư Tình Yêu</span>
+                <span class="partner-role-tag">Mặt Trăng Dịu Êm 🌙</span>
               </div>
             </div>
 
             <div class="partner-status-row">
-              <span class="partner-status-pill ${dayData.aiCompleted ? 'status-pill-done-ai' : 'status-pill-pending'}">
-                ${dayData.aiCompleted ? `Đã tích hoàn thành ${dayData.aiCompletedDate ? '(' + dayData.aiCompletedDate.split('-').reverse().join('/') + ')' : ''}` : '⏳ Chưa tích hoàn thành'}
+              <span class="partner-status-pill ${dayData.aiCompleted ? 'status-pill-done-ai' : dayData.aiShieldUsed ? 'status-pill-done-ai' : 'status-pill-pending'}">
+                ${dayData.aiShieldUsed ? '🛡️ Đã dùng khiên bảo vệ' : dayData.aiCompleted ? '✓ Đã tích hoàn thành' : '⏳ Chưa tích hoàn thành'}
               </span>
             </div>
 
@@ -1232,21 +1670,30 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
             >
               ${dayData.aiCompleted ? '✓ AI Đã Xong (Bấm để hủy)' : '👦 AI Tích Đã Xong ✨'}
             </button>
+
+            <!-- Shield Button for AI -->
+            <button
+              type="button"
+              class="btn-use-shield-mini"
+              id="btn-shield-ai"
+            >
+              ${dayData.aiShieldUsed ? '🛡️ Hủy Dùng Khiên AI' : `🛡️ Dùng Khiên Hộ Mệnh AI (${shields.ai}/2)`}
+            </button>
           </div>
 
           <!-- Card 2: Maze (Em) -->
-          <div class="partner-check-card card-maze ${dayData.mazeCompleted ? 'is-checked' : ''}">
+          <div class="partner-check-card card-maze ${dayData.mazeCompleted || dayData.mazeShieldUsed || dayData.rescuedBy ? 'is-checked' : ''}">
             <div class="card-partner-header">
               <img src="${girlsAvatar}" alt="Maze" class="partner-avatar-img" />
               <div class="partner-title-wrap">
                 <h4 class="partner-main-name gradient-rose-text">Maze (Em) 🌸</h4>
-                <span class="partner-role-tag">Nàng Kiến Tạo Yêu Thương</span>
+                <span class="partner-role-tag">Trái Đất Xinh Đẹp 🌍</span>
               </div>
             </div>
 
             <div class="partner-status-row">
-              <span class="partner-status-pill ${dayData.mazeCompleted ? 'status-pill-done-maze' : 'status-pill-pending'}">
-                ${dayData.mazeCompleted ? `Đã tích hoàn thành ${dayData.mazeCompletedDate ? '(' + dayData.mazeCompletedDate.split('-').reverse().join('/') + ')' : ''}` : '⏳ Chưa tích hoàn thành'}
+              <span class="partner-status-pill ${dayData.mazeCompleted ? 'status-pill-done-maze' : dayData.mazeShieldUsed ? 'status-pill-done-maze' : 'status-pill-pending'}">
+                ${dayData.mazeShieldUsed ? '🛡️ Đã dùng khiên bảo vệ' : dayData.mazeCompleted ? '✓ Đã tích hoàn thành' : '⏳ Chưa tích hoàn thành'}
               </span>
             </div>
 
@@ -1257,89 +1704,132 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
             >
               ${dayData.mazeCompleted ? '✓ Maze Đã Xong (Bấm để hủy)' : '👧 Maze Tích Đã Xong 💖'}
             </button>
+
+            <!-- Shield Button for Maze -->
+            <button
+              type="button"
+              class="btn-use-shield-mini"
+              id="btn-shield-maze"
+            >
+              ${dayData.mazeShieldUsed ? '🛡️ Hủy Dùng Khiên Maze' : `🛡️ Dùng Khiên Hộ Mệnh Maze (${shields.maze}/2)`}
+            </button>
           </div>
         </div>
 
         <!-- Feedback & Guidance Banner -->
         ${feedbackBannerHtml}
 
-        <!-- Quick Joint Action -->
-        <div class="quick-joint-action-row">
-          <button type="button" class="btn-joint-toggle" id="btn-quick-joint-toggle">
-            ${dayData.completed ? '🔄 Bỏ tích cả hai người' : '💖 Cả hai cùng tích hoàn thành (Phím tắt)'}
+        <!-- Bottom Action Row: Love Rescue & Joint Toggle -->
+        <div class="panel-bottom-actions-row">
+          <button type="button" class="btn-action-pill btn-action-rescue" id="btn-love-rescue">
+            ${dayData.rescuedBy ? '🔄 Bỏ Chế Độ Tích Bù' : '💖 Tích Bù Yêu Thương (Gánh Thay)'}
+          </button>
+          <button type="button" class="btn-action-pill" id="btn-quick-joint-toggle">
+            ${dayData.completed ? '🔄 Bỏ tích cả hai người' : '⚡ Cả hai cùng tích hoàn thành (Phím tắt)'}
           </button>
         </div>
       </div>
     `;
 
-    // AI toggle event
     const aiToggleBtn = panel.querySelector('#btn-toggle-ai');
     if (aiToggleBtn) {
       aiToggleBtn.addEventListener('click', () => {
         dayData.aiCompleted = !dayData.aiCompleted;
-        if (dayData.aiCompleted) {
-          dayData.aiCompletedDate = new Date().toISOString().slice(0, 10);
-        } else {
-          dayData.aiCompletedDate = undefined;
-        }
-
-        // Check if both completed
-        dayData.completed = Boolean(dayData.aiCompleted && dayData.mazeCompleted);
-        if (dayData.completed) {
-          dayData.completedDate = new Date().toISOString().slice(0, 10);
-        } else {
-          dayData.completedDate = undefined;
-        }
-
+        dayData.aiCompletedDate = dayData.aiCompleted ? new Date().toISOString().slice(0, 10) : undefined;
+        recalcDayCompletion(dayData);
         saveStoredHabits(list);
         renderHabitUI();
       });
     }
 
-    // Maze toggle event
     const mazeToggleBtn = panel.querySelector('#btn-toggle-maze');
     if (mazeToggleBtn) {
       mazeToggleBtn.addEventListener('click', () => {
         dayData.mazeCompleted = !dayData.mazeCompleted;
-        if (dayData.mazeCompleted) {
-          dayData.mazeCompletedDate = new Date().toISOString().slice(0, 10);
-        } else {
-          dayData.mazeCompletedDate = undefined;
-        }
-
-        // Check if both completed
-        dayData.completed = Boolean(dayData.aiCompleted && dayData.mazeCompleted);
-        if (dayData.completed) {
-          dayData.completedDate = new Date().toISOString().slice(0, 10);
-        } else {
-          dayData.completedDate = undefined;
-        }
-
+        dayData.mazeCompletedDate = dayData.mazeCompleted ? new Date().toISOString().slice(0, 10) : undefined;
+        recalcDayCompletion(dayData);
         saveStoredHabits(list);
         renderHabitUI();
       });
     }
 
-    // Quick Joint toggle event
+    const aiShieldBtn = panel.querySelector('#btn-shield-ai');
+    if (aiShieldBtn) {
+      aiShieldBtn.addEventListener('click', () => {
+        if (dayData.aiShieldUsed) {
+          dayData.aiShieldUsed = false;
+          shields.ai = Math.min(2, shields.ai + 1);
+        } else {
+          if (shields.ai <= 0) {
+            alert('⚠️ AI đã dùng hết 2 khiên hộ mệnh của chặng này rồi!');
+            return;
+          }
+          dayData.aiShieldUsed = true;
+          shields.ai -= 1;
+        }
+        recalcDayCompletion(dayData);
+        saveStoredShields(shields);
+        saveStoredHabits(list);
+        renderHabitUI();
+      });
+    }
+
+    const mazeShieldBtn = panel.querySelector('#btn-shield-maze');
+    if (mazeShieldBtn) {
+      mazeShieldBtn.addEventListener('click', () => {
+        if (dayData.mazeShieldUsed) {
+          dayData.mazeShieldUsed = false;
+          shields.maze = Math.min(2, shields.maze + 1);
+        } else {
+          if (shields.maze <= 0) {
+            alert('⚠️ Maze đã dùng hết 2 khiên hộ mệnh của chặng này rồi!');
+            return;
+          }
+          dayData.mazeShieldUsed = true;
+          shields.maze -= 1;
+        }
+        recalcDayCompletion(dayData);
+        saveStoredShields(shields);
+        saveStoredHabits(list);
+        renderHabitUI();
+      });
+    }
+
+    const rescueBtn = panel.querySelector('#btn-love-rescue');
+    if (rescueBtn) {
+      rescueBtn.addEventListener('click', () => {
+        if (dayData.rescuedBy) {
+          dayData.rescuedBy = undefined;
+          dayData.rescueNote = undefined;
+        } else {
+          const rescuer = confirm('Bấm OK nếu AI là người gánh bù, hoặc Cancel nếu Maze là người gánh bù?') ? 'ai' : 'maze';
+          const rescuerName = rescuer === 'ai' ? 'AI' : 'Maze';
+          const defaultNote = `${rescuerName} đã học bù bài hôm nay giúp đối phương với trọn vẹn yêu thương! 💖`;
+          const note = prompt(`Nhập lời nhắn yêu thương khi học bù (${rescuerName}):`, defaultNote);
+          dayData.rescuedBy = rescuer;
+          dayData.rescueNote = note || defaultNote;
+        }
+        recalcDayCompletion(dayData);
+        saveStoredHabits(list);
+        renderHabitUI();
+      });
+    }
+
     const jointToggleBtn = panel.querySelector('#btn-quick-joint-toggle');
     if (jointToggleBtn) {
       jointToggleBtn.addEventListener('click', () => {
         const willComplete = !dayData.completed;
         const nowIso = new Date().toISOString().slice(0, 10);
-
         dayData.aiCompleted = willComplete;
         dayData.mazeCompleted = willComplete;
-        dayData.completed = willComplete;
         dayData.aiCompletedDate = willComplete ? nowIso : undefined;
         dayData.mazeCompletedDate = willComplete ? nowIso : undefined;
-        dayData.completedDate = willComplete ? nowIso : undefined;
-
+        recalcDayCompletion(dayData);
         saveStoredHabits(list);
         renderHabitUI();
       });
     }
 
-    // Previous day button event
     const prevBtn = panel.querySelector('#btn-prev-day');
     if (prevBtn) {
       prevBtn.addEventListener('click', () => {
@@ -1350,11 +1840,10 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       });
     }
 
-    // Next day button event
     const nextBtn = panel.querySelector('#btn-next-day');
     if (nextBtn) {
       nextBtn.addEventListener('click', () => {
-        if (currentSelectedDay < 21) {
+        if (currentSelectedDay < targetDays) {
           currentSelectedDay += 1;
           renderHabitUI();
         }
@@ -1362,8 +1851,43 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     }
   }
 
+  function recalcDayCompletion(dayData: any) {
+    const isAIHandled = dayData.aiCompleted || dayData.aiShieldUsed;
+    const isMazeHandled = dayData.mazeCompleted || dayData.mazeShieldUsed;
+    dayData.completed = (isAIHandled && isMazeHandled) || Boolean(dayData.rescuedBy);
+    if (dayData.completed && !dayData.completedDate) {
+      dayData.completedDate = new Date().toISOString().slice(0, 10);
+    } else if (!dayData.completed) {
+      dayData.completedDate = undefined;
+    }
+  }
+
   function initHabitInteractive() {
-    // Save Start Date Button
+    document.querySelectorAll('.milestone-tab-btn').forEach((btn: any) => {
+      btn.addEventListener('click', () => {
+        const days = Number(btn.getAttribute('data-days'));
+        if (days && !isNaN(days)) {
+          saveStoredTargetDays(days);
+          renderHabitUI();
+        }
+      });
+    });
+
+    const portalAdvanceBtn = document.getElementById('btn-portal-advance');
+    if (portalAdvanceBtn) {
+      portalAdvanceBtn.addEventListener('click', () => {
+        const currentDays = getStoredTargetDays();
+        let nextDays = 66;
+        if (currentDays === 21) nextDays = 66;
+        else if (currentDays === 66) nextDays = 100;
+        else if (currentDays === 100) nextDays = 365;
+
+        saveStoredTargetDays(nextDays);
+        renderHabitUI();
+        alert(`🌌 Tuyệt vời! Hai bạn đã chính thức bước qua Cổng Không - Thời Gian vào Chặng ${nextDays} Ngày!`);
+      });
+    }
+
     const saveStartDateBtn = document.getElementById('btn-save-start-date');
     const startDateInput = document.getElementById('habit-start-date-input') as HTMLInputElement | null;
 
@@ -1373,13 +1897,12 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
         if (val && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
           saveStoredStartDate(val);
           renderHabitUI();
-          alert(`✅ Đã lưu ngày bắt đầu: ${val.split('-').reverse().join('/')}! Lịch 21 ngày đã được cập nhật.`);
+          alert(`✅ Đã lưu ngày bắt đầu: ${val.split('-').reverse().join('/')}! Lịch trình đã được phân bổ lại.`);
         } else {
           alert('Vui lòng chọn ngày hợp lệ!');
         }
       });
 
-      // Auto update on change
       startDateInput.addEventListener('change', () => {
         const val = startDateInput.value;
         if (val && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
@@ -1389,12 +1912,10 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       });
     }
 
-    // Quick Presets
     const presetToday = document.getElementById('btn-preset-today');
     if (presetToday) {
       presetToday.addEventListener('click', () => {
-        const today = getTodayIso();
-        saveStoredStartDate(today);
+        saveStoredStartDate(getTodayIso());
         renderHabitUI();
       });
     }
@@ -1410,13 +1931,11 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     const presetDefault = document.getElementById('btn-preset-default');
     if (presetDefault) {
       presetDefault.addEventListener('click', () => {
-        const def = (window as any).__DEFAULT_HABIT_START_DATE__ || '2026-08-20';
-        saveStoredStartDate(def);
+        saveStoredStartDate('2026-08-20');
         renderHabitUI();
       });
     }
 
-    // Listen for Realtime Cloud Updates from Firebase
     window.addEventListener('couple-cloud-updated', () => {
       renderHabitUI();
     });

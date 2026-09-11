@@ -74,6 +74,26 @@ export function initGlobalSyncEngine(): void {
       }
     }
 
+    // 4.2. Habit Shields / Khiên bảo vệ
+    if (cloudData.habitShields !== undefined && typeof cloudData.habitShields === 'object') {
+      const current = localStorage.getItem('couple_habit_shields');
+      const next = JSON.stringify(cloudData.habitShields);
+      if (current !== next) {
+        localStorage.setItem('couple_habit_shields', next);
+        hasChanges = true;
+      }
+    }
+
+    // 4.3. Habit Target Days / Chặng Milestone
+    if (cloudData.habitTargetDays !== undefined && typeof cloudData.habitTargetDays === 'number') {
+      const current = localStorage.getItem('couple_habit_target_days');
+      const next = String(cloudData.habitTargetDays);
+      if (current !== next) {
+        localStorage.setItem('couple_habit_target_days', next);
+        hasChanges = true;
+      }
+    }
+
     // 5. Trash Bin / Thùng rác
     if (cloudData.trashBin !== undefined && Array.isArray(cloudData.trashBin)) {
       const current = localStorage.getItem('couple_trash_bin');
