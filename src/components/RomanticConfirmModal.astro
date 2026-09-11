@@ -1,0 +1,518 @@
+---
+/**
+ * RomanticConfirmModal.astro
+ * =========================================================================
+ * Hộp Thoại Xác Nhận Phong Thư Tình Yêu & Tem Niêm Phong (Mẫu 2: Romantic Envelope)
+ * Tinh tế, lãng mạn, thay thế hoàn toàn confirm() mặc định của trình duyệt.
+ * =========================================================================
+ */
+---
+
+<div class="envelope-confirm-overlay" id="romantic-confirm-modal" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="envelope-card-wrapper">
+    <!-- Wax Seal Badge -->
+    <div class="envelope-wax-seal" id="confirm-wax-seal">
+      <span class="seal-icon" id="confirm-seal-icon">💌</span>
+      <span class="seal-sparkle">✨</span>
+    </div>
+
+    <!-- Envelope Flap Decorative Header -->
+    <div class="envelope-flap-header">
+      <div class="flap-accent-line"></div>
+    </div>
+
+    <!-- Letter Body Container -->
+    <div class="envelope-letter-body romantic-card">
+      <button type="button" class="envelope-close-btn" id="confirm-btn-close" aria-label="Đóng">&times;</button>
+
+      <div class="letter-header">
+        <span class="letter-tag" id="confirm-type-badge">🌸 Kỷ Niệm Tình Yêu</span>
+        <h3 class="letter-heading gradient-love-text" id="confirm-heading">Tạm Cất Trang Nhật Ký Này Nhé?</h3>
+      </div>
+
+      <!-- Item Subject & Quote Box -->
+      <div class="letter-quote-box">
+        <div class="quote-subject-line">
+          <span class="subject-icon" id="confirm-subject-icon">📖</span>
+          <span class="subject-title" id="confirm-subject-title">Tên mục kỷ niệm...</span>
+        </div>
+        <div class="quote-text-container" id="confirm-quote-container">
+          <span class="quote-mark">“</span>
+          <p class="quote-text" id="confirm-quote-text">Trích dẫn câu chuyện tình yêu ngọt ngào...</p>
+          <span class="quote-mark right">”</span>
+        </div>
+      </div>
+
+      <!-- Detail / Warning Message -->
+      <p class="letter-notice-text" id="confirm-notice-text">
+        Kỷ niệm này sẽ được lưu giữ an toàn trong Thùng Rác và có thể khôi phục lại bất kỳ lúc nào.
+      </p>
+
+      <!-- Action Buttons -->
+      <div class="envelope-actions-row">
+        <button type="button" class="btn-envelope-cancel" id="confirm-btn-cancel">
+          <span class="btn-icon">🌸</span>
+          <span id="confirm-cancel-text">Để Lại Đây</span>
+        </button>
+        <button type="button" class="btn-envelope-confirm" id="confirm-btn-ok">
+          <span class="btn-icon" id="confirm-ok-icon">📦</span>
+          <span id="confirm-ok-text">Cất Đi</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .envelope-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 8, 18, 0.88);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    z-index: 100000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .envelope-confirm-overlay.is-open {
+    display: flex;
+    animation: envelopeFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .envelope-card-wrapper {
+    position: relative;
+    max-width: 520px;
+    width: 100%;
+    margin: 0 auto;
+    animation: envelopeSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Wax Seal (Tem Sáp Niêm Phong) */
+  .envelope-wax-seal {
+    position: absolute;
+    top: -26px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e11d48 0%, #be123c 60%, #881337 100%);
+    border: 3px solid rgba(254, 205, 211, 0.85);
+    box-shadow: 0 0 25px rgba(244, 63, 94, 0.7), 0 8px 20px rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    cursor: default;
+    user-select: none;
+    animation: sealPulse 2.8s infinite ease-in-out;
+  }
+
+  .seal-icon {
+    font-size: 1.7rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  }
+
+  .seal-sparkle {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    font-size: 0.75rem;
+    color: #fef08a;
+    animation: sparkleSpin 3s linear infinite;
+  }
+
+  /* Envelope Header Accent */
+  .envelope-flap-header {
+    width: 86%;
+    height: 14px;
+    margin: 0 auto -2px;
+    background: linear-gradient(180deg, rgba(244, 63, 94, 0.25) 0%, rgba(15, 23, 42, 0.95) 100%);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    border-bottom: none;
+  }
+
+  /* Letter Body Container */
+  .envelope-letter-body {
+    position: relative;
+    background: linear-gradient(155deg, rgba(28, 18, 36, 0.96) 0%, rgba(11, 17, 32, 0.98) 100%);
+    border: 1.5px solid rgba(244, 63, 94, 0.4);
+    border-radius: 24px;
+    padding: 2.4rem 2rem 1.8rem;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.9), 0 0 45px rgba(244, 63, 94, 0.22);
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .envelope-close-btn {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 1.35rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .envelope-close-btn:hover {
+    background: rgba(244, 63, 94, 0.2);
+    border-color: #fda4af;
+    color: #ffffff;
+    transform: scale(1.1);
+  }
+
+  .letter-header {
+    margin-bottom: 1.2rem;
+  }
+
+  .letter-tag {
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #fda4af;
+    background: rgba(244, 63, 94, 0.14);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    padding: 3px 12px;
+    border-radius: 9999px;
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.02em;
+  }
+
+  .letter-heading {
+    font-size: 1.45rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+
+  /* Quote Box */
+  .letter-quote-box {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(244, 63, 94, 0.25);
+    border-radius: 16px;
+    padding: 1.1rem 1.3rem;
+    margin-bottom: 1.1rem;
+    text-align: left;
+    position: relative;
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .quote-subject-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+    word-break: break-word;
+  }
+
+  .subject-icon {
+    font-size: 1.15rem;
+    flex-shrink: 0;
+  }
+
+  .quote-text-container {
+    position: relative;
+    padding: 0 10px;
+  }
+
+  .quote-text {
+    font-size: 0.9rem;
+    font-style: italic;
+    color: #cbd5e1;
+    line-height: 1.55;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .quote-mark {
+    font-family: Georgia, serif;
+    font-size: 1.6rem;
+    color: #fda4af;
+    opacity: 0.6;
+    line-height: 0;
+    vertical-align: -0.4em;
+    user-select: none;
+  }
+
+  .quote-mark.right {
+    vertical-align: -0.6em;
+  }
+
+  /* Notice Text */
+  .letter-notice-text {
+    font-size: 0.88rem;
+    color: #94a3b8;
+    line-height: 1.5;
+    margin: 0 0 1.6rem;
+  }
+
+  .letter-notice-text.is-danger {
+    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 6px 12px;
+    border-radius: 8px;
+  }
+
+  /* Actions Row */
+  .envelope-actions-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .btn-envelope-cancel {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(254, 205, 211, 0.3);
+    color: #fecdd3;
+    font-size: 0.96rem;
+    font-weight: 600;
+    padding: 12px 18px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-envelope-cancel:hover {
+    background: rgba(244, 63, 94, 0.18);
+    border-color: #fda4af;
+    color: #ffffff;
+    box-shadow: 0 0 16px rgba(244, 63, 94, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .btn-envelope-confirm {
+    background: linear-gradient(135deg, #f43f5e 0%, #be185d 100%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    font-size: 0.96rem;
+    font-weight: 700;
+    padding: 12px 18px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 18px rgba(244, 63, 94, 0.45);
+  }
+
+  .btn-envelope-confirm:hover {
+    background: linear-gradient(135deg, #fb7185 0%, #e11d48 100%);
+    box-shadow: 0 0 24px rgba(244, 63, 94, 0.65);
+    transform: translateY(-2px);
+  }
+
+  .btn-envelope-confirm.is-danger-action {
+    background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
+    box-shadow: 0 4px 18px rgba(239, 68, 68, 0.45);
+  }
+
+  .btn-envelope-confirm.is-danger-action:hover {
+    background: linear-gradient(135deg, #f87171 0%, #b91c1c 100%);
+    box-shadow: 0 0 24px rgba(239, 68, 68, 0.65);
+  }
+
+  @keyframes envelopeFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes envelopeSlideUp {
+    from { opacity: 0; transform: translateY(22px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes sealPulse {
+    0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 25px rgba(244, 63, 94, 0.7); }
+    50% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 35px rgba(244, 63, 94, 0.9); }
+  }
+
+  @keyframes sparkleSpin {
+    0% { transform: rotate(0deg) scale(0.9); opacity: 0.7; }
+    50% { transform: rotate(180deg) scale(1.2); opacity: 1; }
+    100% { transform: rotate(360deg) scale(0.9); opacity: 0.7; }
+  }
+
+  @media (max-width: 480px) {
+    .envelope-letter-body {
+      padding: 2rem 1.4rem 1.5rem;
+    }
+    .letter-heading {
+      font-size: 1.25rem;
+    }
+    .envelope-actions-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  interface RomanticConfirmOptions {
+    heading?: string;
+    subject?: string;
+    quote?: string;
+    notice?: string;
+    typeBadge?: string;
+    sealEmoji?: string;
+    subjectIcon?: string;
+    confirmText?: string;
+    confirmIcon?: string;
+    cancelText?: string;
+    isDanger?: boolean;
+  }
+
+  let resolvePromise: ((val: boolean) => void) | null = null;
+
+  function openRomanticConfirm(options: RomanticConfirmOptions = {}): Promise<boolean> {
+    return new Promise((resolve) => {
+      resolvePromise = resolve;
+
+      const modal = document.getElementById('romantic-confirm-modal');
+      const headingEl = document.getElementById('confirm-heading');
+      const subjectEl = document.getElementById('confirm-subject-title');
+      const subjectIconEl = document.getElementById('confirm-subject-icon');
+      const quoteEl = document.getElementById('confirm-quote-text');
+      const quoteContainer = document.getElementById('confirm-quote-container');
+      const noticeEl = document.getElementById('confirm-notice-text');
+      const typeBadgeEl = document.getElementById('confirm-type-badge');
+      const sealIconEl = document.getElementById('confirm-seal-icon');
+      const confirmTextEl = document.getElementById('confirm-ok-text');
+      const confirmIconEl = document.getElementById('confirm-ok-icon');
+      const cancelTextEl = document.getElementById('confirm-cancel-text');
+      const confirmBtn = document.getElementById('confirm-btn-ok');
+
+      if (!modal) {
+        // Fallback if modal DOM element is missing
+        resolve(window.confirm(options.heading || 'Bạn có chắc chắn muốn thực hiện?'));
+        return;
+      }
+
+      if (headingEl) {
+        headingEl.textContent = options.heading || 'Tạm Cất Trang Nhật Ký Này Nhé?';
+      }
+      if (subjectEl) {
+        subjectEl.textContent = options.subject || 'Mục kỷ niệm đã chọn';
+      }
+      if (subjectIconEl) {
+        subjectIconEl.textContent = options.subjectIcon || '📖';
+      }
+      if (quoteEl && quoteContainer) {
+        if (options.quote && options.quote.trim()) {
+          quoteEl.textContent = options.quote.trim();
+          quoteContainer.style.display = 'block';
+        } else {
+          quoteEl.textContent = 'Giữ lại chút hương vị ngọt ngào của những ngày bên nhau...';
+          quoteContainer.style.display = 'block';
+        }
+      }
+      if (noticeEl) {
+        noticeEl.textContent = options.notice || (options.isDanger 
+          ? '⚠️ Hành động này sẽ xóa vĩnh viễn và không thể khôi phục lại!'
+          : 'Kỷ niệm này sẽ được lưu giữ an toàn trong Thùng Rác và có thể khôi phục lại bất kỳ lúc nào.');
+        if (options.isDanger) {
+          noticeEl.classList.add('is-danger');
+        } else {
+          noticeEl.classList.remove('is-danger');
+        }
+      }
+      if (typeBadgeEl) {
+        typeBadgeEl.textContent = options.typeBadge || '🌸 Kỷ Niệm Tình Yêu';
+      }
+      if (sealIconEl) {
+        sealIconEl.textContent = options.sealEmoji || '💌';
+      }
+      if (confirmTextEl) {
+        confirmTextEl.textContent = options.confirmText || (options.isDanger ? 'Xóa Vĩnh Viễn' : 'Cất Đi');
+      }
+      if (confirmIconEl) {
+        confirmIconEl.textContent = options.confirmIcon || (options.isDanger ? '🔥' : '📦');
+      }
+      if (cancelTextEl) {
+        cancelTextEl.textContent = options.cancelText || 'Để Lại Đây 🌸';
+      }
+      if (confirmBtn) {
+        if (options.isDanger) {
+          confirmBtn.classList.add('is-danger-action');
+        } else {
+          confirmBtn.classList.remove('is-danger-action');
+        }
+      }
+
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+    });
+  }
+
+  function closeRomanticConfirm(result: boolean) {
+    const modal = document.getElementById('romantic-confirm-modal');
+    if (modal) {
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+    if (resolvePromise) {
+      resolvePromise(result);
+      resolvePromise = null;
+    }
+  }
+
+  function initRomanticConfirmEvents() {
+    const modal = document.getElementById('romantic-confirm-modal');
+    const closeBtn = document.getElementById('confirm-btn-close');
+    const cancelBtn = document.getElementById('confirm-btn-cancel');
+    const confirmBtn = document.getElementById('confirm-btn-ok');
+
+    if (closeBtn) closeBtn.onclick = () => closeRomanticConfirm(false);
+    if (cancelBtn) cancelBtn.onclick = () => closeRomanticConfirm(false);
+    if (confirmBtn) confirmBtn.onclick = () => closeRomanticConfirm(true);
+
+    if (modal) {
+      modal.onclick = (e) => {
+        if (e.target === modal) {
+          closeRomanticConfirm(false);
+        }
+      };
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (!modal || !modal.classList.contains('is-open')) return;
+      if (e.key === 'Escape') {
+        closeRomanticConfirm(false);
+      } else if (e.key === 'Enter') {
+        closeRomanticConfirm(true);
+      }
+    });
+  }
+
+  // Register global window helper
+  (window as any).romanticConfirm = openRomanticConfirm;
+
+  initRomanticConfirmEvents();
+  document.addEventListener('astro:after-swap', initRomanticConfirmEvents);
+</script>

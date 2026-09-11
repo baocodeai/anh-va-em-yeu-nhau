@@ -1,336 +1,374 @@
 ---
-import { getCollection } from 'astro:content';
 import Layout from '../components/Layout.astro';
-import { SITE_CONFIG } from '../site.config';
+import LoveCounter from '../components/LoveCounter.astro';
+import HabitTracker21 from '../components/HabitTracker21.astro';
+import BucketListSection from '../components/BucketListSection.astro';
+import MemoryGallery from '../components/MemoryGallery.astro';
+import SyncHubModal from '../components/SyncHubModal.astro';
+import TrashRecoveryModal from '../components/TrashRecoveryModal.astro';
+import RomanticConfirmModal from '../components/RomanticConfirmModal.astro';
+import { COUPLE_CONFIG } from '../couple.config';
 
-const allProjects = await getCollection('projects');
-const featuredProjects = allProjects
-  .filter((project) => !project.data.draft)
-  .map((project) => ({
-    ...project,
-    slug: project.id.replace(/\.(md|mdx)$/i, '').replace(/\/index$/, '')
-  }))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 3);
-
-const allPosts = await getCollection('blog');
-const recentPosts = allPosts
-  .filter((post) => !post.data.draft)
-  .map((post) => ({
-    ...post,
-    slug: post.id.replace(/\.(md|mdx)$/i, '').replace(/\/index$/, '')
-  }))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 3);
-
-const domains = [
-  {
-    title: "Classical Vision",
-    description: "Xử lý ảnh số, lọc ảnh, phát hiện cạnh Canny/Sobel, trích xuất đặc trưng SIFT/ORB và Homography.",
-    tag: "Classical",
-    image: "/covers/classical-cv.jpg"
-  },
-  {
-    title: "Deep Learning Architectures",
-    description: "Kiến trúc CNN, Vision Transformers (ViT, Swin), kỹ thuật training, data augmentation và transfer learning.",
-    tag: "Deep Learning",
-    image: "/covers/deep-learning.jpg"
-  },
-  {
-    title: "Detection, Segmentation & Tracking",
-    description: "Phát hiện đối tượng real-time với YOLOv11, RT-DETR, SAM 2, Faster R-CNN và theo dõi đa đối tượng trong video.",
-    tag: "Detection",
-    image: "/covers/detection.jpg"
-  },
-  {
-    title: "3D Vision & Neural Rendering",
-    description: "Camera calibration, stereo matching, 3D reconstruction từ point cloud, NeRF, và 3D Gaussian Splatting (3DGS).",
-    tag: "3D Vision",
-    image: "/covers/3d-vision.jpg"
-  },
-  {
-    title: "Generative AI & Multimodal",
-    description: "Stable Diffusion, ControlNet, LoRA fine-tuning, Vision-Language Models (CLIP, LLaVA), và Visual RAG.",
-    tag: "Generative AI",
-    image: "/covers/generative-ai.jpg"
-  },
-  {
-    title: "MLOps & Edge Optimization",
-    description: "Triển khai model với TensorRT, ONNX Runtime, lượng tử hóa INT8/FP16, WebGPU inference và monitoring.",
-    tag: "MLOps",
-    image: "/covers/mlops.jpg"
-  }
-];
-
-// Helper to count articles per domain tag
-const getDomainPostCount = (tag: string) => {
-  return allPosts.filter((p) => {
-    if (p.data.draft) return false;
-    const postDomains = Array.isArray(p.data.domain)
-      ? p.data.domain
-      : p.data.domain
-        ? [p.data.domain]
-        : [];
-    return (
-      postDomains.some((d) => d.toLowerCase() === tag.toLowerCase()) ||
-      p.data.tags?.some((t) => t.toLowerCase() === tag.toLowerCase())
-    );
-  }).length;
-};
-
-const personSchema = JSON.stringify({
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: 'BaoNV',
-  jobTitle: 'Computer Vision Engineer',
-  url: 'https://baocodeai.github.io',
-  sameAs: [
-    'https://github.com/baocodeai',
-    'https://huggingface.co/vubaonguyen',
-    'https://linkedin.com/in/vubaonguyen',
-  ],
-}).replace(/</g, '\\u003c');
+const { title, subtitle } = COUPLE_CONFIG;
 ---
 
 <Layout
-  title="BaoNV — Computer Vision Engineer"
-  description="Computer Vision Engineer"
+  title={`${title} — ${subtitle}`}
+  description="Cuốn nhật ký tinh cầu lưu giữ hành trình 21 ngày rèn thói quen tiếng Anh và những điều ước sẽ làm cùng nhau của AI và Maze."
   canonicalPath="/"
 >
-  <script type="application/ld+json" is:inline set:html={personSchema} />
-
-  <main class="content-shell">
-    <!-- 1. HERO SECTION -->
-    <section class="hero-section" aria-label="Introduction">
-      <div class="hero-container">
-        <div class="hero-top-classified">
-          <div class="hero-status-pill">
-            <span class="status-pulse-dot"></span>
-            <span>Computer Vision & Edge AI</span>
+  <main class="couple-home-main couple-wrapper">
+    <!-- ========================================== -->
+    <!-- TAB PANE 1: TINH CẦU TÌNH YÊU (TỔNG QUAN)  -->
+    <!-- ========================================== -->
+    <div class="tab-pane is-active" id="tab-pane-overview">
+      <section class="hero-love-section">
+        <div class="hero-content-wrap">
+          <div class="hero-top-badge badge-love floating-element">
+            <span>✨ Tinh Cầu Tình Yêu Của AI 🚀 &amp; Maze 🌸</span>
           </div>
-          <div class="vault-classified-badge">
-            <span class="vault-dot"></span>
-            <span>[SYS_STATUS: ONLINE // CUDA_CORES: ACTIVE]</span>
+
+          <h1 class="hero-main-title gradient-love-text">
+            21 Ngày Cùng Em
+          </h1>
+
+          <p class="hero-subtitle">
+            Hành Trình Rèn Luyện Thói Quen &amp; Những Tọa Độ Yêu Thương Giữa Dải Ngân Hà
+          </p>
+
+          <div class="hero-action-buttons">
+            <button type="button" class="btn-love jump-tab-btn" data-jump="tab-pane-habits">
+              <span>✨ Vào Học Tiếng Anh</span>
+            </button>
+            <button type="button" class="btn-outline-love jump-tab-btn" data-jump="tab-pane-bucket">
+              <span>💫 Xem Bucket List</span>
+            </button>
+            <button type="button" class="btn-outline-love jump-tab-btn" data-jump="tab-pane-memories">
+              <span>📸 Xem Album Ảnh</span>
+            </button>
           </div>
         </div>
 
-        <h1 class="hero-title">
-          Computer Vision Engineer
-        </h1>
+        <!-- Real-time Love Timer & Avatar Switcher -->
+        <LoveCounter />
+      </section>
 
-        <div class="hero-actions-group">
-          {SITE_CONFIG.showProjects ? (
-            <a class="btn-primary" href="#featured-projects">
-              <span>View Projects</span>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
-            </a>
-          ) : (
-            <a class="btn-primary" href="/blog/">
-              <span>Explore Blog</span>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
-            </a>
-          )}
-          <a class="btn-secondary" href="https://github.com/baocodeai" target="_blank" rel="noopener noreferrer">
-            <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
-              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.64 7.64 0 0 1 8 3.87c.68 0 1.36.09 2 .26 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
-            </svg>
-            <span>GitHub</span>
-          </a>
-        </div>
-      </div>
-    </section>
+      <!-- Love Letter from AI to Maze -->
+      <section class="love-letter-section">
+        <div class="love-letter-card romantic-card">
+          <div class="letter-stamp">💌</div>
+          <h3 class="letter-title gradient-rose-text">Thư Tình Gửi Vào Ngân Hà</h3>
+          <p class="letter-date">Dành riêng cho Maze — Ngày 15 tháng 8 năm 2026 và mãi mãi về sau</p>
 
-    <!-- 2. TECHNICAL DOMAINS SECTION -->
-    <section class="section domain-section" aria-label="Technical Domains">
-      <div class="section-header-row">
-        <div>
-          <h2 class="section-title">Technical Domains</h2>
-          <p class="section-subtitle">Core areas of research, engineering, and edge deployment.</p>
-        </div>
-      </div>
-
-      <div class="domains-grid">
-        {domains.map((d) => {
-          const count = getDomainPostCount(d.tag);
-          return (
-            <a href={`/tags/${encodeURIComponent(d.tag)}/`} class="domain-card domain-card-banner" title={`Xem các bài viết về ${d.title}`}>
-              <div class="domain-banner-wrapper">
-                <img src={d.image} alt={d.title} class="domain-banner-img" loading="lazy" />
-                <span class="domain-explore-arrow" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M7 17l10-10" />
-                    <path d="M7 7h10v10" />
-                  </svg>
-                </span>
-              </div>
-
-              <div class="domain-card-body">
-                <h3 class="domain-card-title">{d.title}</h3>
-                <p class="domain-card-desc">{d.description}</p>
-
-                <div class="domain-tags-list" style="display: flex; justify-content: space-between; align-items: center;">
-                  <span class="domain-tag">#{d.tag}</span>
-                  <span style="font-size: 0.78rem; font-family: var(--mono); color: var(--muted);">{count > 0 ? `${count} bài viết` : 'Chưa có bài'}</span>
-                </div>
-              </div>
-            </a>
-          );
-        })}
-      </div>
-    </section>
-
-    <!-- 3. FEATURED PROJECTS SECTION -->
-    {SITE_CONFIG.showProjects && featuredProjects.length > 0 && (
-      <section class="section" id="featured-projects" aria-label="Featured Projects">
-        <div class="section-header-row">
-          <div>
-            <h2 class="section-title">Featured Projects</h2>
-            <p class="section-subtitle">Real-time demos running client-side with WebGPU, ONNX & TensorRT.</p>
+          <div class="letter-body">
+            <p>
+              <em>Maze yêu dấu của anh,</em>
+            </p>
+            <p>
+              Giữa vũ trụ bao la với hàng tỷ tinh tú lấp lánh, người ta thường mải miết đi tìm những điều lớn lao xa vời. Nhưng với anh, điều kỳ diệu nhất lại đến từ một ngày thu dịu dàng — ngày <strong>15/08/2026</strong>, khi bàn tay nhỏ bé của em chạm vào cuộc đời anh.
+            </p>
+            <p>
+              Thử thách <strong>21 ngày rèn luyện tiếng Anh</strong> này không đơn thuần là việc học thêm một ngôn ngữ mới. Đó là cái cớ ngọt ngào nhất để mỗi ngày anh được nghe giọng nói của em, được nhìn thấy sự kiên trì trong mắt em, và để hai đứa mình cùng nhau tiến về phía trước. 
+            </p>
+            <p>
+              Còn cuốn <strong>Bucket List</strong> kia chính là lời hứa mà anh đã khắc sâu vào lòng: dù là ngắm hoàng hôn đỏ rực bên bờ biển, lang thang xe máy giữa phố đêm se lạnh, hay nắm tay nhau bước vào lễ đường mai sau — mọi khoảnh khắc ấy đều chỉ trọn vẹn khi người đứng cạnh anh là em.
+            </p>
+            <p class="letter-signature">
+              Yêu em hơn cả những vì sao trên bầu trời,<br />
+              <strong>AI của em 🚀</strong>
+            </p>
           </div>
-          <a class="section-header-link" href="/projects/">
-            <span>live demos</span>
-            <span aria-hidden="true">↗</span>
-          </a>
-        </div>
-
-        <div class="featured-projects-grid">
-          {featuredProjects.map((p) => (
-            <article class="featured-project-card">
-              <div class="project-preview-box">
-                <div class="project-preview-badge">
-                  <span class="pulse-green-dot"></span>
-                  <span>{p.data.badge || "Live Demo"}</span>
-                </div>
-                <div class="project-preview-mock">
-                  <div class="mock-grid-lines"></div>
-                  <div class="mock-camera-frame">
-                    <span class="mock-box-1"></span>
-                    <span class="mock-box-2"></span>
-                    <span class="mock-fps">45+ FPS (WebGPU)</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="featured-project-body">
-                <div class="project-domain-label">{Array.isArray(p.data.domain) ? p.data.domain.join(' · ') : (p.data.domain || "Computer Vision")}</div>
-                <h3 class="featured-project-title">
-                  <a href={`/projects/${p.slug}/`}>{p.data.title}</a>
-                </h3>
-                <p class="featured-project-desc">{p.data.description}</p>
-
-                <div class="project-tech-tags">
-                  {p.data.techStack.map((tech: string) => (
-                    <span class="tech-badge">{tech}</span>
-                  ))}
-                </div>
-
-                <div class="featured-project-cta">
-                  {p.data.demoUrl && (
-                    <a href={p.data.demoUrl} class="btn-demo-primary" target="_blank" rel="noopener noreferrer">
-                      <span>Live Demo</span>
-                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M7 17l10-10" />
-                        <path d="M7 7h10v10" />
-                      </svg>
-                    </a>
-                  )}
-                  {p.data.repoUrl && (
-                    <a href={p.data.repoUrl} class="btn-demo-subtle" target="_blank" rel="noopener noreferrer">
-                      <span>Code</span>
-                    </a>
-                  )}
-                  <a href={`/projects/${p.slug}/`} class="btn-demo-subtle">
-                    <span>Details</span>
-                  </a>
-                </div>
-              </div>
-            </article>
-          ))}
         </div>
       </section>
-    )}
+    </div>
 
-    <!-- 4. RECENT POSTS SECTION -->
-    <section class="section" aria-label="Recent Posts">
-      <div class="section-header-row">
-        <div>
-          <h2 class="section-title">Recent Posts</h2>
-          <p class="section-subtitle">Paper reproductions, architectural deep dives & deployment logs.</p>
-        </div>
-        <a class="section-header-link" href="/blog/">
-          <span>view all</span>
-          <span aria-hidden="true">→</span>
-        </a>
-      </div>
+    <!-- ========================================== -->
+    <!-- TAB PANE 2: 21 NGÀY THÓI QUEN TIẾNG ANH    -->
+    <!-- ========================================== -->
+    <div class="tab-pane" id="tab-pane-habits">
+      <HabitTracker21 />
+    </div>
 
-      <div class="recent-posts-grid">
-        {recentPosts.map((post) => (
-          <article class="recent-post-card">
-            <a class="post-card-full-link" href={`/blog/${post.slug}/`}>
-              <div class="post-card-thumb-area">
-                {post.data.coverImage ? (
-                  <img
-                    src={typeof post.data.coverImage === 'string' ? post.data.coverImage : post.data.coverImage.src}
-                    alt={post.data.title}
-                    class="post-card-cover-img"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div class="post-thumb-abstract-visual">
-                    <div class="visual-node node-a"></div>
-                    <div class="visual-node node-b"></div>
-                    <div class="visual-edge"></div>
-                  </div>
-                )}
-                <div class="post-thumb-category-tag">
-                  {post.data.category || (post.data.tags[0] ?? "Deep Dives")}
-                </div>
-              </div>
+    <!-- ========================================== -->
+    <!-- TAB PANE 3: BUCKET LIST ĐÔI LỨA            -->
+    <!-- ========================================== -->
+    <div class="tab-pane" id="tab-pane-bucket">
+      <BucketListSection />
+    </div>
 
-              <div class="recent-post-content">
-                <div class="recent-post-meta">
-                  <time datetime={post.data.date.toISOString()}>
-                    {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' })}
-                  </time>
-                  {post.data.readingTime && (
-                    <>
-                      <span class="meta-dot">·</span>
-                      <span>{post.data.readingTime}</span>
-                    </>
-                  )}
-                </div>
-
-                <h3 class="recent-post-title">{post.data.title}</h3>
-                <p class="recent-post-excerpt">{post.data.description}</p>
-              </div>
-            </a>
-          </article>
-        ))}
-      </div>
-    </section>
+    <!-- ========================================== -->
+    <!-- TAB PANE 4: KỶ NIỆM CỦA HAI ĐỨA (ALBUM)    -->
+    <!-- ========================================== -->
+    <div class="tab-pane" id="tab-pane-memories">
+      <MemoryGallery />
+    </div>
   </main>
 
-  <script>
-    const setupSpotlights = () => {
-      const cards = document.querySelectorAll<HTMLElement>('.domain-card, .featured-project-card, .recent-post-card');
-      cards.forEach((card) => {
-        card.addEventListener('pointermove', (e) => {
-          const rect = card.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          card.style.setProperty('--mouse-x', `${x}px`);
-          card.style.setProperty('--mouse-y', `${y}px`);
-        });
-      });
-    };
-
-    setupSpotlights();
-    document.addEventListener('astro:after-swap', setupSpotlights);
-  </script>
+  <SyncHubModal />
+  <TrashRecoveryModal />
+  <RomanticConfirmModal />
 </Layout>
+
+<style>
+  .couple-home-main {
+    min-height: 100vh;
+    padding-top: 1.8rem;
+    padding-bottom: 5rem;
+  }
+
+  /* Tab Panes */
+  .tab-pane {
+    display: none;
+    animation: fadeInPane 0.35s ease-out;
+  }
+
+  .tab-pane.is-active {
+    display: block;
+  }
+
+  @keyframes fadeInPane {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Hero */
+  .hero-love-section {
+    max-width: 940px;
+    margin: 1.2rem auto 2.5rem;
+    padding: 0 1.2rem;
+    text-align: center;
+  }
+
+  .hero-content-wrap {
+    margin-bottom: 1.8rem;
+  }
+
+  .hero-top-badge {
+    margin-bottom: 1.2rem;
+    padding: 6px 18px;
+    font-size: 0.85rem;
+  }
+
+  .hero-main-title {
+    font-size: 3.6rem;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin: 0 0 1rem;
+    text-shadow: 0 0 45px rgba(244, 63, 94, 0.45);
+  }
+
+  .hero-subtitle {
+    font-size: 1.15rem;
+    color: #cbd5e1;
+    max-width: 660px;
+    margin: 0 auto 1.8rem;
+    line-height: 1.65;
+    font-family: var(--sans);
+  }
+
+  .hero-action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  /* Love letter */
+  .love-letter-section {
+    max-width: 800px;
+    margin: 4.5rem auto 2rem;
+    padding: 0 1.2rem;
+  }
+
+  .love-letter-card {
+    position: relative;
+    padding: 3.2rem 2.8rem;
+    background: radial-gradient(circle at 50% 0%, rgba(244, 63, 94, 0.16) 0%, rgba(11, 17, 32, 0.88) 75%);
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    border-radius: 22px;
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.8), 0 0 30px rgba(244, 63, 94, 0.15);
+  }
+
+  .letter-stamp {
+    position: absolute;
+    top: -20px;
+    right: 32px;
+    font-size: 2.4rem;
+    filter: drop-shadow(0 4px 12px rgba(244, 63, 94, 0.6));
+  }
+
+  .letter-title {
+    font-size: 1.9rem;
+    font-weight: 800;
+    margin: 0 0 0.4rem;
+    text-align: center;
+    letter-spacing: -0.01em;
+  }
+
+  .letter-date {
+    font-size: 0.88rem;
+    color: #94a3b8;
+    text-align: center;
+    margin-bottom: 2.2rem;
+    font-family: var(--mono);
+  }
+
+  .letter-body {
+    font-family: var(--body);
+    font-size: 1.1rem;
+    line-height: 1.85;
+    color: #e2e8f0;
+  }
+
+  .letter-body p {
+    margin-bottom: 1.25rem;
+  }
+
+  .letter-signature {
+    text-align: right;
+    margin-top: 2rem;
+    font-family: var(--sans);
+    color: #fda4af;
+  }
+
+  @media (max-width: 768px) {
+    .tabs-nav-inner {
+      overflow-x: auto;
+      justify-content: flex-start;
+      border-radius: 16px;
+      scrollbar-width: none;
+    }
+    .tabs-nav-inner::-webkit-scrollbar {
+      display: none;
+    }
+    .galaxy-tab-btn {
+      font-size: 0.82rem;
+      padding: 8px 14px;
+    }
+    .hero-main-title {
+      font-size: 2.4rem;
+    }
+    .hero-subtitle {
+      font-size: 1rem;
+    }
+    .love-letter-card {
+      padding: 2rem 1.4rem;
+    }
+  }
+</style>
+
+<script>
+  function initTabSwitcher() {
+    const headerTabButtons = document.querySelectorAll('.header-tab-btn');
+    const mobileTabButtons = document.querySelectorAll('.mobile-tab-btn');
+    const brandLinks = document.querySelectorAll('.couple-header-brand');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+    const jumpButtons = document.querySelectorAll('.jump-tab-btn');
+
+    function switchTab(targetPaneId: string) {
+      // Header & Mobile Buttons
+      headerTabButtons.forEach((btn) => {
+        if (btn.getAttribute('data-target') === targetPaneId) {
+          btn.classList.add('is-active');
+        } else {
+          btn.classList.remove('is-active');
+        }
+      });
+
+      mobileTabButtons.forEach((btn) => {
+        if (btn.getAttribute('data-target') === targetPaneId) {
+          btn.classList.add('is-active');
+        } else {
+          btn.classList.remove('is-active');
+        }
+      });
+
+      // Close mobile drawer menu if open
+      const mobileMenu = document.getElementById('header-mobile-menu');
+      if (mobileMenu && mobileMenu.hasAttribute('open')) {
+        mobileMenu.removeAttribute('open');
+      }
+
+      // Panes
+      tabPanes.forEach((pane) => {
+        if (pane.id === targetPaneId) {
+          pane.classList.add('is-active');
+        } else {
+          pane.classList.remove('is-active');
+        }
+      });
+
+      // Map pane ID to hash
+      const hashMap: Record<string, string> = {
+        'tab-pane-overview': '#overview',
+        'tab-pane-habits': '#habits',
+        'tab-pane-bucket': '#bucket-list',
+        'tab-pane-memories': '#memories'
+      };
+
+      if (hashMap[targetPaneId]) {
+        history.replaceState(null, '', hashMap[targetPaneId]);
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    headerTabButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-target');
+        if (target) switchTab(target);
+      });
+    });
+
+    mobileTabButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-target');
+        if (target) switchTab(target);
+      });
+    });
+
+    brandLinks.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchTab('tab-pane-overview');
+      });
+    });
+
+    jumpButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const jump = btn.getAttribute('data-jump');
+        if (jump) switchTab(jump);
+      });
+    });
+
+    // Wire sync button in header to open sync modal
+    if (syncHeaderBtn) {
+      syncHeaderBtn.addEventListener('click', () => {
+        const syncModal = document.getElementById('sync-hub-modal');
+        if (syncModal) syncModal.classList.add('is-open');
+      });
+    }
+
+    // Hash routing
+    function handleHash() {
+      const hash = window.location.hash;
+      if (hash === '#habits' || hash === '#habit-tracker') {
+        switchTab('tab-pane-habits');
+      } else if (hash === '#bucket' || hash === '#bucket-list') {
+        switchTab('tab-pane-bucket');
+      } else if (hash === '#memories') {
+        switchTab('tab-pane-memories');
+      } else if (hash === '#overview' || !hash) {
+        switchTab('tab-pane-overview');
+      }
+    }
+
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
+  }
+
+  initTabSwitcher();
+  document.addEventListener('astro:after-swap', initTabSwitcher);
+</script>

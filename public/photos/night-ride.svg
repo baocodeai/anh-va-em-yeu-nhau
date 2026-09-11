@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="600" height="400">
+  <defs>
+    <linearGradient id="cityNight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#090a16"/>
+      <stop offset="60%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#312e81"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="400" fill="url(#cityNight)"/>
+  <!-- Street Lights Bokeh -->
+  <circle cx="80" cy="220" r="30" fill="#fef08a" opacity="0.15"/>
+  <circle cx="200" cy="240" r="45" fill="#f43f5e" opacity="0.12"/>
+  <circle cx="480" cy="210" r="35" fill="#38bdf8" opacity="0.15"/>
+  <circle cx="380" cy="250" r="25" fill="#fef08a" opacity="0.2"/>
+  <!-- Road -->
+  <polygon points="0,400 200,280 400,280 600,400" fill="#18181b"/>
+  <!-- Light streak / Headlight beam -->
+  <polygon points="260,330 350,330 460,400 150,400" fill="#fef08a" opacity="0.15"/>
+  <!-- Motorcycle & Couple Silhouette -->
+  <!-- Back wheel -->
+  <circle cx="260" cy="345" r="18" fill="#3f3f46" stroke="#a1a1aa" stroke-width="3"/>
+  <!-- Front wheel -->
+  <circle cx="340" cy="345" r="18" fill="#3f3f46" stroke="#a1a1aa" stroke-width="3"/>
+  <!-- Bike Frame -->
+  <path d="M 260 345 L 290 325 L 325 325 L 340 345 Z" fill="#ef4444"/>
+  <!-- AI driving -->
+  <circle cx="310" cy="290" r="10" fill="#1e293b"/>
+  <path d="M 300 325 L 310 300 L 325 315 Z" fill="#1e293b"/>
+  <!-- Maze sitting behind hugging AI -->
+  <circle cx="285" cy="293" r="9" fill="#881337"/>
+  <path d="M 275 325 L 285 302 L 310 305 Z" fill="#881337"/>
+  <!-- Romantic text badge -->
+  <rect x="180" y="350" width="240" height="32" rx="16" fill="#000000" opacity="0.7"/>
+  <text x="300" y="371" fill="#fef08a" font-family="'Be Vietnam Pro', sans-serif" font-size="13" font-weight="600" text-anchor="middle">Phố Đêm &amp; Vòng Tay Ấm 🛵✨</text>
+</svg>

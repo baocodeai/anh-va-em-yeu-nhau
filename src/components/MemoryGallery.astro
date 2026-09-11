@@ -1,0 +1,4076 @@
+---
+import { PHOTO_MEMORIES } from '../data/photoMemories';
+
+const defaultMemoriesJSON = JSON.stringify(PHOTO_MEMORIES).replace(/</g, '\\u003c');
+---
+
+<section class="memory-gallery-section" id="memories">
+  <div class="section-header-wrap">
+    <div class="badge-love mb-2">
+      <span>📸 Dải Ngân Hà Kỷ Niệm</span>
+    </div>
+    <h2 class="section-title gradient-love-text">Những Khoảnh Khắc Của Chúng Mình</h2>
+    <p class="section-desc">
+      Mỗi bức hình là một trạm dừng chân ngọt ngào trên chuyến bay tình yêu của AI và Maze.
+    </p>
+
+    <!-- Header View Switcher & Action Row -->
+    <div class="memory-controls-container">
+      <div class="memories-view-switcher" role="tablist">
+        <button
+          type="button"
+          class="view-tab-btn is-active"
+          id="btn-view-stories"
+          role="tab"
+          aria-selected="true"
+        >
+          <span class="tab-icon">🎴</span>
+          <span class="tab-label">Bài Viết Kỷ Niệm</span>
+          <span class="tab-count" id="count-stories-badge">0</span>
+        </button>
+        <button
+          type="button"
+          class="view-tab-btn"
+          id="btn-view-all-photos"
+          role="tab"
+          aria-selected="false"
+        >
+          <span class="tab-icon">🖼️</span>
+          <span class="tab-label">Toàn Bộ Ảnh Đã Tải Lên</span>
+          <span class="tab-count" id="count-all-photos-badge">0</span>
+        </button>
+      </div>
+
+      <div class="memory-actions-row">
+        <button type="button" class="btn-love" id="btn-open-add-memory">
+          <span>+ Thêm Kỷ Niệm Mới</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- View 1: Dynamic Polaroid Cards Grid -->
+  <div class="polaroid-gallery-grid" id="memories-container">
+    <!-- Rendered dynamically by script from LocalStorage -->
+  </div>
+
+  <!-- View 2: All Uploaded Photos Stream / Wall -->
+  <div class="all-photos-stream-wrap" id="all-photos-stream-wrap" style="display: none;">
+    <!-- Filter & Search Toolbar -->
+    <div class="all-photos-toolbar romantic-card">
+      <div class="all-photos-filter-chips" id="photo-type-filter-chips">
+        <button type="button" class="photo-filter-chip is-active" data-filter="all">
+          <span>🌟 Tất cả ảnh</span>
+          <span class="chip-count" id="filter-count-all">0</span>
+        </button>
+        <button type="button" class="photo-filter-chip" data-filter="cover">
+          <span>📸 Ảnh bìa</span>
+          <span class="chip-count" id="filter-count-cover">0</span>
+        </button>
+        <button type="button" class="photo-filter-chip" data-filter="gallery">
+          <span>🖼️ Ảnh đính kèm</span>
+          <span class="chip-count" id="filter-count-gallery">0</span>
+        </button>
+      </div>
+
+      <div class="all-photos-search-wrap">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          id="photo-search-input"
+          class="photo-search-input"
+          placeholder="Tìm theo tên bài, địa điểm, ghi chú..."
+        />
+      </div>
+    </div>
+
+    <!-- Photos Grid Container -->
+    <div class="all-photos-grid" id="all-photos-grid-container">
+      <!-- Rendered dynamically by script -->
+    </div>
+
+    <!-- Empty state for search/filters -->
+    <div class="all-photos-empty-state" id="all-photos-empty" style="display: none;">
+      <div class="empty-icon">🌌</div>
+      <h4 class="empty-title">Chưa tìm thấy bức ảnh nào</h4>
+      <p class="empty-desc">Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc bên trên bạn nhé!</p>
+    </div>
+  </div>
+
+  <!-- Detailed Love Journal Reader Modal -->
+  <div class="journal-reader-overlay" id="journal-reader-modal" aria-hidden="true">
+    <div class="journal-reader-card romantic-card">
+      <button type="button" class="journal-reader-close-btn" id="journal-reader-close" aria-label="Đóng nhật ký">&times;</button>
+      
+      <!-- Article Header / Cover Banner -->
+      <div class="journal-cover-wrap" id="reader-cover-wrap">
+        <img id="reader-cover-img" src="" alt="Cover" class="journal-cover-img" />
+        <div class="journal-cover-gradient"></div>
+        <div class="journal-cover-meta-badge" id="reader-author-badge">✍️ AI &amp; Maze</div>
+      </div>
+
+      <!-- Journal Content Area -->
+      <div class="journal-article-body">
+        <div class="journal-meta-row">
+          <span class="journal-pill" id="reader-date">🗓️ 15/08/2026</span>
+          <span class="journal-pill" id="reader-loc">📍 Bờ biển</span>
+          <span class="journal-pill journal-pill-mood" id="reader-mood">🥰 Hạnh phúc</span>
+          <span class="journal-pill journal-pill-weather" id="reader-weather">🌌 Đêm đầy sao</span>
+        </div>
+
+        <h1 class="journal-article-title gradient-love-text" id="reader-title">Khoảnh khắc vũ trụ se duyên</h1>
+        
+        <div class="journal-lead-quote" id="reader-caption-wrap">
+          <p class="journal-quote-text" id="reader-caption"></p>
+        </div>
+
+        <div class="journal-story-text" id="reader-content">
+          <!-- Paragraphs rendered dynamically -->
+        </div>
+
+        <!-- Attached Photos Showcase -->
+        <div class="journal-gallery-section" id="reader-gallery-section" style="display: none;">
+          <div class="journal-gallery-header">
+            <span class="gallery-title-icon">📸</span>
+            <h4 class="gallery-section-title">Khoảnh Khắc Cùng Ngày</h4>
+          </div>
+          <div class="journal-gallery-grid" id="reader-gallery-grid">
+            <!-- Rendered attached photos -->
+          </div>
+        </div>
+
+        <!-- Love Sign-off -->
+        <div class="journal-signoff-card">
+          <span class="signoff-heart animate-heart">💖</span>
+          <p class="signoff-text">Trang nhật ký được lưu giữ vĩnh cửu giữa muôn vì sao</p>
+          <span class="signoff-couple" id="reader-signoff-names">AI 🚀 &amp; Maze 🌸</span>
+        </div>
+
+        <!-- Bottom Action Bar -->
+        <div class="journal-reader-actions">
+          <button type="button" class="btn-outline-love" id="btn-reader-close-bottom">Đóng Lại</button>
+          <button type="button" class="btn-love" id="btn-reader-edit-story">✏️ Chỉnh Sửa Trang Nhật Ký Này</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dedicated 2-Column Zen Love Journal Studio Modal -->
+  <div class="crud-modal-overlay" id="memory-crud-modal" aria-hidden="true">
+    <div class="crud-modal-card zen-journal-card zen-split-studio romantic-card">
+      
+      <!-- Top Modal Header Bar -->
+      <div class="zen-modal-top-bar">
+        <div class="zen-modal-header-info">
+          <span class="zen-header-badge">✨ Zen Love Studio</span>
+          <h3 class="zen-header-title">Trang Soạn Thảo Kỷ Niệm & Cảm Xúc</h3>
+        </div>
+        <button type="button" class="zen-modal-close-btn" id="memory-modal-close" aria-label="Đóng">&times;</button>
+      </div>
+
+      <!-- Main 2-Column Split Body Form -->
+      <form id="memory-form" class="zen-split-form">
+        <input type="hidden" id="form-mem-id" value="" />
+
+        <div class="zen-two-columns-body">
+          <!-- LEFT COLUMN: Ảnh Bìa Chính + Kho Ảnh Kỷ Niệm Chuyến Đi -->
+          <div class="zen-left-pane">
+            <div class="zen-pane-section">
+              <div class="zen-section-label">
+                <span class="zen-label-icon">🖼️</span>
+                <span class="zen-label-text">Ảnh Bìa Kỷ Niệm</span>
+              </div>
+
+              <!-- Cover Hero Wrap -->
+              <div class="zen-cover-hero" id="zen-cover-hero-wrap">
+                <img id="form-mem-preview" src="" alt="Cover Preview" class="zen-cover-img" style="display: none;" />
+                
+                <div class="zen-cover-empty-placeholder" id="memory-dropzone-empty">
+                  <div class="zen-empty-badge">
+                    <span class="zen-empty-icon">📸</span>
+                  </div>
+                  <h4 class="zen-empty-title">Chưa có ảnh bìa</h4>
+                  <p class="zen-empty-text">Tải ảnh hoặc dán URL ảnh bìa chính</p>
+                  <div class="zen-empty-btns">
+                    <label class="btn-love zen-empty-btn" title="Tải ảnh bìa từ máy">
+                      <span>🖼️ Tải Ảnh</span>
+                      <input type="file" id="form-mem-file" accept="image/*" style="display: none;" />
+                      <input type="file" id="btn-change-mem-file" accept="image/*" style="display: none;" />
+                    </label>
+                    <button type="button" class="btn-outline-love zen-empty-btn" id="btn-toggle-cover-url-empty" title="Dán link ảnh từ Internet">
+                      <span>🌐 Dán URL</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="zen-cover-gradient"></div>
+
+                <!-- Cover Quick Actions Overlay (when image loaded) -->
+                <div class="zen-cover-actions" id="zen-cover-active-actions" style="display: none;">
+                  <label class="zen-cover-btn" title="Đổi sang ảnh bìa khác">
+                    <span>🖼️ Đổi ảnh</span>
+                    <input type="file" id="form-mem-file-active" accept="image/*" style="display: none;" />
+                  </label>
+                  <button type="button" class="zen-cover-btn" id="btn-toggle-cover-url" title="Dán link ảnh từ Internet">
+                    <span>🌐 Dán URL</span>
+                  </button>
+                  <button type="button" class="zen-cover-btn zen-cover-btn-delete" id="btn-clear-mem-photo" title="Xóa ảnh bìa">
+                    <span>🗑️ Xóa</span>
+                  </button>
+                </div>
+
+                <!-- Mini URL Input bar (toggleable) -->
+                <div class="zen-cover-url-bar" id="zen-cover-url-bar" style="display: none;">
+                  <input
+                    type="text"
+                    id="form-mem-url"
+                    class="form-input zen-cover-url-input"
+                    placeholder="Dán link ảnh https://..."
+                  />
+                  <button type="button" class="zen-cover-btn" id="btn-confirm-cover-url">Xong</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Attached Gallery Drawer Section -->
+            <div class="zen-attached-gallery-card">
+              <div class="zen-gallery-header">
+                <div class="zen-gallery-title-wrap">
+                  <span class="zen-gallery-icon">📸</span>
+                  <span class="zen-gallery-title">Kho Ảnh Chuyến Đi</span>
+                  <span class="zen-gallery-count" id="zen-gallery-count-badge">0 ảnh</span>
+                </div>
+                <label class="btn-outline-love file-pick-label btn-sm-custom" style="cursor: pointer;">
+                  <span>+ Tải ảnh</span>
+                  <input type="file" id="form-mem-add-gallery-file" accept="image/*" style="display: none;" />
+                </label>
+              </div>
+              
+              <p class="zen-gallery-sub">Nhấn <strong>[📋 Chèn]</strong> để đưa ảnh vào bài viết bên phải.</p>
+
+              <div id="form-gallery-items-container" class="zen-gallery-items-grid">
+                <!-- Dynamic attached photo cards -->
+              </div>
+
+              <!-- Add by URL row -->
+              <div class="zen-add-url-row">
+                <input
+                  type="text"
+                  id="form-gallery-url-input"
+                  class="form-input flex-1 zen-gallery-url-input"
+                  placeholder="Link ảnh bổ sung https://..."
+                />
+                <button type="button" class="btn-outline-love btn-sm-custom" id="btn-add-gallery-url">Thêm</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN: Không gian Soạn Thảo & Tác Phẩm Nhật Ký -->
+          <div class="zen-right-pane">
+            <div class="zen-scrollable-editor">
+              <!-- Big Seamless Title -->
+              <div class="zen-title-container">
+                <textarea
+                  id="form-mem-title"
+                  class="zen-title-textarea"
+                  rows="1"
+                  required
+                  placeholder="Tiêu đề trang nhật ký..."
+                ></textarea>
+              </div>
+
+              <!-- Interactive Metadata Tag Bar -->
+              <div class="zen-meta-row">
+                <!-- Ngày -->
+                <div class="zen-pill-item">
+                  <span class="zen-pill-icon">🗓️</span>
+                  <input
+                    type="text"
+                    id="form-mem-date"
+                    class="zen-pill-input"
+                    placeholder="15/08/2026"
+                    title="Ngày diễn ra kỷ niệm"
+                  />
+                </div>
+
+                <!-- Địa điểm -->
+                <div class="zen-pill-item">
+                  <span class="zen-pill-icon">📍</span>
+                  <input
+                    type="text"
+                    id="form-mem-loc"
+                    class="zen-pill-input"
+                    placeholder="Địa điểm..."
+                    title="Địa điểm bên nhau"
+                  />
+                </div>
+
+                <!-- Người chắp bút -->
+                <div class="zen-pill-item zen-pill-author">
+                  <span class="zen-pill-icon">✍️</span>
+                  <select id="form-mem-author" class="zen-pill-select" title="Ai là người chắp bút?">
+                    <option value="both">Cả hai đứa 💖</option>
+                    <option value="ai">AI 🚀</option>
+                    <option value="maze">Maze 🌸</option>
+                  </select>
+                </div>
+
+                <!-- Cảm xúc / Mood -->
+                <div class="zen-pill-item zen-pill-mood">
+                  <span class="zen-pill-icon">🥰</span>
+                  <input
+                    type="text"
+                    id="form-mem-mood"
+                    class="zen-pill-input"
+                    placeholder="Tâm trạng..."
+                    title="Cảm xúc hôm ấy"
+                  />
+                </div>
+
+                <!-- Thời tiết -->
+                <div class="zen-pill-item zen-pill-weather">
+                  <span class="zen-pill-icon">🌤️</span>
+                  <input
+                    type="text"
+                    id="form-mem-weather"
+                    class="zen-pill-input"
+                    placeholder="Thời tiết..."
+                    title="Thời tiết hôm ấy"
+                  />
+                </div>
+
+                <!-- Ghim đầu trang -->
+                <label class="zen-pill-item zen-pill-pin" title="Ghim bài kỷ niệm này lên đầu danh sách">
+                  <input type="checkbox" id="form-mem-pinned" style="accent-color: #f43f5e; width: 14px; height: 14px; cursor: pointer;" />
+                  <span id="label-mem-pinned">📌 Ghim lên đầu</span>
+                </label>
+              </div>
+
+              <!-- Lead Quote / Polaroid Caption -->
+              <div class="zen-lead-quote-wrap">
+                <span class="zen-quote-icon">💌</span>
+                <textarea
+                  id="form-mem-caption"
+                  class="zen-caption-textarea"
+                  rows="2"
+                  placeholder="Lời đề tựa ngắn trên thẻ Polaroid (hoặc câu thơ thì thầm ngọt ngào nhất)..."
+                ></textarea>
+              </div>
+
+              <!-- Sticky Format & View Toolbar -->
+              <div class="zen-sticky-toolbar">
+                <div class="zen-tools-group">
+                  <button type="button" class="zen-tb-btn" data-action="bold" title="In đậm (**chữ**)"><strong>B</strong></button>
+                  <button type="button" class="zen-tb-btn" data-action="italic" title="In nghiêng (*chữ*)"><em>I</em></button>
+                  <button type="button" class="zen-tb-btn" data-action="h3" title="Tiêu đề phân đoạn (### Tiêu đề)"><strong>H3</strong></button>
+                  <button type="button" class="zen-tb-btn" data-action="quote" title="Trích dẫn lãng mạn (&gt; Trích dẫn)">❝</button>
+                  <button type="button" class="zen-tb-btn" data-action="poem" title="Khổ thơ tình yêu">📜 Thơ</button>
+                  <button type="button" class="zen-tb-btn" data-action="list" title="Danh sách (- việc đã làm)">• List</button>
+                  <button type="button" class="zen-tb-btn" data-action="img" id="btn-toolbar-img" title="Tải & Chèn ảnh trực tiếp vào bài viết">🖼️ Ảnh</button>
+                  <input type="file" id="form-mem-toolbar-img-file" accept="image/*" style="display: none;" />
+                  
+                  <div class="zen-emoji-strip">
+                    <button type="button" class="zen-emoji-btn" data-emoji="💖">💖</button>
+                    <button type="button" class="zen-emoji-btn" data-emoji="🌸">🌸</button>
+                    <button type="button" class="zen-emoji-btn" data-emoji="🚀">🚀</button>
+                    <button type="button" class="zen-emoji-btn" data-emoji="🌌">🌌</button>
+                    <button type="button" class="zen-emoji-btn" data-emoji="✨">✨</button>
+                    <button type="button" class="zen-emoji-btn" data-emoji="🥰">🥰</button>
+                    <button type="button" class="zen-emoji-btn" data-emoji="💌">💌</button>
+                  </div>
+                </div>
+
+                <div class="zen-view-toggle-group">
+                  <button type="button" class="zen-toggle-btn is-active" data-mode="editor" id="btn-zen-mode-editor">✍️ Soạn thảo</button>
+                  <button type="button" class="zen-toggle-btn" data-mode="preview" id="btn-zen-mode-preview">👁️ Xem trước</button>
+                </div>
+              </div>
+
+              <!-- Zen Editor Body / Live Preview Body -->
+              <div class="zen-workspace-container mode-editor" id="studio-workspace">
+                <!-- Zen Editor Area -->
+                <div class="zen-editor-view" id="workspace-editor-col">
+                  <textarea
+                    id="form-mem-content"
+                    class="zen-main-textarea"
+                    placeholder="Kể lại trọn vẹn câu chuyện của ngày hôm ấy...
+Hai đứa đã đi những đâu? Những điều gì khiến anh/em rung động nhất?
+
+> &quot;Có những khoảnh khắc em mỉm cười làm cả dải ngân hà trong anh bừng sáng.&quot;
+
+### Buổi chiều lộng gió
+Hai đứa mình dạo bước bên nhau..."
+                  ></textarea>
+                </div>
+
+                <!-- Zen Live Preview Area -->
+                <div class="zen-preview-view" id="workspace-preview-col" style="display: none;">
+                  <div class="studio-live-preview-box zen-preview-content-box" id="studio-live-preview">
+                    <!-- Rendered magazine body -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zen Bottom Action Footer -->
+        <div class="zen-footer-bar">
+          <div class="zen-footer-wordcount" id="studio-word-count">0 từ</div>
+          <div class="zen-footer-buttons">
+            <button type="button" class="btn-outline-love" id="btn-cancel-mem">Hủy Bỏ</button>
+            <button type="submit" class="btn-love" id="btn-save-mem">💖 Lưu Trang Nhật Ký</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Lightbox Zoom Modal -->
+  <div class="image-modal-overlay" id="mem-lightbox-modal" aria-hidden="true">
+    <div class="modal-card romantic-card">
+      <button type="button" class="modal-close-btn" id="mem-lightbox-close">&times;</button>
+      <img src="" alt="" id="mem-lightbox-img" class="modal-main-img" />
+      <p id="mem-lightbox-caption" class="modal-caption-text"></p>
+    </div>
+  </div>
+</section>
+
+<!-- Inject default data into client -->
+<script is:inline define:vars={{ defaultMemoriesJSON }}>
+  window.__INITIAL_MEMORIES__ = JSON.parse(defaultMemoriesJSON);
+</script>
+
+<style>
+  .memory-gallery-section {
+    max-width: 1060px;
+    margin: 4rem auto;
+    padding: 0 1.2rem;
+  }
+
+  .section-header-wrap {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .section-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 0.8rem;
+    letter-spacing: -0.02em;
+  }
+
+  .section-desc {
+    max-width: 680px;
+    margin: 0 auto 1.4rem;
+    color: #94a3b8;
+    line-height: 1.6;
+  }
+
+  /* Controls Container & Switcher */
+  .memory-controls-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  .memories-view-switcher {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(11, 17, 32, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    padding: 5px;
+    border-radius: 9999px;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    gap: 6px;
+  }
+
+  .view-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 20px;
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+  }
+
+  .view-tab-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .view-tab-btn.is-active {
+    color: #ffffff;
+    background: linear-gradient(135deg, rgba(244, 63, 94, 0.92), rgba(147, 51, 234, 0.92));
+    border-color: rgba(253, 164, 175, 0.5);
+    box-shadow: 0 4px 18px rgba(244, 63, 94, 0.4);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  .view-tab-btn .tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 7px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+  }
+
+  .view-tab-btn.is-active .tab-count {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.45);
+  }
+
+  .memory-actions-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
+  }
+
+  /* =========================================================================
+     ALL PHOTOS STREAM / GALLERY WALL
+     ========================================================================= */
+  .all-photos-stream-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+    animation: fadeInView 0.35s ease-out;
+  }
+
+  @keyframes fadeInView {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .all-photos-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    padding: 1rem 1.4rem;
+    border-radius: 20px;
+    background: rgba(11, 17, 32, 0.85);
+    border: 1px solid var(--card-border);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    box-shadow: var(--card-glow);
+  }
+
+  .all-photos-filter-chips {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .photo-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 15px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: #cbd5e1;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+  }
+
+  .photo-filter-chip:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+
+  .photo-filter-chip.is-active {
+    background: rgba(244, 63, 94, 0.22);
+    border-color: #f43f5e;
+    color: #fda4af;
+    font-weight: 700;
+    box-shadow: 0 0 16px rgba(244, 63, 94, 0.3);
+  }
+
+  .photo-filter-chip .chip-count {
+    font-size: 0.76rem;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .all-photos-search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 280px;
+    max-width: 360px;
+    flex: 1;
+  }
+
+  .all-photos-search-wrap .search-icon {
+    position: absolute;
+    left: 12px;
+    font-size: 0.95rem;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .photo-search-input {
+    width: 100%;
+    padding: 9px 14px 9px 36px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(15, 23, 42, 0.7);
+    color: #f8fafc;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.25s ease;
+  }
+
+  .photo-search-input:focus {
+    border-color: #f43f5e;
+    background: rgba(15, 23, 42, 0.95);
+    box-shadow: 0 0 16px rgba(244, 63, 94, 0.25);
+  }
+
+  .all-photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 2rem;
+    align-items: stretch;
+  }
+
+  :global(.all-photo-card) {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 22px;
+    overflow: hidden;
+    background: rgba(11, 17, 32, 0.88);
+    border: 1px solid var(--card-border);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    box-shadow: var(--card-glow);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.35s ease, border-color 0.3s ease;
+  }
+
+  :global(.all-photo-card:hover) {
+    transform: translateY(-6px);
+    border-color: #fda4af;
+    box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.85), 0 0 28px rgba(244, 63, 94, 0.28);
+  }
+
+  :global(.all-photo-image-frame) {
+    position: relative;
+    width: 100%;
+    height: 270px;
+    background: #070a13;
+    overflow: hidden;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  :global(.all-photo-img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  :global(.all-photo-image-frame:hover .all-photo-img) {
+    transform: scale(1.06);
+  }
+
+  :global(.all-photo-type-badge) {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #f8fafc;
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 4px 11px;
+    border-radius: 9999px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  :global(.all-photo-type-badge.is-cover) {
+    background: linear-gradient(135deg, rgba(244, 63, 94, 0.92), rgba(147, 51, 234, 0.92));
+    border-color: rgba(253, 164, 175, 0.5);
+    box-shadow: 0 4px 14px rgba(244, 63, 94, 0.4);
+  }
+
+  :global(.all-photo-zoom-hint) {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #ffffff;
+    font-size: 0.92rem;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+
+  :global(.all-photo-image-frame:hover .all-photo-zoom-hint) {
+    opacity: 1;
+  }
+
+  :global(.all-photo-info-body) {
+    padding: 1.3rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
+  }
+
+  :global(.all-photo-memory-meta) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: #94a3b8;
+    font-family: var(--mono);
+  }
+
+  :global(.all-photo-memory-title) {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.35;
+    margin: 0;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+
+  :global(.all-photo-memory-title:hover) {
+    color: #fda4af;
+  }
+
+  :global(.all-photo-caption-text) {
+    font-family: var(--body);
+    font-style: italic;
+    font-size: 0.92rem;
+    color: #cbd5e1;
+    line-height: 1.55;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  :global(.all-photo-card-footer) {
+    padding: 0 1.4rem 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 0.9rem;
+    margin-top: auto;
+  }
+
+  :global(.all-photo-open-journal-btn) {
+    flex: 1;
+    min-height: 40px;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+    cursor: pointer;
+    background: linear-gradient(135deg, rgba(244, 63, 94, 0.22), rgba(147, 51, 234, 0.22));
+    border: 1px solid rgba(244, 63, 94, 0.45);
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(244, 63, 94, 0.15);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+  }
+
+  :global(.all-photo-open-journal-btn:hover) {
+    background: linear-gradient(135deg, #f43f5e, #9333ea);
+    border-color: #fda4af;
+    color: #ffffff;
+    box-shadow: 0 4px 20px rgba(244, 63, 94, 0.45);
+    transform: translateY(-2px);
+  }
+
+  :global(.all-photo-zoom-btn) {
+    min-height: 40px;
+    padding: 8px 14px;
+    border-radius: 9999px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    white-space: nowrap;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #e2e8f0;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+  }
+
+  :global(.all-photo-zoom-btn:hover) {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.35);
+    color: #ffffff;
+    transform: translateY(-2px);
+  }
+
+  .all-photos-empty-state {
+    text-align: center;
+    padding: 4.5rem 2rem;
+    background: rgba(11, 17, 32, 0.6);
+    border-radius: 22px;
+    border: 1px dashed rgba(255, 255, 255, 0.18);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .all-photos-empty-state .empty-icon {
+    font-size: 3.5rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .all-photos-empty-state .empty-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+  }
+
+  .all-photos-empty-state .empty-desc {
+    color: #94a3b8;
+    max-width: 480px;
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  /* Grid - Larger, Majestic & Comfortable */
+  .polaroid-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2.5rem;
+    align-items: stretch;
+  }
+
+  :global(.polaroid-card) {
+    padding: 1.4rem 1.4rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.15rem;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.35s ease, border-color 0.3s ease;
+    background: rgba(11, 17, 32, 0.88);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--card-border);
+    border-radius: 22px;
+    position: relative;
+    box-shadow: var(--card-glow);
+  }
+
+  :global(.tilt-1) { transform: rotate(-1.5deg); }
+  :global(.tilt-2) { transform: rotate(1.2deg); }
+  :global(.tilt-3) { transform: rotate(-1deg); }
+  :global(.tilt-4) { transform: rotate(1.8deg); }
+
+  :global(.polaroid-card:hover) {
+    transform: rotate(0deg) translateY(-6px) scale(1.025);
+    z-index: 5;
+    border-color: #fda4af;
+    box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.85), 0 0 28px rgba(244, 63, 94, 0.28);
+  }
+
+  :global(.polaroid-pin) {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.35rem;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+    z-index: 6;
+  }
+
+  :global(.polaroid-photo-frame) {
+    border-radius: 16px;
+    overflow: hidden;
+    background: #070a13;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    height: 290px;
+    cursor: pointer;
+    position: relative;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+  }
+
+  :global(.polaroid-img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  :global(.polaroid-photo-frame:hover .polaroid-img) {
+    transform: scale(1.05);
+  }
+
+  :global(.polaroid-caption-area) {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  :global(.polaroid-meta-row) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.82rem;
+    color: #94a3b8;
+    font-family: var(--mono);
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  :global(.polaroid-title) {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0.2rem 0;
+    line-height: 1.35;
+    transition: color 0.2s ease;
+  }
+
+  :global(.polaroid-title:hover) {
+    color: #fda4af;
+  }
+
+  :global(.polaroid-caption) {
+    font-family: var(--body);
+    font-style: italic;
+    font-size: 0.94rem;
+    color: #cbd5e1;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* Pinned Card Glowing Effect & Badge */
+  :global(.polaroid-card.is-pinned) {
+    border-color: rgba(251, 191, 36, 0.45);
+    background: linear-gradient(180deg, rgba(30, 20, 10, 0.9) 0%, rgba(11, 17, 32, 0.92) 100%);
+    box-shadow: 0 0 30px rgba(251, 191, 36, 0.16), var(--card-glow);
+  }
+
+  :global(.polaroid-card.is-pinned:hover) {
+    border-color: #fde047;
+    box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.85), 0 0 35px rgba(251, 191, 36, 0.35);
+  }
+
+  :global(.polaroid-pin-badge) {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.92), rgba(244, 63, 94, 0.92));
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #ffffff;
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.4);
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  :global(.polaroid-card-footer) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 0.9rem;
+    margin-top: auto;
+    width: 100%;
+  }
+
+  :global(.polaroid-card-footer .btn-read-journal) {
+    flex: 1;
+    min-height: 40px;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+    cursor: pointer;
+    background: linear-gradient(135deg, rgba(244, 63, 94, 0.22), rgba(147, 51, 234, 0.22));
+    border: 1px solid rgba(244, 63, 94, 0.45);
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(244, 63, 94, 0.15);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+  }
+
+  :global(.polaroid-card-footer .btn-read-journal:hover) {
+    background: linear-gradient(135deg, #f43f5e, #9333ea);
+    border-color: #fda4af;
+    color: #ffffff;
+    box-shadow: 0 4px 20px rgba(244, 63, 94, 0.45);
+    transform: translateY(-2px);
+  }
+
+  :global(.polaroid-card-footer .polaroid-sub-actions) {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-shrink: 0;
+  }
+
+  :global(.polaroid-card-footer .btn-card-icon-action) {
+    min-height: 40px;
+    padding: 8px 13px;
+    border-radius: 9999px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    white-space: nowrap;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #e2e8f0;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+  }
+
+  :global(.polaroid-card-footer .btn-pin-mem) {
+    color: #fde047;
+  }
+
+  :global(.polaroid-card-footer .btn-pin-mem.is-pinned) {
+    background: rgba(245, 158, 11, 0.22);
+    border-color: rgba(251, 191, 36, 0.45);
+    color: #fde047;
+  }
+
+  :global(.polaroid-card-footer .btn-pin-mem:hover) {
+    background: rgba(245, 158, 11, 0.3);
+    border-color: #fde047;
+    color: #ffffff;
+    box-shadow: 0 0 14px rgba(245, 158, 11, 0.35);
+    transform: translateY(-2px);
+  }
+
+  :global(.polaroid-card-footer .btn-edit-mem:hover) {
+    background: rgba(56, 189, 248, 0.2);
+    border-color: #38bdf8;
+    color: #7dd3fc;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.3);
+    transform: translateY(-2px);
+  }
+
+  :global(.polaroid-card-footer .btn-card-delete:hover) {
+    background: rgba(239, 68, 68, 0.25);
+    border-color: #f87171;
+    color: #fca5a5;
+    box-shadow: 0 0 14px rgba(239, 68, 68, 0.35);
+    transform: translateY(-2px);
+  }
+
+  .zen-pill-pin {
+    background: rgba(245, 158, 11, 0.14) !important;
+    border-color: rgba(251, 191, 36, 0.35) !important;
+    color: #fde047 !important;
+    cursor: pointer;
+  }
+
+  /* =========================================================================
+     2-COLUMN ZEN LOVE JOURNAL STUDIO MODAL (Split Layout: Cover Left | Editor Right)
+     ========================================================================= */
+  .crud-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.2rem;
+  }
+
+  .crud-modal-overlay.is-open {
+    display: flex;
+    animation: fadeInModal 0.25s ease-out;
+  }
+
+  .zen-journal-card.zen-split-studio {
+    max-width: 1240px;
+    width: 96vw;
+    height: 92vh;
+    max-height: 94vh;
+    padding: 0;
+    background: #080d1a;
+    border-radius: 24px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.95), 0 0 50px rgba(244, 63, 94, 0.16);
+  }
+
+  /* Top Modal Header Bar */
+  .zen-modal-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.6rem;
+    background: rgba(15, 23, 42, 0.96);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+    z-index: 10;
+  }
+
+  .zen-modal-header-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .zen-header-badge {
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    background: rgba(244, 63, 94, 0.15);
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    color: #fda4af;
+    letter-spacing: 0.3px;
+  }
+
+  .zen-header-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+  }
+
+  .zen-modal-close-btn {
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #e2e8f0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .zen-modal-close-btn:hover {
+    background: rgba(244, 63, 94, 0.7);
+    border-color: #fda4af;
+    color: #ffffff;
+    transform: scale(1.08);
+  }
+
+  /* Form & 2-Column Split Body Grid */
+  .zen-split-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .zen-two-columns-body {
+    display: grid;
+    grid-template-columns: 410px 1fr;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    background: #080d1a;
+  }
+
+  /* =========================================================================
+     LEFT PANE: Cover Photo & Attached Gallery Drawer
+     ========================================================================= */
+  .zen-left-pane {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    padding: 1.4rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(11, 17, 32, 0.65);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(244, 63, 94, 0.3) transparent;
+  }
+
+  .zen-pane-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .zen-section-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #fda4af;
+  }
+
+  .zen-label-icon {
+    font-size: 0.95rem;
+  }
+
+  /* Left Pane Cover Hero */
+  .zen-cover-hero {
+    position: relative;
+    width: 100%;
+    height: 270px;
+    min-height: 270px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #0d1224 0%, #171026 50%, #200d2b 100%);
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(244, 63, 94, 0.25);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  }
+
+  .zen-cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+
+  .zen-cover-hero:hover .zen-cover-img {
+    transform: scale(1.03);
+  }
+
+  .zen-cover-empty-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 1.2rem;
+    text-align: center;
+    z-index: 2;
+    border: 2px dashed rgba(244, 63, 94, 0.35);
+    border-radius: 14px;
+    margin: 0.8rem;
+    width: calc(100% - 1.6rem);
+    height: calc(100% - 1.6rem);
+    background: rgba(11, 17, 32, 0.65);
+    backdrop-filter: blur(8px);
+    transition: all 0.25s ease;
+  }
+
+  .zen-cover-empty-placeholder:hover {
+    border-color: #fda4af;
+    background: rgba(11, 17, 32, 0.85);
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.2);
+  }
+
+  .zen-empty-badge {
+    font-size: 1.8rem;
+    filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.5));
+  }
+
+  .zen-empty-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+  }
+
+  .zen-empty-text {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    margin: 0 0 4px;
+  }
+
+  .zen-empty-btns {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .zen-empty-btn {
+    min-height: 36px !important;
+    padding: 6px 16px !important;
+    font-size: 0.84rem !important;
+    border-radius: 9999px !important;
+  }
+
+  .zen-cover-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(9, 14, 26, 0.05) 0%, rgba(9, 14, 26, 0.4) 60%, rgba(9, 14, 26, 0.95) 100%);
+    pointer-events: none;
+  }
+
+  .zen-cover-actions {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    display: flex;
+    gap: 6px;
+    z-index: 5;
+    background: rgba(11, 17, 32, 0.85);
+    backdrop-filter: blur(12px);
+    padding: 4px 6px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  }
+
+  .zen-cover-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #fda4af;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+
+  .zen-cover-btn:hover {
+    background: linear-gradient(135deg, #f43f5e, #9333ea);
+    color: #ffffff;
+    border-color: #fda4af;
+    transform: translateY(-1px);
+    box-shadow: 0 0 10px rgba(244, 63, 94, 0.4);
+  }
+
+  .zen-cover-btn-delete:hover {
+    background: rgba(239, 68, 68, 0.8);
+    border-color: #f87171;
+  }
+
+  .zen-cover-url-bar {
+    position: absolute;
+    bottom: 10px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    gap: 6px;
+    z-index: 6;
+    background: rgba(15, 23, 42, 0.95);
+    padding: 6px 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  }
+
+  .zen-cover-url-input {
+    font-size: 0.82rem !important;
+    padding: 6px 10px !important;
+    min-height: 36px !important;
+  }
+
+  /* Left Pane Attached Gallery Card */
+  .zen-attached-gallery-card {
+    background: rgba(15, 23, 42, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .zen-gallery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .zen-gallery-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    color: #fda4af;
+    font-size: 0.9rem;
+  }
+
+  .zen-gallery-count {
+    font-size: 0.75rem;
+    background: rgba(244, 63, 94, 0.2);
+    padding: 2px 8px;
+    border-radius: 9999px;
+    color: #fecdd3;
+  }
+
+  .zen-gallery-sub {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    margin: 0;
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  .zen-gallery-items-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(244, 63, 94, 0.25) transparent;
+  }
+
+  :global(.gallery-edit-item) {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(15, 23, 42, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 8px 10px;
+    border-radius: 14px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  :global(.gallery-edit-item:hover) {
+    border-color: rgba(244, 63, 94, 0.45);
+    background: rgba(15, 23, 42, 0.98);
+  }
+
+  :global(.gallery-thumb-wrap) {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+  }
+
+  :global(.gallery-edit-thumb) {
+    width: 60px !important;
+    height: 60px !important;
+    min-width: 60px !important;
+    min-height: 60px !important;
+    max-width: 60px !important;
+    max-height: 60px !important;
+    border-radius: 10px;
+    object-fit: cover !important;
+    flex-shrink: 0;
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    background: #020617;
+    display: block;
+  }
+
+  :global(.gallery-thumb-tag) {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background: rgba(0, 0, 0, 0.85);
+    color: #fda4af;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 4px;
+    border: 1px solid rgba(244, 63, 94, 0.3);
+  }
+
+  :global(.gallery-edit-info) {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  :global(.gallery-item-header) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 2px;
+  }
+
+  :global(.gallery-item-badge) {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #fda4af;
+  }
+
+  :global(.gallery-token-code) {
+    font-size: 0.72rem;
+    background: rgba(244, 63, 94, 0.15);
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    color: #fbcfe8;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-weight: 700;
+  }
+
+  :global(.gallery-caption-input) {
+    font-size: 0.8rem !important;
+    padding: 5px 8px !important;
+    min-height: 32px !important;
+    width: 100%;
+    background: rgba(2, 6, 23, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 6px !important;
+    color: #f1f5f9 !important;
+  }
+
+  :global(.gallery-caption-input:focus) {
+    border-color: #fda4af !important;
+    background: rgba(2, 6, 23, 0.95) !important;
+    box-shadow: 0 0 8px rgba(244, 63, 94, 0.25) !important;
+  }
+
+  :global(.gallery-item-actions) {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: stretch;
+    flex-shrink: 0;
+  }
+
+  :global(.btn-insert-inline-img) {
+    background: linear-gradient(135deg, rgba(244, 63, 94, 0.3), rgba(147, 51, 234, 0.3));
+    border: 1px solid rgba(244, 63, 94, 0.5);
+    color: #fda4af;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  :global(.btn-insert-inline-img:hover) {
+    background: linear-gradient(135deg, #e11d48, #9333ea);
+    color: #ffffff;
+    border-color: #fda4af;
+    transform: translateY(-1px);
+    box-shadow: 0 0 12px rgba(244, 63, 94, 0.4);
+  }
+
+  :global(.btn-insert-inline-img.is-inserted) {
+    background: linear-gradient(135deg, #059669, #10b981) !important;
+    color: #ffffff !important;
+    border-color: #34d399 !important;
+  }
+
+  :global(.btn-remove-gallery-item) {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+    padding: 4px 6px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  :global(.btn-remove-gallery-item:hover) {
+    background: rgba(239, 68, 68, 0.85);
+    color: #ffffff;
+    border-color: #f87171;
+  }
+
+  .zen-add-url-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-top: 4px;
+  }
+
+  .zen-gallery-url-input {
+    font-size: 0.8rem !important;
+    padding: 5px 10px !important;
+    min-height: 34px !important;
+  }
+
+  /* =========================================================================
+     RIGHT PANE: Writing Studio / Markdown Editor / Live Preview
+     ========================================================================= */
+  .zen-right-pane {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    background: #080d1a;
+  }
+
+  .zen-scrollable-editor {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 1.6rem 2.2rem 2.4rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(244, 63, 94, 0.3) transparent;
+  }
+
+  /* Seamless Title Input */
+  .zen-title-container {
+    margin-bottom: 0.8rem;
+  }
+
+  .zen-title-textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.25;
+    font-family: var(--sans);
+    resize: none;
+    letter-spacing: -0.01em;
+    padding: 0;
+  }
+
+  .zen-title-textarea::placeholder {
+    color: rgba(148, 163, 184, 0.4);
+    font-weight: 700;
+  }
+
+  /* Meta Pills Bar */
+  .zen-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+
+  .zen-pill-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(30, 41, 59, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 9999px;
+    padding: 5px 12px;
+    font-size: 0.82rem;
+    color: #cbd5e1;
+    transition: all 0.2s;
+  }
+
+  .zen-pill-item:focus-within {
+    border-color: #fda4af;
+    background: rgba(30, 41, 59, 0.95);
+    box-shadow: 0 0 10px rgba(244, 63, 94, 0.2);
+  }
+
+  .zen-pill-icon {
+    font-size: 0.9rem;
+  }
+
+  .zen-pill-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #f1f5f9;
+    font-size: 0.82rem;
+    font-family: inherit;
+    width: 105px;
+  }
+
+  .zen-pill-input::placeholder {
+    color: #64748b;
+  }
+
+  .zen-pill-select {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fda4af;
+    font-size: 0.82rem;
+    font-family: inherit;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .zen-pill-select option {
+    background: #0f172a;
+    color: #f8fafc;
+  }
+
+  .zen-pill-mood {
+    border-color: rgba(244, 63, 94, 0.35);
+    background: rgba(244, 63, 94, 0.12);
+  }
+
+  .zen-pill-weather {
+    border-color: rgba(56, 189, 248, 0.35);
+    background: rgba(56, 189, 248, 0.12);
+  }
+
+  /* Lead Quote / Polaroid Caption */
+  .zen-lead-quote-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid #f43f5e;
+    background: rgba(244, 63, 94, 0.08);
+    padding: 0.6rem 1.1rem;
+    border-radius: 0 12px 12px 0;
+    margin-bottom: 1.1rem;
+  }
+
+  .zen-quote-icon {
+    font-size: 1.1rem;
+    opacity: 0.85;
+  }
+
+  .zen-caption-textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: var(--body);
+    font-style: italic;
+    font-size: 0.95rem;
+    color: #fbcfe8;
+    line-height: 1.45;
+    resize: none;
+    padding: 0;
+  }
+
+  .zen-caption-textarea::placeholder {
+    color: rgba(244, 63, 94, 0.45);
+  }
+
+  /* Sticky Format & View Toolbar */
+  .zen-sticky-toolbar {
+    position: sticky;
+    top: -1.6rem;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    background: rgba(15, 23, 42, 0.96);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 6px 10px;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .zen-tools-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .zen-tb-btn {
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #f1f5f9;
+    font-size: 0.82rem;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-weight: 600;
+  }
+
+  .zen-tb-btn:hover {
+    background: rgba(244, 63, 94, 0.3);
+    border-color: #fda4af;
+    color: #ffffff;
+    transform: translateY(-1px);
+  }
+
+  .zen-emoji-strip {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    background: rgba(2, 6, 23, 0.6);
+    padding: 2px 6px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    margin-left: 4px;
+  }
+
+  .zen-emoji-btn {
+    background: none;
+    border: none;
+    font-size: 1.05rem;
+    cursor: pointer;
+    padding: 2px 3px;
+    border-radius: 4px;
+    transition: transform 0.15s;
+  }
+
+  .zen-emoji-btn:hover {
+    transform: scale(1.3);
+    background: rgba(244, 63, 94, 0.2);
+  }
+
+  .zen-view-toggle-group {
+    display: flex;
+    gap: 2px;
+    background: rgba(2, 6, 23, 0.7);
+    padding: 3px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .zen-toggle-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .zen-toggle-btn.is-active {
+    background: linear-gradient(135deg, #e11d48, #9333ea);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(225, 29, 72, 0.4);
+  }
+
+  /* Workspace */
+  .zen-workspace-container {
+    margin-bottom: 1.2rem;
+  }
+
+  .zen-main-textarea {
+    width: 100%;
+    min-height: 380px;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: var(--body), Georgia, serif;
+    font-size: 1.08rem;
+    line-height: 1.85;
+    color: #f1f5f9;
+    resize: none;
+    padding: 0;
+  }
+
+  .zen-main-textarea::placeholder {
+    color: rgba(148, 163, 184, 0.4);
+    font-style: italic;
+  }
+
+  .zen-preview-content-box {
+    min-height: 380px;
+    background: rgba(2, 6, 23, 0.4);
+    border-radius: 12px;
+    padding: 1.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  /* Bottom Footer Bar */
+  .zen-footer-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.9rem 1.8rem;
+    background: rgba(15, 23, 42, 0.96);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+  }
+
+  .zen-footer-wordcount {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .zen-footer-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  @media (max-width: 960px) {
+    .zen-journal-card.zen-split-studio {
+      width: 98vw;
+      height: 96vh;
+      max-height: 96vh;
+    }
+    .zen-two-columns-body {
+      grid-template-columns: 1fr;
+      overflow-y: auto;
+    }
+    .zen-left-pane {
+      border-right: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      overflow-y: visible;
+    }
+    .zen-scrollable-editor {
+      overflow-y: visible;
+    }
+  }
+
+  /* Inline Markdown rendered elements (Reader & Preview) */
+  :global(.journal-inline-img-wrap) {
+    margin: 1.8rem 0;
+    text-align: center;
+  }
+
+  :global(.journal-inline-img) {
+    max-width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: 12px;
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    display: block;
+    margin: 0 auto;
+    cursor: pointer;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+
+  :global(.journal-inline-img:hover) {
+    transform: scale(1.02);
+    border-color: #fda4af;
+  }
+
+  :global(.journal-inline-caption) {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #fbcfe8;
+    font-style: italic;
+    font-family: var(--body);
+  }
+
+  :global(.journal-subheading) {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fda4af;
+    margin: 1.6rem 0 0.8rem;
+  }
+
+  :global(.journal-heading) {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #fda4af;
+    margin: 1.8rem 0 0.9rem;
+  }
+
+  :global(.journal-quote) {
+    border-left: 3px solid #f43f5e;
+    background: rgba(244, 63, 94, 0.1);
+    padding: 0.8rem 1.2rem;
+    border-radius: 0 10px 10px 0;
+    margin: 1.4rem 0;
+  }
+
+  :global(.journal-quote-text) {
+    font-family: var(--body);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: #fbcfe8;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  :global(.journal-list) {
+    padding-left: 1.5rem;
+    margin: 1rem 0;
+    color: #e2e8f0;
+  }
+
+  :global(.journal-bold) {
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  :global(.journal-italic) {
+    font-style: italic;
+    color: #fbcfe8;
+  }
+
+  :global(.journal-mark) {
+    background: rgba(244, 63, 94, 0.3);
+    color: #ffffff;
+    padding: 1px 4px;
+    border-radius: 4px;
+  }
+
+  /* =========================================================================
+     JOURNAL ARTICLE READER MODAL
+     ========================================================================= */
+  .journal-reader-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.2rem;
+  }
+
+  .journal-reader-overlay.is-open {
+    display: flex;
+    animation: fadeInModal 0.28s ease-out;
+  }
+
+  .journal-reader-card {
+    position: relative;
+    max-width: 820px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #0f172a;
+    border-radius: 20px;
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8), 0 0 32px rgba(244, 63, 94, 0.2);
+    padding: 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(244, 63, 94, 0.4) transparent;
+  }
+
+  .journal-reader-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    z-index: 10;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    backdrop-filter: blur(6px);
+  }
+
+  .journal-reader-close-btn:hover {
+    background: rgba(244, 63, 94, 0.6);
+    transform: scale(1.1);
+  }
+
+  .journal-cover-wrap {
+    position: relative;
+    width: 100%;
+    height: 340px;
+    overflow: hidden;
+    background: #020617;
+  }
+
+  .journal-cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease;
+  }
+
+  .journal-cover-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(15, 23, 42, 0.1) 0%, rgba(15, 23, 42, 0.5) 60%, rgba(15, 23, 42, 1) 100%);
+  }
+
+  .journal-cover-meta-badge {
+    position: absolute;
+    bottom: 16px;
+    right: 24px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    border-radius: 9999px;
+    padding: 6px 16px;
+    font-size: 0.85rem;
+    color: #fda4af;
+    font-weight: 600;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  }
+
+  .journal-article-body {
+    padding: 1.5rem 2.8rem 2.8rem;
+  }
+
+  .journal-meta-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+  }
+
+  .journal-pill {
+    padding: 5px 14px;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 9999px;
+    font-size: 0.82rem;
+    color: #cbd5e1;
+    font-weight: 500;
+  }
+
+  .journal-pill-mood {
+    border-color: rgba(244, 63, 94, 0.35);
+    background: rgba(244, 63, 94, 0.12);
+    color: #fecdd3;
+  }
+
+  .journal-pill-weather {
+    border-color: rgba(56, 189, 248, 0.35);
+    background: rgba(56, 189, 248, 0.12);
+    color: #bae6fd;
+  }
+
+  .journal-article-title {
+    font-size: 2.3rem;
+    font-weight: 800;
+    line-height: 1.25;
+    margin: 0 0 1.2rem;
+    letter-spacing: -0.02em;
+  }
+
+  .journal-lead-quote {
+    border-left: 3px solid #f43f5e;
+    background: rgba(244, 63, 94, 0.08);
+    padding: 0.9rem 1.4rem;
+    border-radius: 0 12px 12px 0;
+    margin-bottom: 2rem;
+  }
+
+  .journal-quote-text {
+    font-family: var(--body);
+    font-style: italic;
+    font-size: 1.08rem;
+    color: #fbcfe8;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .journal-story-text {
+    font-family: var(--body);
+    font-size: 1.12rem;
+    line-height: 1.9;
+    color: #e2e8f0;
+    margin-bottom: 2.5rem;
+  }
+
+  :global(.journal-paragraph) {
+    margin-bottom: 1.4rem;
+  }
+
+  :global(.journal-paragraph:first-of-type::first-letter) {
+    font-size: 2.5rem;
+    line-height: 1;
+    float: left;
+    margin-right: 8px;
+    color: #fda4af;
+    font-family: var(--sans);
+    font-weight: 800;
+  }
+
+  /* Attached photos section in reader */
+  .journal-gallery-section {
+    margin: 2.5rem 0;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .journal-gallery-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1.2rem;
+  }
+
+  .gallery-title-icon {
+    font-size: 1.4rem;
+  }
+
+  .gallery-section-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fda4af;
+    margin: 0;
+  }
+
+  .journal-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.2rem;
+  }
+
+  :global(.gallery-photo-card) {
+    border-radius: 12px;
+    overflow: hidden;
+    background: #020617;
+    border: 1px solid rgba(244, 63, 94, 0.28);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  :global(.gallery-photo-card:hover) {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(244, 63, 94, 0.3);
+    border-color: #fda4af;
+  }
+
+  :global(.gallery-photo-img) {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+
+  :global(.gallery-photo-card:hover .gallery-photo-img) {
+    transform: scale(1.05);
+  }
+
+  :global(.gallery-photo-caption) {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    color: #cbd5e1;
+    font-style: italic;
+    text-align: center;
+    margin: 0;
+    background: rgba(15, 23, 42, 0.95);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .journal-signoff-card {
+    text-align: center;
+    padding: 2rem 1.5rem;
+    background: radial-gradient(circle at 50% 50%, rgba(244, 63, 94, 0.12) 0%, rgba(15, 23, 42, 0.6) 80%);
+    border-radius: 16px;
+    border: 1px dashed rgba(244, 63, 94, 0.35);
+    margin-top: 2.5rem;
+  }
+
+  .signoff-heart {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .signoff-text {
+    font-size: 0.95rem;
+    color: #cbd5e1;
+    font-style: italic;
+    margin: 0 0 0.4rem;
+  }
+
+  .signoff-couple {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fda4af;
+  }
+
+  .journal-reader-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* Polaroid Cards badges & read hints */
+  :global(.polaroid-read-hint) {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #fda4af;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  :global(.polaroid-photo-frame:hover .polaroid-read-hint) {
+    background: linear-gradient(135deg, rgba(225, 29, 72, 0.95), rgba(147, 51, 234, 0.95));
+    color: #ffffff;
+    border-color: #fda4af;
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    box-shadow: 0 6px 20px rgba(244, 63, 94, 0.45);
+  }
+
+  :global(.polaroid-photo-count) {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 2;
+  }
+
+  :global(.polaroid-mood-badge) {
+    font-size: 0.72rem;
+    color: #fbcfe8;
+    background: rgba(244, 63, 94, 0.15);
+    border: 1px solid rgba(244, 63, 94, 0.25);
+    padding: 2px 8px;
+    border-radius: 9999px;
+  }
+
+  :global(.btn-read-journal) {
+    background: linear-gradient(135deg, #e11d48, #9333ea) !important;
+    color: #ffffff !important;
+    border-color: transparent !important;
+    font-weight: 600;
+  }
+
+  :global(.btn-read-journal:hover) {
+    box-shadow: 0 0 12px rgba(244, 63, 94, 0.5);
+    transform: scale(1.05);
+  }
+
+  /* Lightbox */
+  .image-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .image-modal-overlay.is-open {
+    display: flex;
+    animation: fadeInModal 0.25s ease-out;
+  }
+
+  .modal-card {
+    position: relative;
+    max-width: 680px;
+    width: 100%;
+    background: #0f172a;
+    padding: 1.5rem;
+  }
+
+  .modal-main-img {
+    width: 100%;
+    max-height: 480px;
+    object-fit: contain;
+    border-radius: 8px;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .modal-caption-text {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fda4af;
+    margin: 0;
+  }
+
+  @media (max-width: 992px) {
+    .journal-studio-card {
+      width: 98vw;
+      height: 96vh;
+      max-height: 96vh;
+      padding: 1rem;
+    }
+    .studio-split-layout {
+      grid-template-columns: 1fr;
+      overflow-y: auto;
+    }
+    .studio-sidebar-pane {
+      max-height: 280px;
+    }
+    .studio-editor-pane {
+      min-height: 380px;
+    }
+    .studio-workspace.mode-split {
+      flex-direction: column;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .section-title {
+      font-size: 1.7rem;
+    }
+    .polaroid-gallery-grid {
+      grid-template-columns: 1fr;
+    }
+    :global(.tilt-1), :global(.tilt-2), :global(.tilt-3), :global(.tilt-4) {
+      transform: none;
+    }
+    .journal-article-body {
+      padding: 1.2rem 1.4rem 1.8rem;
+    }
+    .journal-cover-wrap {
+      height: 220px;
+    }
+    .journal-article-title {
+      font-size: 1.7rem;
+    }
+    .journal-story-text {
+      font-size: 1rem;
+      line-height: 1.75;
+    }
+    .studio-footer-hint {
+      max-width: 100%;
+    }
+    .studio-footer-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .studio-footer-buttons {
+      justify-content: flex-end;
+    }
+  }
+</style>
+
+<script>
+  import { pushDataToFirebase } from '../lib/firebaseClient';
+  import { moveItemToTrash } from '../lib/trashBin';
+
+  interface JournalPhoto {
+    id: string;
+    url: string;
+    caption?: string;
+  }
+
+  interface PhotoMemory {
+    id: string;
+    title: string;
+    caption: string;
+    imageUrl: string;
+    date?: string;
+    location?: string;
+    journalContent?: string;
+    mood?: string;
+    weather?: string;
+    author?: 'ai' | 'maze' | 'both';
+    galleryImages?: JournalPhoto[];
+    isPinned?: boolean;
+  }
+
+  const MEMORIES_STORAGE_KEY = 'couple_memories';
+
+  let currentUploadedMemPhoto = '';
+  let currentAttachedGallery: JournalPhoto[] = [];
+  let currentViewingPhoto: PhotoMemory | null = null;
+  let currentStudioViewMode: 'split' | 'editor' | 'preview' = 'split';
+
+  function escapeHtml(str: string): string {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // =========================================================================
+  // LIGHTWEIGHT MARKDOWN PARSER (For Reader & Live Preview)
+  // =========================================================================
+  function renderMarkdownToHtml(raw: string, defaultAlt = 'Kỷ niệm', customGallery?: JournalPhoto[]): string {
+    if (!raw || !raw.trim()) return '';
+
+    const text = raw.replace(/\r\n/g, '\n');
+    const lines = text.split('\n');
+    const htmlBlocks: string[] = [];
+    let currentParagraph: string[] = [];
+    let inList = false;
+    let listItems: string[] = [];
+    let inBlockquote = false;
+    let blockquoteLines: string[] = [];
+
+    const formatInline = (str: string) => {
+      let res = str
+        .replace(/\*\*(.*?)\*\*/g, '<strong class="journal-bold">$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em class="journal-italic">$1</em>')
+        .replace(/==(.*?)==/g, '<mark class="journal-mark">$1</mark>');
+
+      // Handle inline [photo:X] or [ảnh:X]
+      res = res.replace(/\[(?:photo|ảnh):(\d+)(?:\s*\|\s*(.*?))?\]/gi, (match, pNum, pCap) => {
+        const pIdx = parseInt(pNum, 10) - 1;
+        const galleryList = customGallery || currentAttachedGallery || [];
+        const photoObj = galleryList[pIdx];
+        if (photoObj && photoObj.url) {
+          const alt = pCap?.trim() || photoObj.caption || defaultAlt || `Ảnh ${pIdx + 1}`;
+          return `
+            <figure class="journal-inline-img-wrap" data-src="${photoObj.url}" data-caption="${escapeHtml(alt)}">
+              <img src="${photoObj.url}" alt="${escapeHtml(alt)}" class="journal-inline-img" loading="lazy" />
+              <figcaption class="journal-inline-caption">📸 ${escapeHtml(alt)}</figcaption>
+            </figure>
+          `;
+        }
+        return match;
+      });
+
+      return res;
+    };
+
+    const flushParagraph = () => {
+      if (currentParagraph.length > 0) {
+        const pText = currentParagraph.join('<br/>');
+        htmlBlocks.push(`<p class="journal-paragraph">${formatInline(pText)}</p>`);
+        currentParagraph = [];
+      }
+    };
+
+    const flushList = () => {
+      if (inList && listItems.length > 0) {
+        htmlBlocks.push(`<ul class="journal-list">${listItems.map((item) => `<li>${formatInline(item)}</li>`).join('')}</ul>`);
+        listItems = [];
+        inList = false;
+      }
+    };
+
+    const flushBlockquote = () => {
+      if (inBlockquote && blockquoteLines.length > 0) {
+        const quoteContent = blockquoteLines.join('<br/>');
+        htmlBlocks.push(`<blockquote class="journal-quote"><p class="journal-quote-text">${formatInline(quoteContent)}</p></blockquote>`);
+        blockquoteLines = [];
+        inBlockquote = false;
+      }
+    };
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+
+      if (!line) {
+        flushParagraph();
+        flushList();
+        flushBlockquote();
+        continue;
+      }
+
+      // 1. Short photo tag: [photo:1] or [ảnh:1] or [photo:1 | Chú thích riêng]
+      const photoTagMatch = line.match(/^\[(?:photo|ảnh):(\d+)(?:\s*\|\s*(.*?))?\]$/i);
+      if (photoTagMatch) {
+        flushParagraph();
+        flushList();
+        flushBlockquote();
+        const photoIndex = parseInt(photoTagMatch[1], 10) - 1;
+        const customCap = photoTagMatch[2]?.trim();
+        const galleryList = customGallery || currentAttachedGallery || [];
+        const photoObj = galleryList[photoIndex];
+        if (photoObj && photoObj.url) {
+          const alt = customCap || photoObj.caption || defaultAlt || `Ảnh ${photoIndex + 1}`;
+          const src = photoObj.url;
+          htmlBlocks.push(`
+            <figure class="journal-inline-img-wrap" data-src="${src}" data-caption="${escapeHtml(alt)}">
+              <img src="${src}" alt="${escapeHtml(alt)}" class="journal-inline-img" loading="lazy" />
+              <figcaption class="journal-inline-caption">📸 ${escapeHtml(alt)}</figcaption>
+            </figure>
+          `);
+        }
+        continue;
+      }
+
+      // 2. Inline image: ![caption](url)
+      const imgMatch = line.match(/^!\[(.*?)\]\((.*?)\)$/);
+      if (imgMatch) {
+        flushParagraph();
+        flushList();
+        flushBlockquote();
+        const alt = imgMatch[1] || defaultAlt;
+        const src = imgMatch[2];
+        htmlBlocks.push(`
+          <figure class="journal-inline-img-wrap" data-src="${src}" data-caption="${escapeHtml(alt)}">
+            <img src="${src}" alt="${escapeHtml(alt)}" class="journal-inline-img" loading="lazy" />
+            ${alt ? `<figcaption class="journal-inline-caption">📸 ${escapeHtml(alt)}</figcaption>` : ''}
+          </figure>
+        `);
+        continue;
+      }
+
+      // Heading 3: ### Heading
+      if (line.startsWith('### ')) {
+        flushParagraph();
+        flushList();
+        flushBlockquote();
+        htmlBlocks.push(`<h4 class="journal-subheading">${formatInline(escapeHtml(line.slice(4)))}</h4>`);
+        continue;
+      }
+
+      // Heading 2 / 1: ## Heading or # Heading
+      if (line.startsWith('## ') || line.startsWith('# ')) {
+        flushParagraph();
+        flushList();
+        flushBlockquote();
+        const headingText = line.startsWith('## ') ? line.slice(3) : line.slice(2);
+        htmlBlocks.push(`<h3 class="journal-heading">${formatInline(escapeHtml(headingText))}</h3>`);
+        continue;
+      }
+
+      // Blockquote: > text
+      if (line.startsWith('>')) {
+        flushParagraph();
+        flushList();
+        inBlockquote = true;
+        blockquoteLines.push(escapeHtml(line.replace(/^>\s*/, '')));
+        continue;
+      } else if (inBlockquote) {
+        flushBlockquote();
+      }
+
+      // List: - item or * item
+      if (line.startsWith('- ') || line.startsWith('* ')) {
+        flushParagraph();
+        flushBlockquote();
+        inList = true;
+        listItems.push(escapeHtml(line.slice(2)));
+        continue;
+      } else if (inList) {
+        flushList();
+      }
+
+      // Regular paragraph text
+      currentParagraph.push(escapeHtml(line));
+    }
+
+    flushParagraph();
+    flushList();
+    flushBlockquote();
+
+    return htmlBlocks.join('\n');
+  }
+
+  function getStoredMemories(): PhotoMemory[] {
+    try {
+      const stored = localStorage.getItem(MEMORIES_STORAGE_KEY);
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    const initial = (window as any).__INITIAL_MEMORIES__ || [];
+    localStorage.setItem(MEMORIES_STORAGE_KEY, JSON.stringify(initial));
+    return initial;
+  }
+
+  function saveStoredMemories(list: PhotoMemory[]) {
+    localStorage.setItem(MEMORIES_STORAGE_KEY, JSON.stringify(list));
+    pushDataToFirebase({ memories: list, lastUpdatedBy: 'Memories' }).catch(() => {});
+  }
+
+  // =========================================================================
+  // ALL UPLOADED PHOTOS STREAM LOGIC
+  // =========================================================================
+  interface AggregatedPhotoItem {
+    id: string;
+    url: string;
+    caption?: string;
+    photoType: 'cover' | 'gallery';
+    photoIndex?: number;
+    memory: PhotoMemory;
+  }
+
+  let currentPhotoFilter = 'all'; // 'all' | 'cover' | 'gallery'
+  let currentPhotoSearchQuery = '';
+
+  function getAllUploadedPhotos(): AggregatedPhotoItem[] {
+    const memories = getStoredMemories();
+    const allPhotos: AggregatedPhotoItem[] = [];
+
+    // Sort: Pinned memories first
+    const sortedList = [...memories].sort((a, b) => {
+      const pinA = a.isPinned ? 1 : 0;
+      const pinB = b.isPinned ? 1 : 0;
+      return pinB - pinA;
+    });
+
+    sortedList.forEach((mem) => {
+      // 1. Cover Photo
+      if (mem.imageUrl) {
+        allPhotos.push({
+          id: `${mem.id}-cover`,
+          url: mem.imageUrl,
+          caption: mem.caption || '',
+          photoType: 'cover',
+          memory: mem
+        });
+      }
+
+      // 2. Attached Gallery Photos
+      if (mem.galleryImages && Array.isArray(mem.galleryImages)) {
+        mem.galleryImages.forEach((img, idx) => {
+          if (img.url) {
+            allPhotos.push({
+              id: `${mem.id}-gallery-${img.id || idx}`,
+              url: img.url,
+              caption: img.caption || mem.caption || '',
+              photoType: 'gallery',
+              photoIndex: idx + 1,
+              memory: mem
+            });
+          }
+        });
+      }
+    });
+
+    return allPhotos;
+  }
+
+  function renderAllPhotosStream() {
+    const gridContainer = document.getElementById('all-photos-grid-container');
+    const emptyState = document.getElementById('all-photos-empty');
+    if (!gridContainer) return;
+
+    const allPhotos = getAllUploadedPhotos();
+
+    // Update counts in badges & filter chips
+    const totalCount = allPhotos.length;
+    const coverCount = allPhotos.filter((p) => p.photoType === 'cover').length;
+    const galleryCount = allPhotos.filter((p) => p.photoType === 'gallery').length;
+
+    const badgeCountAllPhotos = document.getElementById('count-all-photos-badge');
+    if (badgeCountAllPhotos) badgeCountAllPhotos.textContent = String(totalCount);
+
+    const filterCountAll = document.getElementById('filter-count-all');
+    if (filterCountAll) filterCountAll.textContent = String(totalCount);
+
+    const filterCountCover = document.getElementById('filter-count-cover');
+    if (filterCountCover) filterCountCover.textContent = String(coverCount);
+
+    const filterCountGallery = document.getElementById('filter-count-gallery');
+    if (filterCountGallery) filterCountGallery.textContent = String(galleryCount);
+
+    // Apply filters & search query
+    let filtered = allPhotos;
+    if (currentPhotoFilter === 'cover') {
+      filtered = filtered.filter((p) => p.photoType === 'cover');
+    } else if (currentPhotoFilter === 'gallery') {
+      filtered = filtered.filter((p) => p.photoType === 'gallery');
+    }
+
+    if (currentPhotoSearchQuery.trim()) {
+      const q = currentPhotoSearchQuery.toLowerCase().trim();
+      filtered = filtered.filter((p) => {
+        const title = (p.memory.title || '').toLowerCase();
+        const loc = (p.memory.location || '').toLowerCase();
+        const date = (p.memory.date || '').toLowerCase();
+        const cap = (p.caption || '').toLowerCase();
+        const author = (p.memory.author || '').toLowerCase();
+        const mood = (p.memory.mood || '').toLowerCase();
+        return (
+          title.includes(q) ||
+          loc.includes(q) ||
+          date.includes(q) ||
+          cap.includes(q) ||
+          author.includes(q) ||
+          mood.includes(q)
+        );
+      });
+    }
+
+    gridContainer.innerHTML = '';
+
+    if (filtered.length === 0) {
+      if (emptyState) emptyState.style.display = 'flex';
+      return;
+    } else {
+      if (emptyState) emptyState.style.display = 'none';
+    }
+
+    filtered.forEach((item) => {
+      const card = document.createElement('div');
+      card.className = 'all-photo-card romantic-card';
+
+      const isCover = item.photoType === 'cover';
+      const typeBadgeText = isCover ? '📸 Ảnh Bìa' : `🖼️ Ảnh Chuyến Đi #${item.photoIndex || 1}`;
+      const authorName =
+        item.memory.author === 'ai' ? 'AI 🚀' : item.memory.author === 'maze' ? 'Maze 🌸' : 'Cả hai 💖';
+      const displayCaption = item.caption || item.memory.caption || item.memory.title;
+
+      card.innerHTML = `
+        <div class="all-photo-image-frame" title="Nhấn để phóng to ảnh">
+          <img
+            src="${item.url}"
+            alt="${escapeHtml(item.memory.title)}"
+            class="all-photo-img"
+            loading="lazy"
+          />
+          <span class="all-photo-type-badge ${isCover ? 'is-cover' : ''}">${typeBadgeText}</span>
+          <div class="all-photo-zoom-hint">🔍 Nhấn để phóng to</div>
+        </div>
+        <div class="all-photo-info-body">
+          <div class="all-photo-memory-meta">
+            <span>🗓️ ${escapeHtml(item.memory.date || 'Kỷ niệm')}</span>
+            <span>📍 ${escapeHtml(item.memory.location || 'Bên nhau')}</span>
+            <span>✍️ ${escapeHtml(authorName)}</span>
+          </div>
+          <h3 class="all-photo-memory-title" title="Nhấn để mở nhật ký kỷ niệm">${escapeHtml(item.memory.title)}</h3>
+          <p class="all-photo-caption-text">"${escapeHtml(displayCaption)}"</p>
+        </div>
+        <div class="all-photo-card-footer">
+          <button type="button" class="all-photo-open-journal-btn" title="Mở trang nhật ký chứa bức ảnh này">
+            <span>📖 Mở Nhật Ký</span>
+          </button>
+          <button type="button" class="all-photo-zoom-btn" title="Phóng to ảnh chất lượng cao">
+            <span>🔍 Phóng To</span>
+          </button>
+        </div>
+      `;
+
+      // Click on photo frame -> Lightbox
+      const imgFrame = card.querySelector('.all-photo-image-frame');
+      if (imgFrame) {
+        imgFrame.addEventListener('click', () => {
+          openMemLightbox(item.url, `${item.memory.title} - ${displayCaption}`);
+        });
+      }
+
+      // Click on zoom button -> Lightbox
+      const zoomBtn = card.querySelector('.all-photo-zoom-btn');
+      if (zoomBtn) {
+        zoomBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openMemLightbox(item.url, `${item.memory.title} - ${displayCaption}`);
+        });
+      }
+
+      // Click on title -> Open Reader
+      const titleEl = card.querySelector('.all-photo-memory-title');
+      if (titleEl) {
+        titleEl.addEventListener('click', () => {
+          openJournalReader(item.memory);
+        });
+      }
+
+      // Click on "Mở Nhật Ký" -> Open Reader
+      const readBtn = card.querySelector('.all-photo-open-journal-btn');
+      if (readBtn) {
+        readBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openJournalReader(item.memory);
+        });
+      }
+
+      gridContainer.appendChild(card);
+    });
+  }
+
+  function renderMemories() {
+    const container = document.getElementById('memories-container');
+    if (!container) return;
+
+    const list = getStoredMemories();
+
+    // Update stories tab count badge
+    const badgeCountStories = document.getElementById('count-stories-badge');
+    if (badgeCountStories) badgeCountStories.textContent = String(list.length);
+
+    // Also sync all photos stream
+    renderAllPhotosStream();
+
+    // Sort: Pinned memories first
+    const sortedList = [...list].sort((a, b) => {
+      const pinA = a.isPinned ? 1 : 0;
+      const pinB = b.isPinned ? 1 : 0;
+      return pinB - pinA;
+    });
+
+    container.innerHTML = '';
+
+    sortedList.forEach((photo, index) => {
+      const card = document.createElement('div');
+      const isPinned = !!photo.isPinned;
+      card.className = `polaroid-card romantic-card tilt-${(index % 4) + 1} ${isPinned ? 'is-pinned' : ''}`;
+      card.setAttribute('data-id', photo.id);
+
+      const galleryCount = photo.galleryImages?.length || 0;
+      const moodBadge = photo.mood ? `<span class="polaroid-mood-badge">${escapeHtml(photo.mood)}</span>` : '';
+      const photoCountBadge = galleryCount > 0 ? `<span class="polaroid-photo-count">📸 +${galleryCount} ảnh</span>` : '';
+      const pinBadge = isPinned ? `<div class="polaroid-pin-badge" title="Bài kỷ niệm được ghim lên đầu">📌 Đã ghim</div>` : '';
+
+      card.innerHTML = `
+        <div class="polaroid-pin">${isPinned ? '📌' : '📍'}</div>
+        ${pinBadge}
+        <div class="polaroid-photo-frame" title="Nhấn để mở nhật ký kỷ niệm">
+          <img
+            src="${photo.imageUrl}"
+            alt="${escapeHtml(photo.title)}"
+            class="polaroid-img"
+            loading="lazy"
+          />
+          ${photoCountBadge}
+          <div class="polaroid-read-hint">📖 Đọc nhật ký &amp; cảm xúc</div>
+        </div>
+        <div class="polaroid-caption-area">
+          <div class="polaroid-meta-row">
+            <span class="polaroid-date">🗓️ ${escapeHtml(photo.date || 'Kỷ niệm')}</span>
+            <span class="polaroid-loc">📍 ${escapeHtml(photo.location || 'Bên nhau')}</span>
+            ${moodBadge}
+          </div>
+          <h3 class="polaroid-title" style="cursor: pointer;" title="Nhấn để đọc nhật ký">${escapeHtml(photo.title)}</h3>
+          <p class="polaroid-caption">"${escapeHtml(photo.caption || '')}"</p>
+        </div>
+        <div class="polaroid-card-footer">
+          <button type="button" class="btn-read-journal" title="Mở nhật ký & cảm xúc">
+            <span>📖 Đọc Nhật Ký</span>
+          </button>
+          <div class="polaroid-sub-actions">
+            <button type="button" class="btn-card-icon-action btn-pin-mem ${isPinned ? 'is-pinned' : ''}" title="${isPinned ? 'Bỏ ghim khỏi đầu trang' : 'Ghim bài viết lên đầu trang'}">
+              <span>${isPinned ? '⭐' : '📌'}</span>
+            </button>
+            <button type="button" class="btn-card-icon-action btn-edit-mem" title="Chỉnh sửa kỷ niệm">
+              <span>✏️ Sửa</span>
+            </button>
+            <button type="button" class="btn-card-icon-action btn-delete-mem btn-card-delete" title="Xóa kỷ niệm">
+              <span>🗑️ Xóa</span>
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Open Journal Reader events
+      const frame = card.querySelector('.polaroid-photo-frame');
+      if (frame) {
+        frame.addEventListener('click', () => openJournalReader(photo));
+      }
+
+      const titleEl = card.querySelector('.polaroid-title');
+      if (titleEl) {
+        titleEl.addEventListener('click', () => openJournalReader(photo));
+      }
+
+      const readBtn = card.querySelector('.btn-read-journal');
+      if (readBtn) {
+        readBtn.addEventListener('click', () => openJournalReader(photo));
+      }
+
+      // Quick Pin toggle click
+      const pinBtn = card.querySelector('.btn-pin-mem');
+      if (pinBtn) {
+        pinBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const target = list.find((p) => p.id === photo.id);
+          if (target) {
+            target.isPinned = !target.isPinned;
+            saveStoredMemories(list);
+            renderMemories();
+          }
+        });
+      }
+
+      // Edit click
+      const editBtn = card.querySelector('.btn-edit-mem');
+      if (editBtn) {
+        editBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openEditMemModal(photo);
+        });
+      }
+
+      // Delete click
+      const deleteBtn = card.querySelector('.btn-delete-mem');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const excerpt = photo.quote || photo.caption || (photo.story ? photo.story.replace(/<[^>]*>?/gm, '').slice(0, 110) + '...' : 'Một khoảnh khắc tuyệt đẹp giữa dải ngân hà của hai đứa...');
+          const confirmed = (window as any).romanticConfirm
+            ? await (window as any).romanticConfirm({
+                heading: 'Tạm Cất Trang Nhật Ký Này Nhé?',
+                subject: photo.title,
+                subjectIcon: '📸',
+                quote: excerpt,
+                typeBadge: '📸 Kỷ Niệm Tình Yêu',
+                sealEmoji: '💌',
+                confirmText: 'Cất Đi 📦',
+                cancelText: 'Để Lại Đây 🌸',
+                notice: 'Kỷ niệm này sẽ được lưu giữ an toàn trong Thùng Rác và có thể khôi phục lại bất kỳ lúc nào.'
+              })
+            : confirm(`Bạn có chắc muốn chuyển kỷ niệm "${photo.title}" vào Thùng Rác không?`);
+
+          if (confirmed) {
+            moveItemToTrash(
+              {
+                originalId: photo.id,
+                type: 'memory',
+                title: photo.title,
+                previewImage: photo.imageUrl,
+                subtitle: photo.caption || photo.location || '',
+                data: photo
+              },
+              {
+                onUndo: () => renderMemories()
+              }
+            );
+            const updated = list.filter((p) => p.id !== photo.id);
+            saveStoredMemories(updated);
+            renderMemories();
+          }
+        });
+      }
+
+      container.appendChild(card);
+    });
+  }
+
+  // =========================================================================
+  // JOURNAL READER MODAL
+  // =========================================================================
+  function openJournalReader(photo: PhotoMemory) {
+    currentViewingPhoto = photo;
+    const modal = document.getElementById('journal-reader-modal');
+    if (!modal) return;
+
+    // Cover Image
+    const coverImg = document.getElementById('reader-cover-img') as HTMLImageElement | null;
+    if (coverImg) {
+      coverImg.src = photo.imageUrl;
+      coverImg.alt = photo.title;
+    }
+
+    // Author badge
+    const authorBadge = document.getElementById('reader-author-badge');
+    const signoffNames = document.getElementById('reader-signoff-names');
+    let authorText = '✍️ AI 🚀 & Maze 🌸';
+    let coupleText = 'AI 🚀 & Maze 🌸';
+    if (photo.author === 'ai') {
+      authorText = '✍️ Chắp bút bởi AI 🚀';
+      coupleText = 'Thương gửi Maze từ AI 🚀';
+    } else if (photo.author === 'maze') {
+      authorText = '✍️ Chắp bút bởi Maze 🌸';
+      coupleText = 'Thương gửi AI từ Maze 🌸';
+    }
+    if (authorBadge) authorBadge.textContent = authorText;
+    if (signoffNames) signoffNames.textContent = coupleText;
+
+    // Meta row pills
+    const datePill = document.getElementById('reader-date');
+    const locPill = document.getElementById('reader-loc');
+    const moodPill = document.getElementById('reader-mood');
+    const weatherPill = document.getElementById('reader-weather');
+
+    if (datePill) datePill.textContent = `🗓️ ${photo.date || 'Kỷ niệm'}`;
+    if (locPill) locPill.textContent = `📍 ${photo.location || 'Bên nhau'}`;
+
+    if (moodPill) {
+      if (photo.mood) {
+        moodPill.textContent = photo.mood;
+        moodPill.style.display = 'inline-flex';
+      } else {
+        moodPill.style.display = 'none';
+      }
+    }
+
+    if (weatherPill) {
+      if (photo.weather) {
+        weatherPill.textContent = photo.weather;
+        weatherPill.style.display = 'inline-flex';
+      } else {
+        weatherPill.style.display = 'none';
+      }
+    }
+
+    // Title
+    const titleEl = document.getElementById('reader-title');
+    if (titleEl) titleEl.textContent = photo.title;
+
+    // Caption / Lead quote
+    const captionWrap = document.getElementById('reader-caption-wrap');
+    const captionEl = document.getElementById('reader-caption');
+    if (captionWrap && captionEl) {
+      if (photo.caption) {
+        captionEl.textContent = `"${photo.caption}"`;
+        captionWrap.style.display = 'block';
+      } else {
+        captionWrap.style.display = 'none';
+      }
+    }
+
+    // Story Body with Markdown Parser
+    const contentEl = document.getElementById('reader-content');
+    if (contentEl) {
+      const rawContent = photo.journalContent || photo.caption || '';
+      const renderedHtml = renderMarkdownToHtml(rawContent, photo.title, photo.galleryImages || []);
+
+      if (!renderedHtml) {
+        contentEl.innerHTML = `
+          <p class="journal-paragraph" style="font-style: italic; color: #94a3b8;">
+            Trang nhật ký này chưa có bài viết chi tiết. Bạn có thể nhấn nút "Chỉnh Sửa Trang Nhật Ký Này" bên dưới để viết lại cảm xúc ngọt ngào của hai bạn nhé! ✨
+          </p>
+        `;
+      } else {
+        contentEl.innerHTML = renderedHtml;
+
+        // Add Lightbox zoom on any inline images in story
+        const inlineImgs = contentEl.querySelectorAll('.journal-inline-img-wrap');
+        inlineImgs.forEach((wrap: any) => {
+          wrap.addEventListener('click', () => {
+            const src = wrap.getAttribute('data-src') || '';
+            const cap = wrap.getAttribute('data-caption') || photo.title;
+            if (src) openMemLightbox(src, cap);
+          });
+        });
+      }
+    }
+
+    // Attached Gallery Showcase at bottom
+    const gallerySec = document.getElementById('reader-gallery-section');
+    const galleryGrid = document.getElementById('reader-gallery-grid');
+    if (gallerySec && galleryGrid) {
+      if (photo.galleryImages && photo.galleryImages.length > 0) {
+        gallerySec.style.display = 'block';
+        galleryGrid.innerHTML = '';
+        photo.galleryImages.forEach((img) => {
+          const itemCard = document.createElement('div');
+          itemCard.className = 'gallery-photo-card';
+          itemCard.innerHTML = `
+            <img src="${img.url}" alt="${escapeHtml(img.caption || photo.title)}" class="gallery-photo-img" loading="lazy" />
+            ${img.caption ? `<p class="gallery-photo-caption">${escapeHtml(img.caption)}</p>` : ''}
+          `;
+          itemCard.addEventListener('click', () => {
+            openMemLightbox(img.url, img.caption || photo.title);
+          });
+          galleryGrid.appendChild(itemCard);
+        });
+      } else {
+        gallerySec.style.display = 'none';
+        galleryGrid.innerHTML = '';
+      }
+    }
+
+    modal.classList.add('is-open');
+  }
+
+  function closeJournalReader() {
+    const modal = document.getElementById('journal-reader-modal');
+    if (modal) modal.classList.remove('is-open');
+  }
+
+  // =========================================================================
+  // LIVE PREVIEW & STUDIO WORKSPACE
+  // =========================================================================
+  function updateLivePreview() {
+    const previewBox = document.getElementById('studio-live-preview');
+    const wordCountEl = document.getElementById('studio-word-count');
+    if (!previewBox) return;
+
+    const title = (document.getElementById('form-mem-title') as HTMLInputElement)?.value.trim() || 'Tiêu Đề Kỷ Niệm';
+    const date = (document.getElementById('form-mem-date') as HTMLInputElement)?.value.trim() || 'Hôm nay';
+    const loc = (document.getElementById('form-mem-loc') as HTMLInputElement)?.value.trim() || 'Bên nhau';
+    const author = (document.getElementById('form-mem-author') as HTMLSelectElement)?.value || 'both';
+    const mood = (document.getElementById('form-mem-mood') as HTMLInputElement)?.value.trim() || '';
+    const weather = (document.getElementById('form-mem-weather') as HTMLInputElement)?.value.trim() || '';
+    const caption = (document.getElementById('form-mem-caption') as HTMLTextAreaElement)?.value.trim() || '';
+    const content = (document.getElementById('form-mem-content') as HTMLTextAreaElement)?.value || '';
+
+    // Word counter
+    if (wordCountEl) {
+      const words = content.trim() ? content.trim().split(/\s+/).length : 0;
+      wordCountEl.textContent = `${words} từ`;
+    }
+
+    let authorBadge = '✍️ AI & Maze';
+    if (author === 'ai') authorBadge = '✍️ AI 🚀';
+    else if (author === 'maze') authorBadge = '✍️ Maze 🌸';
+
+    const renderedStory = renderMarkdownToHtml(content, title, currentAttachedGallery) || `
+      <p class="journal-paragraph" style="color: #64748b; font-style: italic;">
+        Nội dung bài viết sẽ hiển thị trực tiếp tại đây khi bạn gõ bên trái...
+      </p>
+    `;
+
+    previewBox.innerHTML = `
+      <div style="border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.8rem; margin-bottom: 1.2rem;">
+        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 0.6rem;">
+          <span class="journal-pill" style="font-size: 0.75rem; padding: 2px 10px;">🗓️ ${escapeHtml(date)}</span>
+          <span class="journal-pill" style="font-size: 0.75rem; padding: 2px 10px;">📍 ${escapeHtml(loc)}</span>
+          <span class="journal-pill" style="font-size: 0.75rem; padding: 2px 10px; border-color: rgba(244,63,94,0.4); color: #fda4af;">${authorBadge}</span>
+          ${mood ? `<span class="journal-pill journal-pill-mood" style="font-size: 0.75rem; padding: 2px 10px;">${escapeHtml(mood)}</span>` : ''}
+          ${weather ? `<span class="journal-pill journal-pill-weather" style="font-size: 0.75rem; padding: 2px 10px;">${escapeHtml(weather)}</span>` : ''}
+        </div>
+        <h2 style="font-size: 1.6rem; font-weight: 800; color: #ffffff; margin: 0 0 0.5rem;" class="gradient-love-text">${escapeHtml(title)}</h2>
+        ${caption ? `<div class="journal-lead-quote" style="padding: 0.6rem 1rem; margin-bottom: 0;"><p class="journal-quote-text" style="font-size: 0.92rem;">"${escapeHtml(caption)}"</p></div>` : ''}
+      </div>
+      <div class="studio-preview-content">
+        ${renderedStory}
+      </div>
+    `;
+
+    // Lightbox zoom on preview inline images
+    const inlineImgs = previewBox.querySelectorAll('.journal-inline-img-wrap');
+    inlineImgs.forEach((wrap: any) => {
+      wrap.addEventListener('click', () => {
+        const src = wrap.getAttribute('data-src') || '';
+        const cap = wrap.getAttribute('data-caption') || title;
+        if (src) openMemLightbox(src, cap);
+      });
+    });
+  }
+
+  // =========================================================================
+  // MARKDOWN TOOLBAR & TEXTAREA HELPERS
+  // =========================================================================
+  function insertMarkdown(prefix: string, suffix = '', defaultText = '') {
+    const textarea = document.getElementById('form-mem-content') as HTMLTextAreaElement | null;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+    const replacement = selectedText ? `${prefix}${selectedText}${suffix}` : `${prefix}${defaultText}${suffix}`;
+
+    textarea.setRangeText(replacement, start, end, 'select');
+    textarea.focus();
+
+    // Set cursor inside inserted text if defaultText was used
+    if (!selectedText && defaultText) {
+      textarea.setSelectionRange(start + prefix.length, start + prefix.length + defaultText.length);
+    }
+
+    updateLivePreview();
+  }
+
+  function insertAtCursor(text: string) {
+    const textarea = document.getElementById('form-mem-content') as HTMLTextAreaElement | null;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    textarea.setRangeText(text, start, end, 'end');
+    textarea.focus();
+    updateLivePreview();
+  }
+
+  function setStudioViewMode(mode: 'editor' | 'preview') {
+    currentStudioViewMode = mode;
+    const workspace = document.getElementById('studio-workspace');
+    const editorCol = document.getElementById('workspace-editor-col');
+    const previewCol = document.getElementById('workspace-preview-col');
+    const editorBtn = document.getElementById('btn-zen-mode-editor');
+    const previewBtn = document.getElementById('btn-zen-mode-preview');
+
+    if (editorBtn && previewBtn) {
+      if (mode === 'preview') {
+        editorBtn.classList.remove('is-active');
+        previewBtn.classList.add('is-active');
+      } else {
+        editorBtn.classList.add('is-active');
+        previewBtn.classList.remove('is-active');
+      }
+    }
+
+    if (workspace) {
+      workspace.classList.remove('mode-editor', 'mode-preview');
+      workspace.classList.add(`mode-${mode}`);
+    }
+
+    if (editorCol && previewCol) {
+      if (mode === 'preview') {
+        editorCol.style.display = 'none';
+        previewCol.style.display = 'block';
+        updateLivePreview();
+      } else {
+        editorCol.style.display = 'block';
+        previewCol.style.display = 'none';
+      }
+    }
+  }
+
+  // =========================================================================
+  // ATTACHED GALLERY STUDIO MANAGER (With 1-Click Markdown Insert)
+  // =========================================================================
+  function renderAttachedGalleryEditor() {
+    const container = document.getElementById('form-gallery-items-container');
+    const countBadge = document.getElementById('zen-gallery-count-badge');
+    if (countBadge) {
+      countBadge.textContent = `${currentAttachedGallery.length} ảnh`;
+    }
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (currentAttachedGallery.length === 0) {
+      container.innerHTML = `
+        <div class="zen-gallery-empty-tip" style="padding: 10px; background: rgba(15, 23, 42, 0.4); border-radius: 10px; border: 1px dashed rgba(255, 255, 255, 0.1);">
+          <p style="color: #94a3b8; font-size: 0.8rem; margin: 0; font-style: italic; line-height: 1.5; text-align: center;">
+            Chưa có ảnh chèn thêm.<br/>Nhấn <strong>"+ Tải ảnh"</strong> hoặc dán URL bên dưới để đưa ảnh vào kho.
+          </p>
+        </div>
+      `;
+      return;
+    }
+
+    currentAttachedGallery.forEach((item, index) => {
+      const itemNum = index + 1;
+      const itemEl = document.createElement('div');
+      itemEl.className = 'gallery-edit-item';
+      itemEl.innerHTML = `
+        <div class="gallery-thumb-wrap">
+          <img src="${item.url}" alt="Ảnh ${itemNum}" class="gallery-edit-thumb" />
+          <span class="gallery-thumb-tag">#${itemNum}</span>
+        </div>
+        <div class="gallery-edit-info">
+          <div class="gallery-item-header">
+            <span class="gallery-item-badge">📸 Ảnh ${itemNum}</span>
+            <code class="gallery-token-code">[photo:${itemNum}]</code>
+          </div>
+          <input
+            type="text"
+            class="form-input gallery-caption-input"
+            placeholder="Chú thích ảnh..."
+            value="${escapeHtml(item.caption || '')}"
+          />
+        </div>
+        <div class="gallery-item-actions">
+          <button type="button" class="btn-insert-inline-img" title="Chèn mã ngắn [photo:${itemNum}] vào bài viết">
+            <span>📋 Chèn</span>
+          </button>
+          <button type="button" class="btn-remove-gallery-item" title="Xóa ảnh khỏi kho">🗑️</button>
+        </div>
+      `;
+
+      // Update caption on input
+      const captionInput = itemEl.querySelector('.gallery-caption-input') as HTMLInputElement | null;
+      if (captionInput) {
+        captionInput.addEventListener('input', () => {
+          currentAttachedGallery[index].caption = captionInput.value;
+          updateLivePreview();
+        });
+      }
+
+      // 1-Click Insert Markdown button
+      const insertBtn = itemEl.querySelector('.btn-insert-inline-img');
+      if (insertBtn) {
+        insertBtn.addEventListener('click', () => {
+          const photoToken = `[photo:${itemNum}]`;
+          
+          const textarea = document.getElementById('form-mem-content') as HTMLTextAreaElement | null;
+          if (textarea) {
+            let currentVal = textarea.value;
+            // Clean out any huge raw base64 data URLs or placeholder if present
+            const messyBase64Regex = /!\[.*?\]\(data:image\/[a-zA-Z]+;base64,[A-Za-z0-9+/=]{100,}\)/g;
+            const placeholderRegex = /!\[.*?\]\(https?:\/\/(?:\.\.\.|\S*)\)/i;
+            
+            if (messyBase64Regex.test(currentVal)) {
+              textarea.value = currentVal.replace(messyBase64Regex, photoToken);
+              updateLivePreview();
+            } else if (placeholderRegex.test(currentVal)) {
+              textarea.value = currentVal.replace(placeholderRegex, photoToken);
+              updateLivePreview();
+            } else {
+              insertAtCursor(`\n\n${photoToken}\n\n`);
+            }
+          } else {
+            insertAtCursor(`\n\n${photoToken}\n\n`);
+          }
+
+          insertBtn.classList.add('is-inserted');
+          insertBtn.innerHTML = '<span>✅ Đã chèn!</span>';
+          setTimeout(() => {
+            insertBtn.classList.remove('is-inserted');
+            insertBtn.innerHTML = '<span>📋 Chèn</span>';
+          }, 1500);
+        });
+      }
+
+      // Remove photo
+      const removeBtn = itemEl.querySelector('.btn-remove-gallery-item');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', () => {
+          currentAttachedGallery.splice(index, 1);
+          renderAttachedGalleryEditor();
+          updateLivePreview();
+        });
+      }
+
+      container.appendChild(itemEl);
+    });
+  }
+
+  function addPhotoToGallery(url: string, caption = '') {
+    if (!url || !url.trim()) return;
+    currentAttachedGallery.push({
+      id: 'g-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+      url: url.trim(),
+      caption
+    });
+    renderAttachedGalleryEditor();
+    updateLivePreview();
+  }
+
+  // =========================================================================
+  // LIGHTBOX MODAL
+  // =========================================================================
+  function openMemLightbox(src: string, caption: string) {
+    const modal = document.getElementById('mem-lightbox-modal');
+    const img = document.getElementById('mem-lightbox-img') as HTMLImageElement | null;
+    const cap = document.getElementById('mem-lightbox-caption');
+    if (!modal || !img) return;
+
+    img.src = src;
+    img.alt = caption;
+    if (cap) cap.textContent = caption;
+    modal.classList.add('is-open');
+  }
+
+  // =========================================================================
+  // MODAL STUDIO OPEN / EDIT
+  // =========================================================================
+  function openAddMemModal() {
+    const modal = document.getElementById('memory-crud-modal');
+    const form = document.getElementById('memory-form') as HTMLFormElement | null;
+    const coverUrlBar = document.getElementById('zen-cover-url-bar');
+    if (!modal || !form) return;
+
+    form.reset();
+    (document.getElementById('form-mem-id') as HTMLInputElement).value = '';
+    (document.getElementById('form-mem-title') as HTMLTextAreaElement).value = '';
+    (document.getElementById('form-mem-date') as HTMLInputElement).value = new Date().toLocaleDateString('vi-VN');
+    (document.getElementById('form-mem-loc') as HTMLInputElement).value = '';
+    (document.getElementById('form-mem-author') as HTMLSelectElement).value = 'both';
+    (document.getElementById('form-mem-mood') as HTMLInputElement).value = '';
+    (document.getElementById('form-mem-weather') as HTMLInputElement).value = '';
+    (document.getElementById('form-mem-caption') as HTMLTextAreaElement).value = '';
+    (document.getElementById('form-mem-content') as HTMLTextAreaElement).value = '';
+    (document.getElementById('form-mem-pinned') as HTMLInputElement).checked = false;
+
+    if (coverUrlBar) coverUrlBar.style.display = 'none';
+
+    currentUploadedMemPhoto = '';
+    currentAttachedGallery = [];
+    updateMemPhotoPreview('');
+    renderAttachedGalleryEditor();
+    setStudioViewMode('editor');
+    updateLivePreview();
+    modal.classList.add('is-open');
+  }
+
+  function openEditMemModal(photo: PhotoMemory) {
+    const modal = document.getElementById('memory-crud-modal');
+    const coverUrlBar = document.getElementById('zen-cover-url-bar');
+    if (!modal) return;
+
+    (document.getElementById('form-mem-id') as HTMLInputElement).value = photo.id;
+    (document.getElementById('form-mem-title') as HTMLTextAreaElement).value = photo.title || '';
+    (document.getElementById('form-mem-date') as HTMLInputElement).value = photo.date || '';
+    (document.getElementById('form-mem-loc') as HTMLInputElement).value = photo.location || '';
+    (document.getElementById('form-mem-author') as HTMLSelectElement).value = photo.author || 'both';
+    (document.getElementById('form-mem-mood') as HTMLInputElement).value = photo.mood || '';
+    (document.getElementById('form-mem-weather') as HTMLInputElement).value = photo.weather || '';
+    (document.getElementById('form-mem-caption') as HTMLTextAreaElement).value = photo.caption || '';
+    (document.getElementById('form-mem-content') as HTMLTextAreaElement).value = photo.journalContent || '';
+    (document.getElementById('form-mem-url') as HTMLInputElement).value = photo.imageUrl || '';
+    (document.getElementById('form-mem-pinned') as HTMLInputElement).checked = !!photo.isPinned;
+
+    if (coverUrlBar) coverUrlBar.style.display = 'none';
+
+    currentUploadedMemPhoto = photo.imageUrl || '';
+    updateMemPhotoPreview(currentUploadedMemPhoto);
+
+    // Deep copy attached gallery
+    currentAttachedGallery = (photo.galleryImages || []).map((img) => ({ ...img }));
+    renderAttachedGalleryEditor();
+    setStudioViewMode('editor');
+    updateLivePreview();
+
+    modal.classList.add('is-open');
+  }
+
+  function updateMemPhotoPreview(url: string) {
+    const emptyState = document.getElementById('memory-dropzone-empty');
+    const activeActions = document.getElementById('zen-cover-active-actions');
+    const img = document.getElementById('form-mem-preview') as HTMLImageElement | null;
+    const urlInput = document.getElementById('form-mem-url') as HTMLInputElement | null;
+
+    if (url) {
+      if (img) {
+        img.src = url;
+        img.style.display = 'block';
+      }
+      if (emptyState) emptyState.style.display = 'none';
+      if (activeActions) activeActions.style.display = 'flex';
+      if (urlInput && urlInput.value !== url && !url.startsWith('data:')) {
+        urlInput.value = url;
+      }
+    } else {
+      if (img) {
+        img.src = '';
+        img.style.display = 'none';
+      }
+      if (emptyState) emptyState.style.display = 'flex';
+      if (activeActions) activeActions.style.display = 'none';
+      if (urlInput) urlInput.value = '';
+    }
+  }
+
+  // =========================================================================
+  // INITIALIZATION & EVENT BINDINGS
+  // =========================================================================
+  function initMemoryInteractive() {
+    renderMemories();
+
+    // View Switcher (Stories Polaroid vs All Uploaded Photos)
+    const btnViewStories = document.getElementById('btn-view-stories');
+    const btnViewAllPhotos = document.getElementById('btn-view-all-photos');
+    const containerStories = document.getElementById('memories-container');
+    const containerAllPhotos = document.getElementById('all-photos-stream-wrap');
+
+    const switchView = (view: 'stories' | 'all-photos') => {
+      if (view === 'stories') {
+        btnViewStories?.classList.add('is-active');
+        btnViewStories?.setAttribute('aria-selected', 'true');
+        btnViewAllPhotos?.classList.remove('is-active');
+        btnViewAllPhotos?.setAttribute('aria-selected', 'false');
+
+        if (containerStories) containerStories.style.display = 'grid';
+        if (containerAllPhotos) containerAllPhotos.style.display = 'none';
+      } else {
+        btnViewAllPhotos?.classList.add('is-active');
+        btnViewAllPhotos?.setAttribute('aria-selected', 'true');
+        btnViewStories?.classList.remove('is-active');
+        btnViewStories?.setAttribute('aria-selected', 'false');
+
+        if (containerStories) containerStories.style.display = 'none';
+        if (containerAllPhotos) {
+          containerAllPhotos.style.display = 'flex';
+          renderAllPhotosStream();
+        }
+      }
+    };
+
+    if (btnViewStories) btnViewStories.addEventListener('click', () => switchView('stories'));
+    if (btnViewAllPhotos) btnViewAllPhotos.addEventListener('click', () => switchView('all-photos'));
+
+    // Filter Chips for All Photos Stream
+    const filterChips = document.querySelectorAll('#photo-type-filter-chips .photo-filter-chip');
+    filterChips.forEach((chip: any) => {
+      chip.addEventListener('click', () => {
+        filterChips.forEach((c: any) => c.classList.remove('is-active'));
+        chip.classList.add('is-active');
+        currentPhotoFilter = chip.getAttribute('data-filter') || 'all';
+        renderAllPhotosStream();
+      });
+    });
+
+    // Search input for All Photos Stream
+    const searchInput = document.getElementById('photo-search-input') as HTMLInputElement | null;
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        currentPhotoSearchQuery = searchInput.value;
+        renderAllPhotosStream();
+      });
+    }
+
+    const openAddBtn = document.getElementById('btn-open-add-memory');
+    if (openAddBtn) openAddBtn.addEventListener('click', openAddMemModal);
+
+    const crudModal = document.getElementById('memory-crud-modal');
+    const closeCrudBtn = document.getElementById('memory-modal-close');
+    const cancelCrudBtn = document.getElementById('btn-cancel-mem');
+
+    if (closeCrudBtn && crudModal) closeCrudBtn.addEventListener('click', () => crudModal.classList.remove('is-open'));
+    if (cancelCrudBtn && crudModal) cancelCrudBtn.addEventListener('click', () => crudModal.classList.remove('is-open'));
+    if (crudModal) {
+      crudModal.addEventListener('click', (e) => {
+        if (e.target === crudModal) crudModal.classList.remove('is-open');
+      });
+    }
+
+    // Markdown Toolbar actions
+    const toolbarTools = document.querySelectorAll('.zen-tb-btn, .btn-tb-tool');
+    toolbarTools.forEach((btn: any) => {
+      btn.addEventListener('click', () => {
+        const action = btn.getAttribute('data-action');
+        switch (action) {
+          case 'bold':
+            insertMarkdown('**', '**', 'chữ in đậm');
+            break;
+          case 'italic':
+            insertMarkdown('*', '*', 'chữ in nghiêng');
+            break;
+          case 'h3':
+            insertMarkdown('\n### ', '\n', 'Tiêu đề phân đoạn');
+            break;
+          case 'quote':
+            insertMarkdown('\n> "', '"\n', 'Lời trích dẫn ngọt ngào...');
+            break;
+          case 'poem':
+            insertMarkdown('\n> 📜 Khổ thơ:\n> ', '\n', 'Dòng thơ 1...\n> Dòng thơ 2...');
+            break;
+          case 'list':
+            insertMarkdown('\n- ', '\n', 'Điều ngọt ngào hai đứa cùng làm');
+            break;
+          case 'img':
+            const tbImgInput = document.getElementById('form-mem-toolbar-img-file') as HTMLInputElement | null;
+            if (tbImgInput) {
+              tbImgInput.click();
+            } else {
+              insertMarkdown('\n![', '](https://...)\n', 'Chú thích ảnh');
+            }
+            break;
+        }
+      });
+    });
+
+    // Toolbar direct image file picker handler
+    const tbImgFilePicker = document.getElementById('form-mem-toolbar-img-file') as HTMLInputElement | null;
+    if (tbImgFilePicker) {
+      tbImgFilePicker.addEventListener('change', (e: any) => {
+        const file = e.target.files?.[0];
+        if (!file || !file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const dataUrl = event.target?.result as string;
+          if (dataUrl) {
+            addPhotoToGallery(dataUrl, 'Kỷ niệm');
+            const newIndex = currentAttachedGallery.length;
+            const photoToken = `[photo:${newIndex}]`;
+            const textarea = document.getElementById('form-mem-content') as HTMLTextAreaElement | null;
+            if (textarea) {
+              let currentVal = textarea.value;
+              const messyBase64Regex = /!\[.*?\]\(data:image\/[a-zA-Z]+;base64,[A-Za-z0-9+/=]{100,}\)/g;
+              const placeholderRegex = /!\[.*?\]\(https?:\/\/(?:\.\.\.|\S*)\)/i;
+              if (messyBase64Regex.test(currentVal)) {
+                textarea.value = currentVal.replace(messyBase64Regex, photoToken);
+                updateLivePreview();
+              } else if (placeholderRegex.test(currentVal)) {
+                textarea.value = currentVal.replace(placeholderRegex, photoToken);
+                updateLivePreview();
+              } else {
+                insertAtCursor(`\n\n${photoToken}\n\n`);
+              }
+            } else {
+              insertAtCursor(`\n\n${photoToken}\n\n`);
+            }
+          }
+          tbImgFilePicker.value = '';
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Emoji buttons
+    const emojiBtns = document.querySelectorAll('.zen-emoji-btn, .btn-tb-emoji');
+    emojiBtns.forEach((btn: any) => {
+      btn.addEventListener('click', () => {
+        const emoji = btn.getAttribute('data-emoji') || '';
+        if (emoji) insertAtCursor(` ${emoji} `);
+      });
+    });
+
+    // View mode switcher buttons
+    const zenEditorBtn = document.getElementById('btn-zen-mode-editor');
+    const zenPreviewBtn = document.getElementById('btn-zen-mode-preview');
+    if (zenEditorBtn) zenEditorBtn.addEventListener('click', () => setStudioViewMode('editor'));
+    if (zenPreviewBtn) zenPreviewBtn.addEventListener('click', () => setStudioViewMode('preview'));
+
+    // Live preview update on inputs
+    const contentTextarea = document.getElementById('form-mem-content');
+    if (contentTextarea) {
+      contentTextarea.addEventListener('input', updateLivePreview);
+    }
+
+    const liveInputs = ['form-mem-title', 'form-mem-date', 'form-mem-loc', 'form-mem-author', 'form-mem-mood', 'form-mem-weather', 'form-mem-caption'];
+    liveInputs.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', updateLivePreview);
+        el.addEventListener('change', updateLivePreview);
+      }
+    });
+
+    // Reader Modal controls
+    const readerModal = document.getElementById('journal-reader-modal');
+    const closeReaderBtn = document.getElementById('journal-reader-close');
+    const closeReaderBottom = document.getElementById('btn-reader-close-bottom');
+    const editStoryBtn = document.getElementById('btn-reader-edit-story');
+
+    if (closeReaderBtn) closeReaderBtn.addEventListener('click', closeJournalReader);
+    if (closeReaderBottom) closeReaderBottom.addEventListener('click', closeJournalReader);
+    if (readerModal) {
+      readerModal.addEventListener('click', (e) => {
+        if (e.target === readerModal) closeJournalReader();
+      });
+    }
+
+    if (editStoryBtn) {
+      editStoryBtn.addEventListener('click', () => {
+        closeJournalReader();
+        if (currentViewingPhoto) {
+          openEditMemModal(currentViewingPhoto);
+        }
+      });
+    }
+
+    // Cover image zoom in reader
+    const readerCoverImg = document.getElementById('reader-cover-img');
+    if (readerCoverImg) {
+      readerCoverImg.addEventListener('click', () => {
+        if (currentViewingPhoto) {
+          openMemLightbox(currentViewingPhoto.imageUrl, currentViewingPhoto.title);
+        }
+      });
+      readerCoverImg.style.cursor = 'pointer';
+      readerCoverImg.title = 'Nhấn để phóng to ảnh bìa';
+    }
+
+    // Lightbox close
+    const lbModal = document.getElementById('mem-lightbox-modal');
+    const lbClose = document.getElementById('mem-lightbox-close');
+    if (lbClose && lbModal) lbClose.addEventListener('click', () => lbModal.classList.remove('is-open'));
+    if (lbModal) {
+      lbModal.addEventListener('click', (e) => {
+        if (e.target === lbModal) lbModal.classList.remove('is-open');
+      });
+    }
+
+    // Dropzone & Drag-and-drop & URL for Cover Image
+    const heroWrap = document.getElementById('zen-cover-hero-wrap');
+    const fileInput = document.getElementById('form-mem-file') as HTMLInputElement | null;
+    const changeFileBtn = document.getElementById('btn-change-mem-file') as HTMLInputElement | null;
+    const activeFileInput = document.getElementById('form-mem-file-active') as HTMLInputElement | null;
+    const urlInput = document.getElementById('form-mem-url') as HTMLInputElement | null;
+    const clearPhotoBtn = document.getElementById('btn-clear-mem-photo');
+    const toggleCoverUrlBtn = document.getElementById('btn-toggle-cover-url');
+    const toggleCoverUrlEmptyBtn = document.getElementById('btn-toggle-cover-url-empty');
+    const coverUrlBar = document.getElementById('zen-cover-url-bar');
+    const confirmCoverUrlBtn = document.getElementById('btn-confirm-cover-url');
+
+    const handleCoverFile = (file: File) => {
+      if (!file || !file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        currentUploadedMemPhoto = event.target?.result as string;
+        updateMemPhotoPreview(currentUploadedMemPhoto);
+        updateLivePreview();
+      };
+      reader.readAsDataURL(file);
+    };
+
+    if (fileInput) {
+      fileInput.addEventListener('change', (e: any) => {
+        const file = e.target.files?.[0];
+        if (file) handleCoverFile(file);
+      });
+    }
+
+    if (changeFileBtn) {
+      changeFileBtn.addEventListener('change', (e: any) => {
+        const file = e.target.files?.[0];
+        if (file) handleCoverFile(file);
+      });
+    }
+
+    if (activeFileInput) {
+      activeFileInput.addEventListener('change', (e: any) => {
+        const file = e.target.files?.[0];
+        if (file) handleCoverFile(file);
+      });
+    }
+
+    const toggleUrlBar = () => {
+      if (!coverUrlBar) return;
+      const isVisible = coverUrlBar.style.display === 'flex';
+      coverUrlBar.style.display = isVisible ? 'none' : 'flex';
+      if (!isVisible && urlInput) urlInput.focus();
+    };
+
+    if (toggleCoverUrlBtn) toggleCoverUrlBtn.addEventListener('click', toggleUrlBar);
+    if (toggleCoverUrlEmptyBtn) toggleCoverUrlEmptyBtn.addEventListener('click', toggleUrlBar);
+
+    if (confirmCoverUrlBtn && urlInput) {
+      confirmCoverUrlBtn.addEventListener('click', () => {
+        const val = urlInput.value.trim();
+        if (val) {
+          currentUploadedMemPhoto = val;
+          updateMemPhotoPreview(val);
+          updateLivePreview();
+        }
+        if (coverUrlBar) coverUrlBar.style.display = 'none';
+      });
+      urlInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          confirmCoverUrlBtn.click();
+        }
+      });
+    }
+
+    if (heroWrap) {
+      ['dragenter', 'dragover'].forEach((evt) => {
+        heroWrap.addEventListener(evt, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          heroWrap.classList.add('is-dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach((evt) => {
+        heroWrap.addEventListener(evt, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          heroWrap.classList.remove('is-dragover');
+        });
+      });
+
+      heroWrap.addEventListener('drop', (e: any) => {
+        const file = e.dataTransfer?.files?.[0];
+        if (file) handleCoverFile(file);
+      });
+    }
+
+    if (clearPhotoBtn) {
+      clearPhotoBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        currentUploadedMemPhoto = '';
+        if (urlInput) urlInput.value = '';
+        if (fileInput) fileInput.value = '';
+        if (changeFileBtn) changeFileBtn.value = '';
+        if (coverUrlBar) coverUrlBar.style.display = 'none';
+        updateMemPhotoPreview('');
+        updateLivePreview();
+      });
+    }
+
+    // Attached Gallery: Add File
+    const addGalleryFileBtn = document.getElementById('form-mem-add-gallery-file') as HTMLInputElement | null;
+    if (addGalleryFileBtn) {
+      addGalleryFileBtn.addEventListener('change', (e: any) => {
+        const file = e.target.files?.[0];
+        if (!file || !file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const dataUrl = event.target?.result as string;
+          if (dataUrl) addPhotoToGallery(dataUrl);
+          addGalleryFileBtn.value = '';
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Attached Gallery: Add URL
+    const addGalleryUrlBtn = document.getElementById('btn-add-gallery-url');
+    const galleryUrlInput = document.getElementById('form-gallery-url-input') as HTMLInputElement | null;
+    if (addGalleryUrlBtn && galleryUrlInput) {
+      addGalleryUrlBtn.addEventListener('click', () => {
+        const url = galleryUrlInput.value.trim();
+        if (url) {
+          addPhotoToGallery(url);
+          galleryUrlInput.value = '';
+        }
+      });
+      galleryUrlInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addGalleryUrlBtn.click();
+        }
+      });
+    }
+
+    // Form submit
+    const form = document.getElementById('memory-form');
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = (document.getElementById('form-mem-id') as HTMLInputElement).value;
+        const title = (document.getElementById('form-mem-title') as HTMLInputElement).value.trim();
+        const date = (document.getElementById('form-mem-date') as HTMLInputElement).value.trim();
+        const location = (document.getElementById('form-mem-loc') as HTMLInputElement).value.trim();
+        const author = ((document.getElementById('form-mem-author') as HTMLSelectElement)?.value || 'both') as 'ai' | 'maze' | 'both';
+        const mood = (document.getElementById('form-mem-mood') as HTMLInputElement).value.trim();
+        const weather = (document.getElementById('form-mem-weather') as HTMLInputElement).value.trim();
+        const caption = (document.getElementById('form-mem-caption') as HTMLTextAreaElement).value.trim();
+        const journalContent = (document.getElementById('form-mem-content') as HTMLTextAreaElement).value.trim();
+        const isPinned = (document.getElementById('form-mem-pinned') as HTMLInputElement)?.checked || false;
+
+        const list = getStoredMemories();
+
+        if (id) {
+          const idx = list.findIndex((p) => p.id === id);
+          if (idx !== -1) {
+            const updatedItem: PhotoMemory = {
+              ...list[idx],
+              title,
+              date,
+              location,
+              author,
+              mood,
+              weather,
+              caption,
+              journalContent,
+              isPinned,
+              imageUrl: currentUploadedMemPhoto || list[idx].imageUrl,
+              galleryImages: [...currentAttachedGallery]
+            };
+            list[idx] = updatedItem;
+
+            // If currently viewing in reader, update reader view
+            if (currentViewingPhoto && currentViewingPhoto.id === id) {
+              currentViewingPhoto = updatedItem;
+            }
+          }
+        } else {
+          const newMem: PhotoMemory = {
+            id: 'mem-' + Date.now(),
+            title,
+            date: date || new Date().toLocaleDateString('vi-VN'),
+            location: location || 'Bên nhau',
+            author,
+            mood,
+            weather,
+            caption,
+            journalContent,
+            isPinned,
+            imageUrl: currentUploadedMemPhoto || '/photos/anniversary.svg',
+            galleryImages: [...currentAttachedGallery]
+          };
+          list.unshift(newMem);
+        }
+
+        saveStoredMemories(list);
+        renderMemories();
+
+        if (crudModal) crudModal.classList.remove('is-open');
+      });
+    }
+
+    // Realtime sync listener
+    window.addEventListener('couple-cloud-updated', (e: any) => {
+      const cloudData = e.detail;
+      if (cloudData && cloudData.memories) {
+        localStorage.setItem(MEMORIES_STORAGE_KEY, JSON.stringify(cloudData.memories));
+        renderMemories();
+        if (currentViewingPhoto) {
+          const refreshed = cloudData.memories.find((m: any) => m.id === currentViewingPhoto?.id);
+          if (refreshed) {
+            currentViewingPhoto = refreshed;
+            const readerModal = document.getElementById('journal-reader-modal');
+            if (readerModal && readerModal.classList.contains('is-open')) {
+              openJournalReader(refreshed);
+            }
+          }
+        }
+      }
+    });
+
+    // Item restored from trash listener
+    window.addEventListener('couple-item-restored', (e: any) => {
+      if (e.detail?.type === 'memory') {
+        renderMemories();
+      }
+    });
+  }
+
+  initMemoryInteractive();
+  document.addEventListener('astro:after-swap', initMemoryInteractive);
+</script>

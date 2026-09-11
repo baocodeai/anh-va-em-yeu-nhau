@@ -425,9 +425,9 @@
 
       density = createDoubleFBO(dyeW, dyeH, formatRGBA, filtering);
       velocity = createDoubleFBO(simW, simH, formatRG, filtering);
-      divergence = createFBO(simW, simH, formatR, gl.NEAREST);
-      curl = createFBO(simW, simH, formatR, gl.NEAREST);
-      pressure = createDoubleFBO(simW, simH, formatR, gl.NEAREST);
+      divergence = createFBO(simW, simH, formatR, gl!.NEAREST);
+      curl = createFBO(simW, simH, formatR, gl!.NEAREST);
+      pressure = createDoubleFBO(simW, simH, formatR, gl!.NEAREST);
     }
 
     function splat(x: number, y: number, dx: number, dy: number, color: { r: number; g: number; b: number }) {

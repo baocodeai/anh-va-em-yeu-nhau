@@ -1,0 +1,754 @@
+---
+/**
+ * =========================================================================
+ * TRASH & RECOVERY MODAL (THÙNG RÁC & KHÔI PHỤC KÝ ỨC)
+ * =========================================================================
+ */
+---
+
+<div class="trash-modal-overlay" id="trash-recovery-modal" aria-hidden="true">
+  <div class="trash-modal-card romantic-card">
+    
+    <!-- Top Modal Header -->
+    <div class="trash-modal-header">
+      <div class="trash-header-info">
+        <div class="trash-header-title-row">
+          <span class="trash-header-icon">🗑️</span>
+          <h3 class="trash-header-title gradient-love-text">Thùng Rác &amp; Khôi Phục Ký Ức</h3>
+          <span class="trash-header-count-badge" id="trash-modal-total-count">0 mục</span>
+        </div>
+        <p class="trash-header-desc">
+          Nơi lưu giữ an toàn các trang nhật ký, ảnh kỷ niệm và điều ước đã xóa. Bạn có thể phục hồi lại bất cứ lúc nào!
+        </p>
+      </div>
+      <button type="button" class="trash-modal-close-btn" id="trash-modal-close" aria-label="Đóng">&times;</button>
+    </div>
+
+    <!-- Controls & Filters Row -->
+    <div class="trash-controls-row">
+      <div class="trash-filter-chips" id="trash-filter-chips">
+        <button type="button" class="trash-filter-chip is-active" data-filter="all">
+          <span>🌟 Tất cả</span>
+          <span class="trash-chip-count" id="trash-filter-all-count">0</span>
+        </button>
+        <button type="button" class="trash-filter-chip" data-filter="memory">
+          <span>📸 Kỷ niệm</span>
+          <span class="trash-chip-count" id="trash-filter-memory-count">0</span>
+        </button>
+        <button type="button" class="trash-filter-chip" data-filter="bucket_list">
+          <span>💫 Điều ước</span>
+          <span class="trash-chip-count" id="trash-filter-bucket-count">0</span>
+        </button>
+      </div>
+
+      <button type="button" class="btn-empty-trash-action" id="btn-empty-trash-action" title="Dọn sạch toàn bộ thùng rác">
+        <span>🧹 Dọn sạch</span>
+      </button>
+    </div>
+
+    <!-- Deleted Items Stream -->
+    <div class="trash-items-scroll-wrap">
+      <div class="trash-items-list" id="trash-items-list">
+        <!-- Rendered dynamically by client script -->
+      </div>
+
+      <!-- Empty state -->
+      <div class="trash-empty-state" id="trash-empty-state" style="display: none;">
+        <div class="trash-empty-icon">🌌</div>
+        <h4 class="trash-empty-title">Thùng Rác Đang Trống</h4>
+        <p class="trash-empty-desc">
+          Mọi ký ức, trang nhật ký và điều ước của hai bạn đều đang được lưu giữ vẹn nguyên trên tinh cầu tình yêu! ✨
+        </p>
+      </div>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="trash-modal-footer">
+      <div class="trash-footer-tip">
+        <span>💡 Các mục trong thùng rác được đồng bộ tự động giữa hai bạn qua đám mây.</span>
+      </div>
+      <button type="button" class="btn-outline-love" id="btn-trash-close-bottom">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .trash-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 7, 15, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    animation: fadeInModal 0.25s ease-out;
+  }
+
+  .trash-modal-overlay.is-open {
+    display: flex;
+  }
+
+  @keyframes fadeInModal {
+    from { opacity: 0; transform: scale(0.97); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .trash-modal-card {
+    max-width: 760px;
+    width: 100%;
+    max-height: 88vh;
+    background: rgba(11, 17, 32, 0.96);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 40px rgba(244, 63, 94, 0.25);
+    overflow: hidden;
+  }
+
+  .trash-modal-header {
+    padding: 1.6rem 1.8rem 1.2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.2rem;
+  }
+
+  .trash-header-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .trash-header-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .trash-header-icon {
+    font-size: 1.6rem;
+  }
+
+  .trash-header-title {
+    font-size: 1.45rem;
+    font-weight: 800;
+    margin: 0;
+  }
+
+  .trash-header-count-badge {
+    font-size: 0.78rem;
+    font-weight: 700;
+    background: rgba(244, 63, 94, 0.2);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    color: #fda4af;
+    padding: 2px 10px;
+    border-radius: 9999px;
+  }
+
+  .trash-header-desc {
+    font-size: 0.88rem;
+    color: #94a3b8;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .trash-modal-close-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #94a3b8;
+    font-size: 1.6rem;
+    line-height: 1;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .trash-modal-close-btn:hover {
+    background: #f43f5e;
+    color: #ffffff;
+    border-color: #fda4af;
+    transform: rotate(90deg);
+  }
+
+  .trash-controls-row {
+    padding: 1rem 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    background: rgba(7, 10, 19, 0.5);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .trash-filter-chips {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .trash-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: #cbd5e1;
+    font-size: 0.84rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+
+  .trash-filter-chip:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+
+  .trash-filter-chip.is-active {
+    background: rgba(244, 63, 94, 0.25);
+    border-color: #f43f5e;
+    color: #fda4af;
+    font-weight: 700;
+    box-shadow: 0 0 14px rgba(244, 63, 94, 0.3);
+  }
+
+  .trash-chip-count {
+    font-size: 0.74rem;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .btn-empty-trash-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    background: rgba(239, 68, 68, 0.12);
+    color: #fca5a5;
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-empty-trash-action:hover {
+    background: rgba(239, 68, 68, 0.28);
+    border-color: #ef4444;
+    color: #ffffff;
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.35);
+  }
+
+  .trash-items-scroll-wrap {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.4rem 1.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-height: 260px;
+    max-height: 52vh;
+  }
+
+  .trash-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  :global(.trash-item-card) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.2rem;
+    padding: 1rem 1.2rem;
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    transition: all 0.25s ease;
+  }
+
+  :global(.trash-item-card:hover) {
+    border-color: rgba(244, 63, 94, 0.45);
+    background: rgba(15, 23, 42, 0.95);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    transform: translateY(-2px);
+  }
+
+  :global(.trash-item-left) {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  :global(.trash-item-thumb-frame) {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #070a13;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  :global(.trash-item-thumb-img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  :global(.trash-item-thumb-icon) {
+    font-size: 1.8rem;
+  }
+
+  :global(.trash-item-info) {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  :global(.trash-item-meta-top) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  :global(.trash-type-badge) {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.08);
+    color: #e2e8f0;
+  }
+
+  :global(.trash-type-badge.is-memory) {
+    background: rgba(244, 63, 94, 0.2);
+    border-color: rgba(244, 63, 94, 0.4);
+    color: #fda4af;
+  }
+
+  :global(.trash-type-badge.is-bucket) {
+    background: rgba(147, 51, 234, 0.2);
+    border-color: rgba(147, 51, 234, 0.4);
+    color: #d8b4fe;
+  }
+
+  :global(.trash-deleted-date) {
+    font-size: 0.76rem;
+    color: #94a3b8;
+    font-family: var(--mono);
+  }
+
+  :global(.trash-item-title) {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  :global(.trash-item-sub) {
+    font-size: 0.84rem;
+    color: #94a3b8;
+    margin: 0;
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  :global(.trash-item-actions) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  :global(.btn-trash-restore) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 15px;
+    border-radius: 9999px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(16, 185, 129, 0.25));
+    border: 1px solid rgba(34, 197, 94, 0.5);
+    color: #86efac;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  :global(.btn-trash-restore:hover) {
+    background: linear-gradient(135deg, #22c55e, #10b981);
+    color: #ffffff;
+    border-color: #86efac;
+    box-shadow: 0 0 16px rgba(34, 197, 94, 0.45);
+    transform: translateY(-2px);
+  }
+
+  :global(.btn-trash-delete-perm) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 0.95rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  :global(.btn-trash-delete-perm:hover) {
+    background: rgba(239, 68, 68, 0.3);
+    border-color: #ef4444;
+    color: #fca5a5;
+    transform: scale(1.1);
+  }
+
+  .trash-empty-state {
+    text-align: center;
+    padding: 3.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .trash-empty-icon {
+    font-size: 3.2rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .trash-empty-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+  }
+
+  .trash-empty-desc {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    max-width: 440px;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .trash-modal-footer {
+    padding: 1.1rem 1.8rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: rgba(7, 10, 19, 0.5);
+  }
+
+  .trash-footer-tip {
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+
+  @media (max-width: 640px) {
+    .trash-modal-card {
+      max-height: 92vh;
+    }
+    .trash-modal-header {
+      padding: 1.2rem 1.2rem 1rem;
+    }
+    .trash-controls-row {
+      padding: 0.8rem 1.2rem;
+    }
+    .trash-items-scroll-wrap {
+      padding: 1rem 1.2rem;
+    }
+    .trash-modal-footer {
+      padding: 0.9rem 1.2rem;
+      flex-direction: column-reverse;
+      align-items: stretch;
+    }
+    :global(.trash-item-card) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.9rem;
+    }
+    :global(.trash-item-actions) {
+      width: 100%;
+      justify-content: flex-end;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 0.6rem;
+    }
+  }
+</style>
+
+<script>
+  import {
+    getStoredTrash,
+    saveStoredTrash,
+    restoreTrashItem,
+    deleteTrashItemPermanently,
+    emptyAllTrash,
+    type DeletedTrashItem
+  } from '../lib/trashBin';
+
+  let currentTrashFilter = 'all'; // 'all' | 'memory' | 'bucket_list'
+
+  function updateTrashBadgeCounters() {
+    const list = getStoredTrash();
+    const total = list.length;
+
+    // Header counter badge
+    const headerCountEl = document.getElementById('header-trash-count');
+    if (headerCountEl) headerCountEl.textContent = String(total);
+
+    // Modal total badge
+    const modalTotalCount = document.getElementById('trash-modal-total-count');
+    if (modalTotalCount) modalTotalCount.textContent = `${total} mục`;
+
+    // Filter counts
+    const filterAll = document.getElementById('trash-filter-all-count');
+    const filterMem = document.getElementById('trash-filter-memory-count');
+    const filterBucket = document.getElementById('trash-filter-bucket-count');
+
+    if (filterAll) filterAll.textContent = String(total);
+    if (filterMem) filterMem.textContent = String(list.filter((i) => i.type === 'memory').length);
+    if (filterBucket) filterBucket.textContent = String(list.filter((i) => i.type === 'bucket_list').length);
+  }
+
+  function renderTrashModalItems() {
+    const listContainer = document.getElementById('trash-items-list');
+    const emptyState = document.getElementById('trash-empty-state');
+    if (!listContainer) return;
+
+    updateTrashBadgeCounters();
+
+    const allTrash = getStoredTrash();
+    let filtered = allTrash;
+
+    if (currentTrashFilter !== 'all') {
+      filtered = allTrash.filter((item) => item.type === currentTrashFilter);
+    }
+
+    listContainer.innerHTML = '';
+
+    if (filtered.length === 0) {
+      if (emptyState) emptyState.style.display = 'flex';
+      return;
+    } else {
+      if (emptyState) emptyState.style.display = 'none';
+    }
+
+    filtered.forEach((item) => {
+      const card = document.createElement('div');
+      card.className = 'trash-item-card';
+
+      const isMemory = item.type === 'memory';
+      const typeBadgeText = isMemory ? '📸 Kỷ Niệm' : '💫 Điều Ước';
+      const typeClass = isMemory ? 'is-memory' : 'is-bucket';
+
+      const thumbHtml = item.previewImage
+        ? `<img src="${item.previewImage}" alt="${item.title}" class="trash-item-thumb-img" />`
+        : `<span class="trash-item-thumb-icon">${isMemory ? '📸' : '💫'}</span>`;
+
+      card.innerHTML = `
+        <div class="trash-item-left">
+          <div class="trash-item-thumb-frame">
+            ${thumbHtml}
+          </div>
+          <div class="trash-item-info">
+            <div class="trash-item-meta-top">
+              <span class="trash-type-badge ${typeClass}">${typeBadgeText}</span>
+              <span class="trash-deleted-date">🗓️ ${item.deletedAtFormatted || 'Đã xóa'}</span>
+            </div>
+            <h4 class="trash-item-title" title="${item.title}">${item.title}</h4>
+            ${item.subtitle ? `<p class="trash-item-sub">"${item.subtitle}"</p>` : ''}
+          </div>
+        </div>
+        <div class="trash-item-actions">
+          <button type="button" class="btn-trash-restore" title="Khôi phục lại mục này">
+            <span>🔄 Khôi Phục</span>
+          </button>
+          <button type="button" class="btn-trash-delete-perm" title="Xóa vĩnh viễn khỏi thùng rác">
+            <span>🗑️</span>
+          </button>
+        </div>
+      `;
+
+      // Restore button click
+      const restoreBtn = card.querySelector('.btn-trash-restore');
+      if (restoreBtn) {
+        restoreBtn.addEventListener('click', () => {
+          restoreTrashItem(item.id);
+          renderTrashModalItems();
+        });
+      }
+
+      // Permanent delete button click
+      const deletePermBtn = card.querySelector('.btn-trash-delete-perm');
+      if (deletePermBtn) {
+        deletePermBtn.addEventListener('click', async () => {
+          const isMemory = item.type === 'memory';
+          const excerpt = item.data?.quote || item.data?.caption || item.data?.description || item.data?.memoryNote || item.subtitle || 'Mục này chuẩn bị được xóa hoàn toàn khỏi hệ thống.';
+          const confirmed = (window as any).romanticConfirm
+            ? await (window as any).romanticConfirm({
+                heading: 'Xác Nhận Xóa Vĩnh Viễn?',
+                subject: item.title,
+                subjectIcon: isMemory ? '📸' : '💫',
+                quote: excerpt,
+                typeBadge: isMemory ? '📸 Kỷ Niệm' : '💫 Điều Ước',
+                sealEmoji: '🔥',
+                confirmText: 'Xóa Vĩnh Viễn 🔥',
+                cancelText: 'Giữ Lại 🌸',
+                isDanger: true,
+                notice: '⚠️ Cảnh báo: Mục này sẽ bị xóa vĩnh viễn khỏi thiết bị & đám mây, không thể khôi phục lại!'
+              })
+            : confirm(`Bạn có chắc muốn xóa VĨNH VIỄN "${item.title}" không? Hành động này không thể hoàn tác!`);
+
+          if (confirmed) {
+            deleteTrashItemPermanently(item.id);
+            renderTrashModalItems();
+          }
+        });
+      }
+
+      listContainer.appendChild(card);
+    });
+  }
+
+  function initTrashModalInteractive() {
+    const modal = document.getElementById('trash-recovery-modal');
+    const closeBtn = document.getElementById('trash-modal-close');
+    const closeBottomBtn = document.getElementById('btn-trash-close-bottom');
+    const emptyTrashBtn = document.getElementById('btn-empty-trash-action');
+
+    const openModal = () => {
+      if (!modal) return;
+      modal.classList.add('is-open');
+      renderTrashModalItems();
+    };
+
+    const closeModal = () => {
+      if (!modal) return;
+      modal.classList.remove('is-open');
+    };
+
+    // Header open button
+    const headerOpenBtn = document.getElementById('header-btn-open-trash');
+    if (headerOpenBtn) headerOpenBtn.addEventListener('click', openModal);
+
+    // Global triggers (any button with .btn-open-trash-trigger)
+    document.querySelectorAll('.btn-open-trash-trigger').forEach((btn: any) => {
+      btn.addEventListener('click', openModal);
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (closeBottomBtn) closeBottomBtn.addEventListener('click', closeModal);
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+    }
+
+    // Empty all trash
+    if (emptyTrashBtn) {
+      emptyTrashBtn.addEventListener('click', async () => {
+        const trash = getStoredTrash();
+        if (trash.length === 0) return;
+        const confirmed = (window as any).romanticConfirm
+          ? await (window as any).romanticConfirm({
+              heading: 'Dọn Sạch Thùng Rác?',
+              subject: `Toàn bộ ${trash.length} mục trong Thùng Rác`,
+              subjectIcon: '🧹',
+              quote: 'Tất cả các trang nhật ký kỷ niệm và điều ước đã xóa sẽ bị giải phóng vĩnh viễn khỏi không gian lưu trữ.',
+              typeBadge: '🗑️ Dọn Sạch Thùng Rác',
+              sealEmoji: '🧹',
+              confirmText: 'Dọn Sạch Tất Cả 🔥',
+              cancelText: 'Để Lại Đây 🌸',
+              isDanger: true,
+              notice: `⚠️ Cảnh báo: ${trash.length} mục sẽ bị xóa vĩnh viễn và không thể khôi phục!`
+            })
+          : confirm(`Bạn có chắc muốn DỌN SẠCH toàn bộ ${trash.length} mục trong thùng rác không? Tất cả sẽ bị xóa vĩnh viễn!`);
+
+        if (confirmed) {
+          emptyAllTrash();
+          renderTrashModalItems();
+        }
+      });
+    }
+
+    // Filter chips
+    const filterChips = document.querySelectorAll('#trash-filter-chips .trash-filter-chip');
+    filterChips.forEach((chip: any) => {
+      chip.addEventListener('click', () => {
+        filterChips.forEach((c: any) => c.classList.remove('is-active'));
+        chip.classList.add('is-active');
+        currentTrashFilter = chip.getAttribute('data-filter') || 'all';
+        renderTrashModalItems();
+      });
+    });
+
+    // Initial counter update
+    updateTrashBadgeCounters();
+
+    // Listen to real-time events
+    window.addEventListener('couple-trash-updated', () => {
+      updateTrashBadgeCounters();
+      if (modal && modal.classList.contains('is-open')) {
+        renderTrashModalItems();
+      }
+    });
+
+    // Firebase realtime sync
+    window.addEventListener('couple-cloud-updated', (e: any) => {
+      const cloudData = e.detail;
+      if (cloudData && cloudData.trashBin) {
+        localStorage.setItem('couple_trash_bin', JSON.stringify(cloudData.trashBin));
+        updateTrashBadgeCounters();
+        if (modal && modal.classList.contains('is-open')) {
+          renderTrashModalItems();
+        }
+      }
+    });
+  }
+
+  initTrashModalInteractive();
+  document.addEventListener('astro:after-swap', initTrashModalInteractive);
+</script>

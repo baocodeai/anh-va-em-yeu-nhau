@@ -119,7 +119,7 @@ const currentTag = displayTag || tag;
         <div>
           <h2 style="font-size: 1.35rem; margin-bottom: 1.5rem; color: var(--ink);">Bài viết ({posts.length})</h2>
           <div class="post-list">
-            {posts.map((post) => (
+            {posts.map((post: any) => (
               <article class="post-card">
                 <a class="post-card-link" href={`/blog/${post.slug}/`}>
                   <div class="post-card-content">
@@ -150,7 +150,7 @@ const currentTag = displayTag || tag;
         <div style="margin-top: 3rem;">
           <h2 style="font-size: 1.35rem; margin-bottom: 1.5rem; color: var(--ink);">Dự án liên quan ({projects.length})</h2>
           <div class="post-list">
-            {projects.map((proj) => (
+            {projects.map((proj: any) => (
               <article class="post-card">
                 <a class="post-card-link" href={`/projects/${proj.slug}/`}>
                   <div class="post-card-content">

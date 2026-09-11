@@ -6,6 +6,7 @@
   <!-- Deep Space Cosmic Atmosphere -->
   <div class="nebula-cloud nebula-primary"></div>
   <div class="nebula-cloud nebula-secondary"></div>
+  <div class="nebula-cloud nebula-love"></div>
 
   <!-- Fullscreen Interactive Canvas -->
   <canvas id="cosmos-canvas" class="cosmos-canvas"></canvas>
@@ -42,6 +43,11 @@
     animation: nebula-drift-2 30s ease-in-out infinite alternate;
   }
 
+  .nebula-love {
+    background: radial-gradient(circle 850px at 50% 65%, rgba(244, 63, 94, 0.16) 0%, rgba(168, 85, 247, 0.10) 40%, transparent 70%);
+    animation: nebula-drift-love 28s ease-in-out infinite alternate;
+  }
+
   @keyframes nebula-drift-1 {
     0% { transform: scale(1) translate(0, 0); opacity: 0.5; }
     50% { transform: scale(1.08) translate(-2%, 2%); opacity: 0.7; }
@@ -52,6 +58,12 @@
     0% { transform: scale(1.05) translate(0, 0); opacity: 0.45; }
     50% { transform: scale(0.96) translate(2%, -2%); opacity: 0.65; }
     100% { transform: scale(1.06) translate(-2%, 2%); opacity: 0.5; }
+  }
+
+  @keyframes nebula-drift-love {
+    0% { transform: scale(0.95) translate(-1%, 2%); opacity: 0.4; }
+    50% { transform: scale(1.06) translate(1%, -1%); opacity: 0.6; }
+    100% { transform: scale(1) translate(-2%, -2%); opacity: 0.45; }
   }
 
   .cosmos-canvas {
@@ -214,7 +226,10 @@
         '#bfdbfe',
         '#93c5fd',
         '#fef08a',
-        '#fed7aa'
+        '#fed7aa',
+        '#fda4af',
+        '#f472b6',
+        '#e879f9'
       ];
 
       for (let i = 0; i < starCount; i++) {

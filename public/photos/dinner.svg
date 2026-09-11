@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="600" height="400">
+  <defs>
+    <radialGradient id="candleGlow" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#fef08a" stop-opacity="0.8"/>
+      <stop offset="40%" stop-color="#ea580c" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#09090b" stop-opacity="0.95"/>
+    </radialGradient>
+  </defs>
+  <rect width="600" height="400" fill="#09090b"/>
+  <circle cx="300" cy="180" r="220" fill="url(#candleGlow)"/>
+  <!-- Table -->
+  <ellipse cx="300" cy="330" rx="260" ry="80" fill="#27272a" stroke="#3f3f46" stroke-width="2"/>
+  <!-- Candle -->
+  <rect x="294" y="190" width="12" height="60" rx="3" fill="#fafafa"/>
+  <ellipse cx="300" cy="175" rx="7" ry="14" fill="#fbbf24"/>
+  <ellipse cx="300" cy="177" rx="4" ry="8" fill="#ef4444"/>
+  <!-- Wine Glasses -->
+  <path d="M 230 240 Q 240 270 240 280 L 240 305 L 225 305 L 255 305 L 240 305 Q 240 270 250 240 Z" fill="#f43f5e" opacity="0.8" stroke="#cbd5e1" stroke-width="1.5"/>
+  <path d="M 350 240 Q 360 270 360 280 L 360 305 L 345 305 L 375 305 L 360 305 Q 360 270 370 240 Z" fill="#f43f5e" opacity="0.8" stroke="#cbd5e1" stroke-width="1.5"/>
+  <!-- Plates -->
+  <ellipse cx="200" cy="320" rx="45" ry="18" fill="#e4e4e7" stroke="#a1a1aa" stroke-width="1"/>
+  <ellipse cx="400" cy="320" rx="45" ry="18" fill="#e4e4e7" stroke="#a1a1aa" stroke-width="1"/>
+  <!-- Romantic text -->
+  <rect x="180" y="350" width="240" height="32" rx="16" fill="#18181b" opacity="0.8"/>
+  <text x="300" y="371" fill="#fbcfe8" font-family="'Be Vietnam Pro', sans-serif" font-size="13" font-weight="600" text-anchor="middle">Bữa Tối Dưới Ánh Nến 🕯️🍷</text>
+</svg>

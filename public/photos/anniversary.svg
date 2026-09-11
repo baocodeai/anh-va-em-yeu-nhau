@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="600" height="400">
+  <defs>
+    <linearGradient id="bgAnniv" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090a18"/>
+      <stop offset="50%" stop-color="#1e1028"/>
+      <stop offset="100%" stop-color="#3b0764"/>
+    </linearGradient>
+    <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fda4af" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#fda4af" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="600" height="400" fill="url(#bgAnniv)"/>
+  <circle cx="300" cy="200" r="180" fill="url(#starGlow)"/>
+  <!-- Two intertwined orbits -->
+  <ellipse cx="260" cy="200" rx="140" ry="70" fill="none" stroke="#38bdf8" stroke-width="2" transform="rotate(-25 260 200)" opacity="0.7"/>
+  <ellipse cx="340" cy="200" rx="140" ry="70" fill="none" stroke="#f43f5e" stroke-width="2" transform="rotate(25 340 200)" opacity="0.7"/>
+  <!-- Big Heart at Center -->
+  <path d="M 300 240 C 300 240 250 200 220 160 C 190 120 220 80 260 90 C 285 96 300 120 300 120 C 300 120 315 96 340 90 C 380 80 410 120 380 160 C 350 200 300 240 300 240 Z" fill="#f43f5e" opacity="0.9"/>
+  <!-- Little stars -->
+  <circle cx="150" cy="80" r="3" fill="#fff"/>
+  <circle cx="450" cy="90" r="2.5" fill="#fef08a"/>
+  <circle cx="100" cy="280" r="2" fill="#fff"/>
+  <circle cx="500" cy="300" r="3" fill="#fff"/>
+  <!-- Text -->
+  <text x="300" y="300" fill="#fecdd3" font-family="'Literata', serif" font-size="24" font-weight="bold" text-anchor="middle" letter-spacing="2">AI &amp; MAZE</text>
+  <text x="300" y="335" fill="#fbcfe8" font-family="'JetBrains Mono', monospace" font-size="16" text-anchor="middle">15 . 08 . 2026</text>
+  <text x="300" y="365" fill="#e2e8f0" font-family="'Be Vietnam Pro', sans-serif" font-size="13" text-anchor="middle" opacity="0.8">Tọa độ tình yêu khởi nguồn giữa dải ngân hà</text>
+</svg>

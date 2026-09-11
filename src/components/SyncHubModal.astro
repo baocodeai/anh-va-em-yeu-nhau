@@ -1,0 +1,807 @@
+---
+// SyncHubModal.astro - Trung Tâm Đồng Bộ Dữ Liệu & Kết Nối Firebase Realtime
+---
+
+<div class="sync-hub-trigger-wrap">
+  <button type="button" class="sync-hub-floating-btn btn-love" id="open-sync-hub" title="Đồng Bộ & Quản Lý Dữ Liệu">
+    <span class="sync-icon">🔥</span>
+    <span class="sync-label">Cloud Sync &amp; Backup</span>
+    <span class="sync-live-dot" id="global-sync-dot" title="Trạng thái kết nối"></span>
+  </button>
+</div>
+
+<!-- Modal Overlay -->
+<div class="sync-hub-overlay" id="sync-hub-modal" aria-hidden="true">
+  <div class="sync-hub-card romantic-card">
+    <div class="sync-hub-header">
+      <div class="sync-hub-title-row">
+        <span class="modal-icon">🪐</span>
+        <div>
+          <h3 class="modal-title gradient-love-text">Trung Tâm Dữ Liệu &amp; Firebase Realtime</h3>
+          <p class="modal-subtitle">Đồng bộ tức thì dữ liệu giữa AI &amp; Maze trên mọi thiết bị</p>
+        </div>
+      </div>
+      <button type="button" class="sync-close-btn" id="close-sync-hub" aria-label="Đóng">&times;</button>
+    </div>
+
+    <!-- Status Banner -->
+    <div class="sync-status-banner" id="firebase-status-banner">
+      <span class="status-indicator-dot" id="status-indicator-dot"></span>
+      <span class="status-text" id="status-banner-text">Đang kiểm tra kết nối Firebase...</span>
+    </div>
+
+    <div class="sync-hub-tabs">
+      <button type="button" class="tab-btn is-active" data-tab="tab-firebase">🔥 Firebase Realtime</button>
+      <button type="button" class="tab-btn" data-tab="tab-backup">💾 Sao Lưu / Khôi Phục</button>
+      <button type="button" class="tab-btn" data-tab="tab-cloud-api">🌐 Custom API Server</button>
+      <button type="button" class="tab-btn" data-tab="tab-code">📋 Xuất Mã Nguồn</button>
+    </div>
+
+    <!-- Tab 1: Firebase Realtime Database (Primary) -->
+    <div class="tab-content is-active" id="tab-firebase">
+      <div class="sync-block">
+        <h4 class="block-title gradient-rose-text">Cấu Hình Google Firebase Realtime (0đ Miễn Phí):</h4>
+        <p class="block-desc">
+          Dán đoạn cấu hình Firebase từ Google Console của bạn vào đây. Sau khi kết nối, mọi thay đổi của Maze hoặc AI sẽ tự động xuất hiện trên màn hình của người kia trong 0.5 giây!
+        </p>
+
+        <div class="firebase-guide-box">
+          <p class="guide-title">📌 Hướng dẫn tạo Firebase trong 2 phút:</p>
+          <ol class="guide-steps-list">
+            <li>Truy cập <a href="https://console.firebase.google.com" target="_blank" rel="noopener noreferrer" class="link-highlight">console.firebase.google.com</a> (đăng nhập bằng Gmail).</li>
+            <li>Tạo một dự án mới (ví dụ: <code>ai-maze-love</code>).</li>
+            <li>Mục <strong>Build</strong> &rarr; Chọn <strong>Realtime Database</strong> &rarr; Bấm <strong>Tạo cơ sở dữ liệu</strong> (chọn <em>Chế độ kiểm thử / Test mode</em>).</li>
+            <li>Vào biểu tượng <strong>Cài đặt dự án ⚙️</strong> &rarr; Thêm ứng dụng Web <code>&lt;/&gt;</code> &rarr; Copy đoạn mã cấu hình <code>firebaseConfig</code> và dán vào ô bên dưới.</li>
+          </ol>
+        </div>
+
+        <div class="form-group mt-3">
+          <label for="firebase-config-json" class="form-label">Đoạn mã Firebase Config (Dạng JSON hoặc Object):</label>
+          <textarea
+            id="firebase-config-json"
+            class="sync-textarea"
+            rows="5"
+            placeholder='{
+  "apiKey": "AIzaSy...",
+  "authDomain": "ai-maze.firebaseapp.com",
+  "databaseURL": "https://ai-maze-default-rtdb.firebaseio.com",
+  "projectId": "ai-maze",
+  "storageBucket": "ai-maze.appspot.com",
+  "appId": "1:..."
+}'
+          ></textarea>
+        </div>
+
+        <div class="firebase-btn-row">
+          <button type="button" class="btn-love" id="btn-save-firebase">
+            <span>🔥 Kết Nối &amp; Bật Realtime</span>
+          </button>
+          <button type="button" class="btn-outline-love" id="btn-force-push-firebase">
+            <span>⬆️ Đẩy Dữ Liệu Hiện Tại Lên Firebase</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Backup & Restore JSON -->
+    <div class="tab-content" id="tab-backup">
+      <div class="sync-block">
+        <h4 class="block-title">Sao Lưu (Export JSON):</h4>
+        <p class="block-desc">
+          Tải toàn bộ dữ liệu 21 ngày học và Bucket List hiện tại về máy thành tệp tin JSON an toàn.
+        </p>
+        <button type="button" class="btn-love" id="btn-export-json">
+          <span>💾 Tải File Backup JSON</span>
+        </button>
+      </div>
+
+      <div class="sync-block mt-3">
+        <h4 class="block-title">Khôi Phục (Import JSON):</h4>
+        <p class="block-desc">
+          Nhập dữ liệu từ tệp JSON (do AI hoặc Maze gửi cho nhau) để đồng bộ ngay trên máy này.
+        </p>
+        <label class="btn-outline-love file-upload-btn">
+          <span>📥 Chọn File JSON Để Nhập</span>
+          <input type="file" id="file-import-json" accept=".json" style="display: none;" />
+        </label>
+      </div>
+
+      <div class="sync-block mt-3 border-danger">
+        <h4 class="block-title text-danger">Đặt Lại Mặc Định (Reset):</h4>
+        <p class="block-desc">
+          Xóa mọi thay đổi trong bộ nhớ trình duyệt và tải lại dữ liệu mặc định từ mã nguồn gốc.
+        </p>
+        <button type="button" class="btn-reset" id="btn-reset-defaults">
+          <span>🔄 Khôi Phục Dữ Liệu Gốc</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab 3: Custom Cloud API Server -->
+    <div class="tab-content" id="tab-cloud-api">
+      <div class="sync-block">
+        <h4 class="block-title">Kết nối Cloud VPS Riêng Của Bạn:</h4>
+        <p class="block-desc">
+          Nếu bạn tự host server Node.js / Python riêng trên VPS, nhập đường dẫn API tại đây:
+        </p>
+        <div class="cloud-input-group">
+          <input
+            type="url"
+            id="cloud-api-url"
+            class="sync-input"
+            placeholder="http://dia_chi_ip_vps:3000/api/sync"
+            spellcheck="false"
+          />
+          <button type="button" class="btn-love" id="btn-save-cloud-url">Lưu URL</button>
+        </div>
+
+        <div class="cloud-actions-row">
+          <button type="button" class="btn-outline-love" id="btn-push-cloud">
+            <span>⬆️ Đẩy lên Cloud VPS</span>
+          </button>
+          <button type="button" class="btn-outline-love" id="btn-pull-cloud">
+            <span>⬇️ Lấy về từ Cloud VPS</span>
+          </button>
+        </div>
+        <div class="cloud-status-log" id="cloud-status-msg">
+          Trạng thái: Chưa kiểm tra.
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Export Source Code -->
+    <div class="tab-content" id="tab-code">
+      <div class="sync-block">
+        <h4 class="block-title">Sao Chép Mã Nguồn TypeScript:</h4>
+        <p class="block-desc">
+          Nếu bạn muốn lưu vĩnh viễn các điều ước và bài học mới nhất vào mã nguồn (file code), chỉ cần bấm sao chép và dán vào file tương ứng:
+        </p>
+
+        <div class="code-export-actions">
+          <button type="button" class="btn-outline-love" id="btn-copy-bucket-code">
+            <span>📋 Copy Mã Bucket List</span>
+          </button>
+          <button type="button" class="btn-outline-love" id="btn-copy-habit-code">
+            <span>📋 Copy Mã 21 Ngày Học</span>
+          </button>
+        </div>
+        <textarea id="code-export-preview" class="code-preview-area" readonly placeholder="Mã nguồn sẽ hiển thị tại đây sau khi bạn bấm nút trên..."></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Floating trigger button */
+  .sync-hub-trigger-wrap {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 999;
+  }
+
+  .sync-hub-floating-btn {
+    box-shadow: 0 8px 32px rgba(244, 63, 94, 0.45);
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .sync-live-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #64748b;
+    display: inline-block;
+    margin-left: 6px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+    transition: background 0.3s;
+  }
+
+  .sync-live-dot.is-live {
+    background: #22c55e;
+    box-shadow: 0 0 10px #22c55e;
+  }
+
+  /* Modal */
+  .sync-hub-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .sync-hub-overlay.is-open {
+    display: flex;
+    animation: fadeInModal 0.25s ease-out;
+  }
+
+  @keyframes fadeInModal {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .sync-hub-card {
+    position: relative;
+    max-width: 680px;
+    width: 100%;
+    background: #0f172a;
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    padding: 2rem;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .sync-hub-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.8rem;
+  }
+
+  .sync-hub-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .modal-icon {
+    font-size: 2.2rem;
+  }
+
+  .modal-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin: 0;
+  }
+
+  .modal-subtitle {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin: 2px 0 0;
+  }
+
+  .sync-close-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #94a3b8;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .sync-close-btn:hover {
+    color: #ffffff;
+  }
+
+  /* Status Banner */
+  .sync-status-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .status-indicator-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #eab308;
+  }
+
+  .status-indicator-dot.dot-connected {
+    background: #22c55e;
+    box-shadow: 0 0 8px #22c55e;
+  }
+
+  .status-indicator-dot.dot-offline {
+    background: #94a3b8;
+  }
+
+  /* Tabs */
+  .sync-hub-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tab-btn.is-active {
+    background: rgba(244, 63, 94, 0.25);
+    border-color: #f43f5e;
+    color: #fda4af;
+  }
+
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.is-active {
+    display: block;
+    animation: fadeInTab 0.2s ease-out;
+  }
+
+  @keyframes fadeInTab {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .sync-block {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1.4rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .block-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 0.4rem;
+  }
+
+  .block-desc {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    line-height: 1.5;
+    margin: 0 0 1rem;
+  }
+
+  .firebase-guide-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 3px solid #f43f5e;
+    padding: 0.8rem 1rem;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.82rem;
+    margin-bottom: 1rem;
+  }
+
+  .guide-title {
+    font-weight: 700;
+    color: #fecdd3;
+    margin: 0 0 6px;
+  }
+
+  .guide-steps-list {
+    margin: 0;
+    padding-left: 1.2rem;
+    color: #cbd5e1;
+    line-height: 1.6;
+  }
+
+  .link-highlight {
+    color: #38bdf8;
+    text-decoration: underline;
+  }
+
+  .sync-textarea {
+    width: 100%;
+    background: #020617;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 10px;
+    color: #7dd3fc;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    resize: vertical;
+  }
+
+  .firebase-btn-row {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .cloud-input-group {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+
+  .sync-input {
+    flex: 1;
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #ffffff;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+  }
+
+  .cloud-actions-row {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .cloud-status-log {
+    font-size: 0.8rem;
+    font-family: var(--mono);
+    color: #fbbf24;
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 6px;
+  }
+
+  .file-upload-btn {
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .btn-reset {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+    padding: 8px 18px;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-reset:hover {
+    background: rgba(239, 68, 68, 0.3);
+    color: #ffffff;
+  }
+
+  .code-export-actions {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .code-preview-area {
+    width: 100%;
+    height: 160px;
+    background: #020617;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: #7dd3fc;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    padding: 10px;
+    resize: vertical;
+  }
+</style>
+
+<script>
+  import {
+    isFirebaseConfigured,
+    getSavedFirebaseConfig,
+    saveFirebaseConfig,
+    subscribeToRealtimeSync,
+    pushDataToFirebase
+  } from '../lib/firebaseClient';
+
+  function initSyncHub() {
+    const modal = document.getElementById('sync-hub-modal');
+    const openBtn = document.getElementById('open-sync-hub');
+    const closeBtn = document.getElementById('close-sync-hub');
+
+    if (!modal) return;
+
+    const openModal = () => modal.classList.add('is-open');
+    const closeModal = () => modal.classList.remove('is-open');
+
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    document.querySelectorAll('.btn-open-sync-trigger').forEach((btn: any) => {
+      btn.addEventListener('click', openModal);
+    });
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Tab switching
+    const tabBtns = modal.querySelectorAll('.tab-btn');
+    const tabContents = modal.querySelectorAll('.tab-content');
+
+    tabBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach((b) => b.classList.remove('is-active'));
+        tabContents.forEach((c) => c.classList.remove('is-active'));
+
+        btn.classList.add('is-active');
+        const targetTab = btn.getAttribute('data-tab');
+        if (targetTab) {
+          const content = modal.querySelector(`#${targetTab}`);
+          if (content) content.classList.add('is-active');
+        }
+      });
+    });
+
+    // Update Status Banner
+    const globalDot = document.getElementById('global-sync-dot');
+    const statusDot = document.getElementById('status-indicator-dot');
+    const statusText = document.getElementById('status-banner-text');
+
+    function updateFirebaseStatusUI(connected: boolean) {
+      if (connected) {
+        if (globalDot) globalDot.classList.add('is-live');
+        if (statusDot) {
+          statusDot.className = 'status-indicator-dot dot-connected';
+        }
+        if (statusText) {
+          statusText.innerHTML = '🟢 <strong>Firebase Realtime Đang Hoạt Động!</strong> Mọi thay đổi của Maze & AI đang được đồng bộ trực tiếp.';
+        }
+      } else {
+        if (globalDot) globalDot.classList.remove('is-live');
+        if (statusDot) {
+          statusDot.className = 'status-indicator-dot dot-offline';
+        }
+        if (statusText) {
+          statusText.textContent = '⚪ Đang lưu trên bộ nhớ máy (Chưa kích hoạt Firebase).';
+        }
+      }
+    }
+
+    const isConfigured = isFirebaseConfigured();
+    updateFirebaseStatusUI(isConfigured);
+
+    // Pre-fill Firebase config textarea
+    const fbTextarea = document.getElementById('firebase-config-json') as HTMLTextAreaElement | null;
+    const currentCfg = getSavedFirebaseConfig();
+    if (fbTextarea && currentCfg) {
+      fbTextarea.value = JSON.stringify(currentCfg, null, 2);
+    }
+
+    // Save Firebase Config Button
+    const saveFbBtn = document.getElementById('btn-save-firebase');
+    if (saveFbBtn && fbTextarea) {
+      saveFbBtn.addEventListener('click', async () => {
+        const raw = fbTextarea.value.trim();
+        if (!raw) {
+          alert('Vui lòng dán đoạn mã cấu hình Firebase vào ô!');
+          return;
+        }
+
+        try {
+          // Parse loose JSON or JS object
+          let configObj: any;
+          try {
+            configObj = JSON.parse(raw);
+          } catch {
+            // Attempt to clean JS object syntax (e.g. apiKey: "...")
+            const cleaned = raw
+              .replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":')
+              .replace(/'/g, '"');
+            configObj = JSON.parse(cleaned);
+          }
+
+          saveFirebaseConfig(configObj);
+          alert('✅ Đã lưu cấu hình Firebase! Đang kích hoạt kết nối Realtime...');
+          window.location.reload();
+        } catch (err: any) {
+          alert('❌ Định dạng cấu hình chưa chính xác. Vui lòng kiểm tra lại dấu ngoặc nhọn {} và dấu phẩy!');
+        }
+      });
+    }
+
+    // Force Push current data to Firebase
+    const forcePushBtn = document.getElementById('btn-force-push-firebase');
+    if (forcePushBtn) {
+      forcePushBtn.addEventListener('click', async () => {
+        if (!isFirebaseConfigured()) {
+          alert('⚠️ Vui lòng kết nối Firebase trước!');
+          return;
+        }
+
+        const bucketList = JSON.parse(localStorage.getItem('couple_bucket_list') || '[]');
+        const habit21 = JSON.parse(localStorage.getItem('couple_habit_21') || '[]');
+        const memories = JSON.parse(localStorage.getItem('couple_memories') || '[]');
+        const trashBin = JSON.parse(localStorage.getItem('couple_trash_bin') || '[]');
+        const avatars = JSON.parse(localStorage.getItem('couple_avatars') || '{}');
+
+        forcePushBtn.textContent = '⏳ Đang đẩy...';
+        const ok = await pushDataToFirebase({
+          bucketList,
+          habit21,
+          memories,
+          trashBin,
+          avatars,
+          lastUpdatedBy: 'Manual Sync'
+        });
+
+        if (ok) {
+          alert('✅ Đã đẩy toàn bộ dữ liệu hiện tại lên Firebase thành công!');
+        } else {
+          alert('❌ Có lỗi khi đẩy dữ liệu. Hãy kiểm tra quy tắc Realtime Database (Rules) đã cho phép read/write chưa.');
+        }
+        forcePushBtn.innerHTML = '<span>⬆️ Đẩy Dữ Liệu Hiện Tại Lên Firebase</span>';
+      });
+    }
+
+    // Start Realtime Subscription
+    if (isConfigured) {
+      subscribeToRealtimeSync((cloudData) => {
+        if (!cloudData) return;
+
+        let shouldNotify = false;
+
+        if (cloudData.bucketList && Array.isArray(cloudData.bucketList)) {
+          const currentLocal = localStorage.getItem('couple_bucket_list');
+          const newCloud = JSON.stringify(cloudData.bucketList);
+          if (currentLocal !== newCloud) {
+            localStorage.setItem('couple_bucket_list', newCloud);
+            shouldNotify = true;
+          }
+        }
+
+        if (cloudData.habit21 && Array.isArray(cloudData.habit21)) {
+          const currentHabit = localStorage.getItem('couple_habit_21');
+          const newHabit = JSON.stringify(cloudData.habit21);
+          if (currentHabit !== newHabit) {
+            localStorage.setItem('couple_habit_21', newHabit);
+            shouldNotify = true;
+          }
+        }
+
+        if (cloudData.memories && Array.isArray(cloudData.memories)) {
+          const currentMems = localStorage.getItem('couple_memories');
+          const newMems = JSON.stringify(cloudData.memories);
+          if (currentMems !== newMems) {
+            localStorage.setItem('couple_memories', newMems);
+            shouldNotify = true;
+          }
+        }
+
+        if (cloudData.trashBin && Array.isArray(cloudData.trashBin)) {
+          const currentTrash = localStorage.getItem('couple_trash_bin');
+          const newTrash = JSON.stringify(cloudData.trashBin);
+          if (currentTrash !== newTrash) {
+            localStorage.setItem('couple_trash_bin', newTrash);
+            shouldNotify = true;
+          }
+        }
+
+        if (cloudData.avatars) {
+          const currentAvs = localStorage.getItem('couple_avatars');
+          const newAvs = JSON.stringify(cloudData.avatars);
+          if (currentAvs !== newAvs) {
+            localStorage.setItem('couple_avatars', newAvs);
+            shouldNotify = true;
+          }
+        }
+
+        if (shouldNotify) {
+          // Notify components to re-render without full reload
+          window.dispatchEvent(new CustomEvent('couple-cloud-updated', { detail: cloudData }));
+        }
+      });
+    }
+
+    // Export Backup JSON
+    const exportBtn = document.getElementById('btn-export-json');
+    if (exportBtn) {
+      exportBtn.addEventListener('click', () => {
+        const data = {
+          couple: 'AI & Maze',
+          exportDate: new Date().toISOString(),
+          habit21: JSON.parse(localStorage.getItem('couple_habit_21') || '[]'),
+          bucketList: JSON.parse(localStorage.getItem('couple_bucket_list') || '[]'),
+          memories: JSON.parse(localStorage.getItem('couple_memories') || '[]'),
+          trashBin: JSON.parse(localStorage.getItem('couple_trash_bin') || '[]'),
+          avatars: JSON.parse(localStorage.getItem('couple_avatars') || '{}')
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `ai-maze-backup-${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+      });
+    }
+
+    // Import Backup JSON
+    const importInput = document.getElementById('file-import-json') as HTMLInputElement | null;
+    if (importInput) {
+      importInput.addEventListener('change', (e: any) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const data = JSON.parse(event.target?.result as string);
+            if (data.bucketList) localStorage.setItem('couple_bucket_list', JSON.stringify(data.bucketList));
+            if (data.habit21) localStorage.setItem('couple_habit_21', JSON.stringify(data.habit21));
+            if (data.memories) localStorage.setItem('couple_memories', JSON.stringify(data.memories));
+            if (data.trashBin) localStorage.setItem('couple_trash_bin', JSON.stringify(data.trashBin));
+            if (data.avatars) localStorage.setItem('couple_avatars', JSON.stringify(data.avatars));
+            alert('✅ Đã nhập dữ liệu thành công! Đang làm mới...');
+            window.location.reload();
+          } catch {
+            alert('❌ Tệp JSON không đúng định dạng!');
+          }
+        };
+        reader.readAsText(file);
+      });
+    }
+
+    // Reset Defaults
+    const resetBtn = document.getElementById('btn-reset-defaults');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', async () => {
+        const confirmed = (window as any).romanticConfirm
+          ? await (window as any).romanticConfirm({
+              heading: 'Khôi Phục Dữ Liệu Ban Đầu?',
+              subject: 'Thiết lập lại toàn bộ dữ liệu mẫu',
+              subjectIcon: '🔄',
+              quote: 'Tất cả các thay đổi tùy chỉnh trên máy của bạn sẽ được đặt lại về phiên bản gốc mặc định của hai đứa.',
+              typeBadge: '⚙️ Trung Tâm Dữ Liệu',
+              sealEmoji: '💌',
+              confirmText: 'Khôi Phục Gốc 🔄',
+              cancelText: 'Giữ Lại 🌸',
+              isDanger: true,
+              notice: '⚠️ Dữ liệu bộ nhớ tạm sẽ được làm mới về mặc định và tải lại trang.'
+            })
+          : confirm('Bạn có chắc muốn khôi phục về dữ liệu gốc không?');
+
+        if (confirmed) {
+          localStorage.removeItem('couple_bucket_list');
+          localStorage.removeItem('couple_habit_21');
+          window.location.reload();
+        }
+      });
+    }
+
+    // Copy Code
+    const copyBucketBtn = document.getElementById('btn-copy-bucket-code');
+    const copyHabitBtn = document.getElementById('btn-copy-habit-code');
+    const codePreview = document.getElementById('code-export-preview') as HTMLTextAreaElement | null;
+
+    if (copyBucketBtn && codePreview) {
+      copyBucketBtn.addEventListener('click', () => {
+        const list = localStorage.getItem('couple_bucket_list') || '[]';
+        const formatted = 'export const BUCKET_LIST: BucketItem[] = ' + JSON.stringify(JSON.parse(list), null, 2) + ';';
+        codePreview.value = formatted;
+        navigator.clipboard.writeText(formatted);
+        alert('📋 Đã sao chép mã BUCKET_LIST vào clipboard!');
+      });
+    }
+
+    if (copyHabitBtn && codePreview) {
+      copyHabitBtn.addEventListener('click', () => {
+        const list = localStorage.getItem('couple_habit_21') || '[]';
+        const formatted = 'export const HABIT_21_DAYS: DayHabit[] = ' + JSON.stringify(JSON.parse(list), null, 2) + ';';
+        codePreview.value = formatted;
+        navigator.clipboard.writeText(formatted);
+        alert('📋 Đã sao chép mã HABIT_21_DAYS vào clipboard!');
+      });
+    }
+  }
+
+  initSyncHub();
+  document.addEventListener('astro:after-swap', initSyncHub);
+</script>

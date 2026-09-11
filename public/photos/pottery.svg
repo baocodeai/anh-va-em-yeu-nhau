@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="600" height="400">
+  <defs>
+    <radialGradient id="workshopGlow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#451a03" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#0c0a09" stop-opacity="1"/>
+    </radialGradient>
+  </defs>
+  <rect width="600" height="400" fill="#0c0a09"/>
+  <circle cx="300" cy="220" r="240" fill="url(#workshopGlow)"/>
+  <!-- Pottery Wheel -->
+  <ellipse cx="300" cy="310" rx="140" ry="35" fill="#57534e" stroke="#78716c" stroke-width="2"/>
+  <ellipse cx="300" cy="295" rx="110" ry="25" fill="#292524"/>
+  <!-- Ceramic Cup/Vase on Wheel -->
+  <path d="M 270 295 C 265 240 250 200 280 160 L 320 160 C 350 200 335 240 330 295 Z" fill="#b45309" stroke="#d97706" stroke-width="2"/>
+  <ellipse cx="300" cy="160" rx="20" ry="6" fill="#f59e0b"/>
+  <!-- Inscription on vase -->
+  <text x="300" y="225" fill="#fef3c7" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="bold" text-anchor="middle">AI &amp; MAZE</text>
+  <path d="M 300 238 C 300 238 296 234 293 236 C 290 238 291 243 300 249 C 309 243 310 238 307 236 C 304 234 300 238 300 238 Z" fill="#ef4444"/>
+  <!-- Hands shaping clay -->
+  <!-- Left hand -->
+  <path d="M 235 210 Q 260 220 272 215" stroke="#fbcfe8" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <!-- Right hand -->
+  <path d="M 365 210 Q 340 220 328 215" stroke="#bae6fd" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <!-- Text badge -->
+  <rect x="180" y="350" width="240" height="32" rx="16" fill="#1c1917" opacity="0.8"/>
+  <text x="300" y="371" fill="#fde68a" font-family="'Be Vietnam Pro', sans-serif" font-size="13" font-weight="600" text-anchor="middle">Làm Đồ Gốm Kỷ Niệm 🏺✨</text>
+</svg>

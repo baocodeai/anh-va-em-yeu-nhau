@@ -1,71 +1,57 @@
-# BaoNV — Computer Vision Engineer Portfolio & Technical Blog
+# 🪐 21 Ngày Cùng Em — Tinh Cầu Tình Yêu Của AI 🚀 & Maze 🌸
 
-A high-performance, minimalist personal portfolio and technical blog built with [Astro](https://astro.build), tailored specifically for **Computer Vision & Edge AI Engineers**.
-
----
-
-## 🌟 Key Highlights & Architecture
-
-- **Dark-Mode First**: Defaults to high-contrast `tokyo-night` theme with 18 switchable runtime color palettes.
-- **Adaptive Logo**: Automatically adapts between high-contrast Electric Cyan (Dark mode with subtle neon glow) and deep sapphire (Light mode).
-- **Zero-Margin Favicon**: Multi-resolution favicons with zero-margin tight cropping for maximum tab readability.
-- **9 Principles CV Blog Grid**:
-  - **16:9 / 16:10 Ratio-Locked Covers**: Ensures clean, uniform card alignment with zero layout shift.
-  - **Authentic CV Result Thumbnails**: Visualizes real detection boxes, 3DGS Gaussian ellipsoids, SAM 2 masks, and WebGPU WGSL pipelines.
-  - **Featured Hero Banner + 4-Column Grid**: Dynamic rhythm guiding readers into top-priority papers and engineering logs.
-  - **Instant Live Filter & Search**: Client-side zero-latency filtering across 6 technical domains (`Detection`, `3D Vision`, `VLM`, `Deployment`, `Diffusion`, `Segmentation`) and search index.
-- **Featured Projects**: Live interactive WebGPU demos and repository showcases.
-- **Fast & 100% Static**: Pure static HTML/CSS with client-side Pagefind search (Ctrl+K).
+Một không gian lãng mạn, tinh tế và ấm áp được xây dựng bằng [Astro](https://astro.build) & Firebase Realtime dành riêng cho **AI** (Chàng Kỹ Sư Vũ Trụ) và **Maze** (Nàng Tinh Cầu Rực Rỡ).
 
 ---
 
-## 🚀 Quick Start
+## 🌟 Các Tính Năng Cốt Lõi
+
+1. **💖 Đồng Hồ Tình Yêu & Avatar Đôi 180px**:
+   - Đếm chính xác từng ngày, giờ, phút, giây từ mốc ngày yêu `15/08/2026`.
+   - Khung avatar đôi cực đại kèm hào quang Neon Cyan & Rose và Trái Tim Quỹ Đạo rực rỡ.
+   - Hỗ trợ tải lên hoặc đổi ảnh đại diện đôi tức thì.
+
+2. **✨ Hành Trình 21 Ngày Rèn Thói Quen Tiếng Anh**:
+   - Thử thách 21 ngày với tiến độ trực quan, âm thanh/lời chúc động viên ngọt ngào khi hoàn thành.
+   - Đánh dấu hoàn thành từng ngày và lưu trữ kỷ lục kiên trì.
+
+3. **💫 Bản Đồ Nguyện Ước (Bucket List Checklist)**:
+   - Danh sách điều ước đôi lứa dạng Checklist thông minh.
+   - Quản lý và tạo phân loại danh mục tùy biến (`+ Tạo danh mục`).
+   - Ghi nhận ngày tạo (`createdAt`), ngày hoàn thành và sắp xếp theo mốc thời gian linh hoạt.
+
+4. **📸 Album Kỷ Niệm & Studio Soạn Thảo 2 Cột**:
+   - Khung thẻ ảnh Polaroid nghệ thuật, hiệu ứng ghim `📌 Đã ghim` lên đầu trang.
+   - Studio soạn thảo mở rộng 2 cột: Cột trái quản lý ảnh bìa & kho ảnh đính kèm; Cột phải soạn thảo nội dung, trích dẫn và xem trước tức thì.
+   - Cơ chế thẻ ảnh rút gọn thông minh `[photo:1]`, `[photo:2]` chống tràn mã base64.
+   - Trang thư viện hiển thị toàn bộ ảnh đã tải lên theo từng bài viết.
+
+5. **🗑️ Thùng Rác & Khôi Phục Ký Ức (Trash Center)**:
+   - Cơ chế Soft-Delete an toàn: Xóa tạm vào Thùng Rác kèm thông báo Toast hoàn tác nhanh `[↩️ Hoàn tác]`.
+   - Nút `🗑️ Thùng rác (N)` trực quan trên Header để xem, khôi phục hoặc xóa vĩnh viễn.
+
+6. **💌 Hộp Thoại Xác Nhận Phong Thư Tình Yêu (Romantic Envelope)**:
+   - Hộp thoại xác nhận mô phỏng phong thư sáp niêm phong `💌` thay thế hoàn toàn `confirm()` mặc định của trình duyệt.
+   - Hiển thị trích dẫn câu chuyện tình yêu cùng 2 nút `[ Để Lại Đây 🌸 ]` và `[ Cất Đi 📦 ]`.
+
+7. **☁️ Đồng Bộ Thời Gian Thực (Firebase Realtime & JSON Backup)**:
+   - Tự động đồng bộ hóa mọi thay đổi giữa hai bạn qua Firebase.
+   - Hỗ trợ xuất / nhập file dữ liệu JSON an toàn trong Trung tâm Đồng Bộ (ở Footer).
+
+---
+
+## 🚀 Khởi Chạy Dự Án
 
 ```sh
 npm install
-npm run dev       # Start local development server on http://localhost:4321
-npm run build     # Compile static bundle and generate Pagefind search index
-npm run preview   # Preview the production build locally
-npm run check     # Type-check Astro and TypeScript content collections
+npm run dev       # Khởi chạy server phát triển tại http://localhost:4321
+npm run build     # Đóng gói sản phẩm tĩnh
+npm run preview   # Xem trước bản build tĩnh
 ```
 
 ---
 
-## 📁 Directory Layout
+## ❤️ Nhân Vật Chính
+- **AI 🚀** (28/09/2005) & **Maze 🌸** (11/12/2005)
+- **Tọa độ bắt đầu**: 15/08/2026 và mãi mãi về sau.
 
-```
-src/
-├── components/         Layout (Header, Nav, Socials, Theme Switcher), TypedLede
-├── content/
-│   ├── blog/           Markdown articles (Paper Reproductions, Deep Dives, Deployment Logs)
-│   └── projects/       Featured CV & Edge AI engineering projects
-└── pages/
-    ├── index.astro     Hero, 6 Technical Domains, Featured Projects, Recent Posts
-    ├── blog/           9-Principle CV Blog (Featured Banner, Domain Chips, 4-Col Grid)
-    ├── projects/       Project showcase & live demo cards
-    ├── about.astro     Bio, background, and contact
-    └── tags/[tag].astro Dynamic tag & domain topic routing
-public/
-├── covers/             Authentic CV result cover illustrations (16:9 SVGs)
-├── css/style.css       Core stylesheet, design system tokens, palette definitions
-├── favicon.svg         Zero-margin vector favicon
-└── logo.png / logo-dark.png Adaptive high-res brand logos
-templates/
-├── HUONG-DAN.md        Complete Vietnamese workflow and writing guide
-├── bai-viet.md         Starter template for new technical blog posts
-└── du-an.md            Starter template for new portfolio projects
-```
-
----
-
-## ✍️ Writing Content
-
-- **New Blog Post**: Copy [`templates/bai-viet.md`](templates/bai-viet.md) to `src/content/blog/your-post-slug.md`.
-- **New Project**: Copy [`templates/du-an.md`](templates/du-an.md) to `src/content/projects/your-project-slug.md`.
-- **Full Guide**: See [`templates/HUONG-DAN.md`](templates/HUONG-DAN.md) for complete documentation.
-
----
-
-## 📄 License
-
-AGPL-3.0-or-later.

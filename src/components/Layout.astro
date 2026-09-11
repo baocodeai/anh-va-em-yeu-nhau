@@ -2,18 +2,19 @@
 import { ClientRouter } from 'astro:transitions';
 import 'katex/dist/katex.min.css';
 import CosmosBackground from './CosmosBackground.astro';
-import { SITE_CONFIG } from '../site.config';
+import { COUPLE_CONFIG } from '../couple.config';
+import '../styles/couple-theme.css';
 
 interface Props {
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   canonicalPath?: string;
   ogType?: 'website' | 'article';
 }
 
 const {
-  title,
-  description,
+  title = `${COUPLE_CONFIG.title} — ${COUPLE_CONFIG.subtitle}`,
+  description = COUPLE_CONFIG.description,
   canonicalPath = '/',
   ogType = 'website',
 } = Astro.props;
@@ -22,7 +23,6 @@ const site = 'https://baocodeai.github.io';
 const canonicalUrl = new URL(canonicalPath, site).toString();
 // Replace public/assets/og.png with your own 1200x630 social preview image.
 const ogImageUrl = new URL('/assets/og.png', site).toString();
-const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -32,18 +32,18 @@ const currentPath = Astro.url.pathname;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#1a1b26" />
+    <meta name="theme-color" content="#0f172a" />
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=2" />
     <link rel="icon" type="image/png" sizes="128x128" href="/favicon.png?v=2" />
     <link rel="shortcut icon" href="/favicon.ico?v=2" />
     <link rel="apple-touch-icon" href="/favicon.png?v=2" />
-    <link rel="alternate" type="application/rss+xml" title="BaoNV" href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title="AI & Maze" href="/rss.xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <meta property="og:type" content={ogType} />
-    <meta property="og:site_name" content="BaoNV" />
+    <meta property="og:site_name" content="AI & Maze" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
@@ -78,77 +78,66 @@ const currentPath = Astro.url.pathname;
   </head>
   <body>
     <CosmosBackground />
-    <header class="site-header">
-      <nav class="nav" aria-label="Primary navigation">
-        <a class="brand" href="/" aria-label="BaoNV - Home">
-          <img src="/logo.png" alt="BaoNV" class="brand-logo logo-light-mode" width="28" height="28" />
-          <img src="/logo-dark.png" alt="BaoNV" class="brand-logo logo-dark-mode" width="28" height="28" />
-          <span class="brand-name">BaoNV</span>
+    <header class="site-header couple-site-header">
+      <nav class="nav" aria-label="Couple navigation">
+        <a class="brand couple-header-brand" href="/#overview" data-target="tab-pane-overview" aria-label="AI & Maze">
+          <span class="brand-heart-icon">💖</span>
+          <span class="brand-name gradient-love-text" style="font-weight: 800; font-size: 1.15rem; letter-spacing: 0.05em;">AI &amp; MAZE</span>
         </a>
 
-        <div class="nav-links">
-          <a href="/" aria-current={currentPath === '/' ? 'page' : undefined}>Home</a>
-          <a href="/blog/" aria-current={currentPath.startsWith('/blog') ? 'page' : undefined}>Blog</a>
-          {SITE_CONFIG.showProjects && (
-            <a href="/projects/" aria-current={currentPath.startsWith('/projects') ? 'page' : undefined}>Projects</a>
-          )}
-          <a href="/about/" aria-current={currentPath === '/about/' ? 'page' : undefined}>About</a>
-        </div>
-
-        <div class="nav-tools">
-          <button class="nav-icon-link" type="button" id="search-open" title="Search (Ctrl+K)" aria-label="Search (Ctrl+K)">
-            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="7" />
-              <path d="m21 21-4.3-4.3" />
-            </svg>
+        <!-- Unified Romantic Header Tab Navigation -->
+        <div class="header-tabs-nav" id="header-tabs-container">
+          <button type="button" class="header-tab-btn is-active" data-target="tab-pane-overview">
+            <span class="tab-icon">💖</span>
+            <span class="tab-label">Tinh Cầu Tình Yêu</span>
           </button>
-
-          <a class="nav-icon-link" href="https://github.com/baocodeai" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub">
-            <svg viewBox="0 0 16 16" aria-hidden="true">
-              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.64 7.64 0 0 1 8 3.87c.68 0 1.36.09 2 .26 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
-            </svg>
-          </a>
-
-          <a class="nav-icon-link" href="https://www.linkedin.com/in/vubaonguyen" target="_blank" rel="noopener noreferrer" title="LinkedIn" aria-label="LinkedIn">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-            </svg>
-          </a>
-
-          <a class="nav-icon-link" href="mailto:baonv.work@gmail.com" title="Email" aria-label="Email">
-            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="4" width="20" height="16" rx="2" />
-              <path d="m2 7 10 7 10-7" />
-            </svg>
-          </a>
-
-          <a class="nav-icon-link" href="/rss.xml" title="RSS Feed" aria-label="RSS Feed">
-            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 11a9 9 0 0 1 9 9" />
-              <path d="M4 4a16 16 0 0 1 16 16" />
-              <circle cx="5" cy="19" r="1" />
-            </svg>
-          </a>
+          <button type="button" class="header-tab-btn" data-target="tab-pane-habits">
+            <span class="tab-icon">✨</span>
+            <span class="tab-label">21 Ngày Thói Quen</span>
+          </button>
+          <button type="button" class="header-tab-btn" data-target="tab-pane-bucket">
+            <span class="tab-icon">💫</span>
+            <span class="tab-label">Bucket List</span>
+          </button>
+          <button type="button" class="header-tab-btn" data-target="tab-pane-memories">
+            <span class="tab-icon">📸</span>
+            <span class="tab-label">Kỷ Niệm Của Hai Đứa</span>
+          </button>
         </div>
 
-        <details class="nav-menu">
-          <summary class="nav-menu-button" aria-label="Open navigation">
+        <!-- Right Tools: Trash & Recovery -->
+        <div class="header-couple-tools">
+          <button type="button" class="header-trash-btn" id="header-btn-open-trash" title="Thùng Rác & Khôi Phục Ký Ức">
+            <span>🗑️ Thùng rác</span>
+            <span class="trash-badge-count" id="header-trash-count">0</span>
+          </button>
+        </div>
+
+        <!-- Mobile Drawer Navigation -->
+        <details class="nav-menu" id="header-mobile-menu">
+          <summary class="nav-menu-button" aria-label="Mở menu">
             <span></span>
             <span></span>
             <span></span>
           </summary>
           <div class="nav-menu-panel">
-            <a href="/" aria-current={currentPath === '/' ? 'page' : undefined}>Home</a>
-            <a href="/blog/" aria-current={currentPath.startsWith('/blog') ? 'page' : undefined}>Blog</a>
-            {SITE_CONFIG.showProjects && (
-              <a href="/projects/" aria-current={currentPath.startsWith('/projects') ? 'page' : undefined}>Projects</a>
-            )}
-            <a href="/about/" aria-current={currentPath === '/about/' ? 'page' : undefined}>About</a>
-            <div class="nav-menu-mobile-tools">
-              <a class="mobile-tool-link" href="https://github.com/baocodeai" target="_blank" rel="noopener noreferrer">GitHub</a>
-              <a class="mobile-tool-link" href="https://www.linkedin.com/in/vubaonguyen" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-              <a class="mobile-tool-link" href="mailto:baonv.work@gmail.com">Email</a>
-              <a class="mobile-tool-link" href="/rss.xml">RSS</a>
+            <button type="button" class="mobile-tab-btn is-active" data-target="tab-pane-overview">
+              <span>💖 Tinh Cầu Tình Yêu</span>
+            </button>
+            <button type="button" class="mobile-tab-btn" data-target="tab-pane-habits">
+              <span>✨ 21 Ngày Thói Quen</span>
+            </button>
+            <button type="button" class="mobile-tab-btn" data-target="tab-pane-bucket">
+              <span>💫 Bucket List</span>
+            </button>
+            <button type="button" class="mobile-tab-btn" data-target="tab-pane-memories">
+              <span>📸 Kỷ Niệm Của Hai Đứa</span>
+            </button>
+            <button type="button" class="mobile-tab-btn btn-open-trash-trigger" style="color: #fca5a5;">
+              <span>🗑️ Thùng Rác &amp; Khôi Phục</span>
+            </button>
+            <div class="mobile-menu-footer">
+              <span style="color: #fda4af; font-size: 0.8rem; font-weight: 600;">AI 🚀 &amp; Maze 🌸 · 15/08/2026</span>
             </div>
           </div>
         </details>
@@ -157,41 +146,40 @@ const currentPath = Astro.url.pathname;
 
     <slot />
 
-    <footer class="site-footer">
+    <footer class="site-footer couple-footer">
       <div class="footer-inner">
         <div class="footer-brand-section">
-          <a class="footer-brand" href="/">
-            <img src="/logo.png" alt="BaoNV" class="brand-logo small logo-light-mode" width="22" height="22" />
-            <img src="/logo-dark.png" alt="BaoNV" class="brand-logo small logo-dark-mode" width="22" height="22" />
-            <span>BaoNV</span>
-          </a>
-          <p class="footer-tagline">Computer Vision Engineer — detection, 3D reconstruction, real-time edge deployment.</p>
+          <div class="footer-brand">
+            <span style="font-size: 1.3rem; filter: drop-shadow(0 0 8px #f43f5e);">💖</span>
+            <span class="gradient-love-text" style="font-size: 1.15rem; font-weight: 800;">AI &amp; MAZE</span>
+          </div>
+          <p class="footer-tagline">
+            Hành trình 21 ngày rèn luyện thói quen tiếng Anh &amp; dải ngân hà tình yêu bất tận kể từ ngày 15/08/2026.
+          </p>
         </div>
 
         <div class="footer-links-grid">
           <div class="footer-col">
-            <span class="footer-col-title">Navigation</span>
-            <a href="/">Home</a>
-            <a href="/blog/">Blog</a>
-            {SITE_CONFIG.showProjects && (
-              <a href="/projects/">Projects & Demos</a>
-            )}
-            <a href="/about/">About</a>
+            <span class="footer-col-title">Tọa Độ Tình Yêu</span>
+            <a href="#love-counter-box">Đồng Hồ Tình Yêu</a>
+            <a href="#habit-tracker">21 Ngày Tiếng Anh</a>
+            <a href="#bucket-list">Bucket List Đôi Lứa</a>
+            <a href="#memories">Kỷ Niệm Giữa Ngân Hà</a>
+            <a href="javascript:void(0)" class="btn-open-sync-trigger" style="color: #7dd3fc; margin-top: 4px;">☁️ Đồng Bộ Dữ Liệu</a>
           </div>
 
           <div class="footer-col">
-            <span class="footer-col-title">Connect</span>
-            <a href="https://github.com/baocodeai" target="_blank" rel="noopener noreferrer">GitHub</a>
-            <a href="https://huggingface.co/vubaonguyen" target="_blank" rel="noopener noreferrer">HuggingFace</a>
-            <a href="https://www.linkedin.com/in/vubaonguyen" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-            <a href="mailto:baonv.work@gmail.com">Email</a>
+            <span class="footer-col-title">Nhân Vật Chính</span>
+            <span style="color: #7dd3fc; font-size: 0.9rem;">🚀 AI (28/09/2005)</span>
+            <span style="color: #fda4af; font-size: 0.9rem;">🌸 Maze (11/12/2005)</span>
+            <span style="color: #fef08a; font-size: 0.85rem; font-family: var(--mono); margin-top: 4px;">❤️ 15/08/2026</span>
           </div>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <span class="footer-copy">&copy; {new Date().getFullYear()} BaoNV. All rights reserved.</span>
-        <span class="footer-powered">Built with <a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a> · Fast, private & client-side first</span>
+        <span class="footer-copy">&copy; {new Date().getFullYear()} AI &amp; Maze. Giữ trọn yêu thương giữa muôn vàn vì sao.</span>
+        <span class="footer-powered">Built with Love &amp; Astro · Lưu vĩnh cửu trên mã nguồn</span>
       </div>
     </footer>
 

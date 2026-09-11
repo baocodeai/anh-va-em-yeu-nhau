@@ -1,0 +1,1458 @@
+---
+import { BUCKET_LIST } from '../data/bucketList';
+
+const defaultBucketJSON = JSON.stringify(BUCKET_LIST).replace(/</g, '\\u003c');
+const categories = [
+  'Tất cả',
+  'Đã hoàn thành',
+  'Đang ấp ủ',
+  'Hẹn hò lãng mạn',
+  'Du lịch & Khám phá',
+  'Trải nghiệm mới lạ',
+  'Tương lai đôi lứa'
+];
+---
+
+<section class="bucket-list-section" id="bucket-list">
+  <div class="section-header-wrap">
+    <div class="badge-love mb-2">
+      <span>💫 Bản Đồ Nguyện Ước Của Hai Đứa</span>
+    </div>
+    <h2 class="section-title gradient-love-text">Những Điều Sẽ Làm Cùng Nhau Trong Lúc Yêu</h2>
+    <p class="section-desc">
+      Từng điều ước nhỏ bé là một tọa độ hạnh phúc mà AI &amp; Maze đã và đang cùng nhau chinh phục giữa dải ngân hà.
+    </p>
+
+    <!-- Header Actions & Counter -->
+    <div class="header-actions-row">
+      <div class="bucket-stats-card romantic-card">
+        <div class="stats-counter-line">
+          <span class="heart-pulse">💖</span>
+          <span class="bucket-stats-text" id="bucket-counter-text">
+            Đang tải dữ liệu...
+          </span>
+        </div>
+        <div class="stats-progress-track">
+          <div class="stats-progress-fill" id="bucket-progress-fill" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <div class="bucket-header-btns">
+        <button type="button" class="btn-love add-item-btn" id="btn-open-add-bucket">
+          <span>+ Thêm Điều Ước Mới</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter & Sort Bar -->
+  <div class="bucket-controls-bar">
+    <div class="bucket-filters-wrap" id="bucket-filters-container">
+      {categories.map((cat, idx) => (
+        <button
+          type="button"
+          class={`filter-btn ${idx === 0 ? 'is-active' : ''}`}
+          data-filter={cat}
+        >
+          {cat === 'Đã hoàn thành' && '❤️ '}
+          {cat === 'Đang ấp ủ' && '⏳ '}
+          {cat}
+        </button>
+      ))}
+    </div>
+
+    <div class="bucket-sort-wrap">
+      <button type="button" class="btn-outline-love btn-create-category-btn" id="btn-quick-add-category" title="Tạo thêm phân loại danh mục mới">
+        <span>+ Danh Mục</span>
+      </button>
+      <button type="button" class="btn-sort-toggle" id="btn-toggle-bucket-sort" title="Nhấn để đổi thứ tự: Mới nhất / Cũ nhất">
+        <span class="sort-icon" id="bucket-sort-icon">⏳</span>
+        <span id="bucket-sort-label">Mới tạo nhất trước</span>
+        <span class="sort-arrow" id="bucket-sort-arrow">↓</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Dynamic Bucket Checklist Container -->
+  <div class="bucket-checklist-container" id="bucket-cards-container">
+    <!-- Rendered dynamically as checklist rows by client script from LocalStorage -->
+  </div>
+
+  <!-- Quick & Clean Romantic Modal for Adding / Editing Bucket Item -->
+  <div class="crud-modal-overlay" id="bucket-crud-modal" aria-hidden="true">
+    <div class="crud-modal-card compact-bucket-modal romantic-card">
+      <div class="compact-modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-title-icon">💫</span>
+          <h3 class="modal-title gradient-love-text" id="bucket-modal-title">Thêm Điều Ước Mới</h3>
+        </div>
+        <button type="button" class="modal-close-btn" id="bucket-modal-close" aria-label="Đóng">&times;</button>
+      </div>
+
+      <form id="bucket-form" class="compact-bucket-form crud-form">
+        <input type="hidden" id="form-item-id" value="" />
+
+        <div class="form-group">
+          <label class="form-label" for="form-title">✨ Tên điều ước / Việc muốn làm cùng nhau <span style="color: #fda4af;">*</span></label>
+          <input
+            type="text"
+            id="form-title"
+            class="form-input"
+            required
+            placeholder="Ví dụ: Cùng nhau ngắm hoàng hôn bên bờ biển..."
+          />
+        </div>
+
+        <div class="modal-grid-row">
+          <div class="form-group">
+            <div class="category-label-row">
+              <label class="form-label" for="form-category">Phân loại danh mục</label>
+              <button type="button" class="btn-inline-cat-action" id="btn-toggle-inline-cat" title="Tạo danh mục mới">+ Tạo danh mục</button>
+            </div>
+            <select id="form-category" class="form-select">
+              <option value="Hẹn hò lãng mạn">💖 Hẹn hò lãng mạn</option>
+              <option value="Du lịch & Khám phá">🏖️ Du lịch &amp; Khám phá</option>
+              <option value="Trải nghiệm mới lạ">✨ Trải nghiệm mới lạ</option>
+              <option value="Tương lai đôi lứa">💍 Tương lai đôi lứa</option>
+            </select>
+            <!-- Inline Mini Drawer for Creating New Category inside Modal -->
+            <div class="inline-new-cat-box" id="box-inline-new-cat" style="display: none;">
+              <input
+                type="text"
+                id="input-new-cat-name"
+                class="form-input new-cat-input"
+                placeholder="Nhập tên danh mục (VD: 🏡 Tổ ấm, 🐾 Thú cưng...)"
+              />
+              <div class="inline-cat-btns">
+                <button type="button" class="btn-love btn-sm" id="btn-apply-new-cat">Thêm</button>
+                <button type="button" class="btn-outline-love btn-sm" id="btn-cancel-new-cat">Đóng</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="form-created-date">🌱 Ngày tạo điều ước</label>
+            <input
+              type="date"
+              id="form-created-date"
+              class="form-input"
+            />
+          </div>
+        </div>
+
+        <div class="modal-grid-row">
+          <div class="form-group">
+            <label class="form-label">Trạng thái thực hiện</label>
+            <label class="checkbox-toggle-pill">
+              <input type="checkbox" id="form-completed" />
+              <span id="label-bucket-completed-text">🤍 Đang ấp ủ làm</span>
+            </label>
+          </div>
+
+          <div class="form-group" id="group-completed-date" style="display: none;">
+            <label class="form-label" for="form-completed-date">🗓️ Ngày hoàn thành</label>
+            <input
+              type="date"
+              id="form-completed-date"
+              class="form-input"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="form-desc">Mô tả / Ghi chú cảm xúc (Tùy chọn)</label>
+          <textarea
+            id="form-desc"
+            class="form-textarea"
+            rows="3"
+            placeholder="Ghi lại đôi dòng kỷ niệm, địa điểm hoặc cảm xúc của hai đứa..."
+          ></textarea>
+        </div>
+
+        <div class="form-actions compact-actions">
+          <button type="button" class="btn-outline-love" id="btn-cancel-bucket">Hủy Bỏ</button>
+          <button type="submit" class="btn-love" id="btn-save-bucket">💖 Lưu Điều Ước</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Inject default data into client -->
+<script is:inline define:vars={{ defaultBucketJSON }}>
+  window.__INITIAL_BUCKET_LIST__ = JSON.parse(defaultBucketJSON);
+</script>
+
+<style>
+  .bucket-list-section {
+    max-width: 920px;
+    margin: 4.5rem auto;
+    padding: 0 1.2rem;
+  }
+
+  .section-header-wrap {
+    text-align: center;
+    margin-bottom: 2.2rem;
+  }
+
+  .section-title {
+    font-size: 2.3rem;
+    font-weight: 800;
+    margin-bottom: 0.8rem;
+    letter-spacing: -0.02em;
+  }
+
+  .section-desc {
+    max-width: 680px;
+    margin: 0 auto 1.6rem;
+    color: #94a3b8;
+    line-height: 1.65;
+    font-size: 1rem;
+  }
+
+  .header-actions-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+  }
+
+  .bucket-header-btns {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .bucket-stats-card {
+    padding: 0.75rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 280px;
+    background: rgba(11, 17, 32, 0.85);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    border-radius: 9999px;
+  }
+
+  .stats-counter-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.92rem;
+    color: #fecdd3;
+  }
+
+  .stats-progress-track {
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+
+  .stats-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #f43f5e, #c084fc, #38bdf8);
+    border-radius: 9999px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px rgba(244, 63, 94, 0.6);
+  }
+
+  .heart-pulse {
+    animation: heartBeat 1.8s infinite;
+  }
+
+  /* Controls Bar (Filters & Sorting) */
+  .bucket-controls-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .bucket-filters-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .bucket-sort-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .btn-create-category-btn {
+    padding: 7px 16px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    border-radius: 9999px;
+  }
+
+  .btn-sort-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(11, 17, 32, 0.8);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 9999px;
+    padding: 7px 18px;
+    font-size: 0.88rem;
+    color: #7dd3fc;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 600;
+    user-select: none;
+    backdrop-filter: blur(10px);
+  }
+
+  .btn-sort-toggle:hover {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .btn-sort-toggle .sort-icon {
+    font-size: 1rem;
+  }
+
+  .btn-sort-toggle .sort-arrow {
+    font-size: 0.9rem;
+    font-weight: 800;
+  }
+
+  .filter-btn {
+    background: rgba(11, 17, 32, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 9999px;
+    padding: 7px 18px;
+    font-size: 0.88rem;
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+  }
+
+  .filter-btn:hover {
+    border-color: #fda4af;
+    color: #ffffff;
+    box-shadow: 0 0 14px rgba(244, 63, 94, 0.25);
+    transform: translateY(-2px);
+  }
+
+  .filter-btn.is-active {
+    background: linear-gradient(135deg, #f43f5e 0%, #a855f7 100%);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 0 18px rgba(244, 63, 94, 0.45);
+  }
+
+  /* =========================================================================
+     BUCKET CHECKLIST CONTAINER & ITEMS
+     ========================================================================= */
+  .bucket-checklist-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  :global(.bucket-check-row) {
+    background: rgba(11, 17, 32, 0.78);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 1.1rem 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.2rem;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    box-shadow: var(--card-glow);
+  }
+
+  :global(.bucket-check-row:hover) {
+    border-color: var(--card-border-hover);
+    box-shadow: var(--card-glow-hover);
+    transform: translateY(-2px);
+  }
+
+  :global(.bucket-check-row.is-completed) {
+    border-left: 4px solid var(--love-rose);
+    background: linear-gradient(90deg, rgba(244, 63, 94, 0.08) 0%, rgba(11, 17, 32, 0.85) 100%);
+  }
+
+  :global(.bucket-check-row.is-pending) {
+    border-left: 4px solid var(--love-cyan);
+    background: linear-gradient(90deg, rgba(56, 189, 248, 0.05) 0%, rgba(11, 17, 32, 0.85) 100%);
+  }
+
+  :global(.check-left-col) {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.1rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  :global(.check-toggle-btn) {
+    background: rgba(255, 255, 255, 0.06);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 2px;
+  }
+
+  :global(.check-toggle-btn:hover) {
+    transform: scale(1.15);
+    border-color: #fda4af;
+    box-shadow: 0 0 16px rgba(244, 63, 94, 0.4);
+  }
+
+  :global(.check-toggle-btn.is-done) {
+    background: linear-gradient(135deg, #e11d48, #f43f5e);
+    border-color: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 0 16px rgba(244, 63, 94, 0.45);
+  }
+
+  :global(.check-info-block) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  :global(.check-title-line) {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  :global(.check-title-text) {
+    font-size: 1.08rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.4;
+    transition: color 0.2s;
+  }
+
+  :global(.check-title-text.is-done) {
+    color: #fecdd3;
+  }
+
+  :global(.check-meta-line) {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    font-size: 0.82rem;
+  }
+
+  :global(.check-cat-badge) {
+    font-size: 0.75rem;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    font-weight: 600;
+  }
+
+  :global(.badge-cat-romantic) {
+    background: rgba(244, 63, 94, 0.15);
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    color: #fda4af;
+  }
+
+  :global(.badge-cat-travel) {
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    color: #7dd3fc;
+  }
+
+  :global(.badge-cat-experience) {
+    background: rgba(251, 191, 36, 0.15);
+    border: 1px solid rgba(251, 191, 36, 0.35);
+    color: #fde047;
+  }
+
+  :global(.badge-cat-future) {
+    background: rgba(192, 132, 252, 0.15);
+    border: 1px solid rgba(192, 132, 252, 0.35);
+    color: #d8b4fe;
+  }
+
+  :global(.badge-cat-custom) {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(56, 189, 248, 0.15));
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    color: #e9d5ff;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.15);
+  }
+
+  /* Inline Category Creation Box */
+  .category-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .btn-inline-cat-action {
+    background: none;
+    border: none;
+    color: #38bdf8;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  .btn-inline-cat-action:hover {
+    color: #7dd3fc;
+    text-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+  }
+
+  .inline-new-cat-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 12px;
+    padding: 10px;
+    margin-top: 6px;
+    animation: fadeInModal 0.2s ease-out;
+  }
+
+  .new-cat-input {
+    min-height: 40px !important;
+    padding: 8px 12px !important;
+    font-size: 0.9rem !important;
+  }
+
+  .inline-cat-btns {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .btn-sm {
+    min-height: 34px !important;
+    padding: 4px 14px !important;
+    font-size: 0.84rem !important;
+    border-radius: 8px !important;
+  }
+
+  :global(.check-created-tag) {
+    color: #7dd3fc;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    padding: 1px 8px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  :global(.check-date-tag) {
+    color: #fda4af;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: rgba(244, 63, 94, 0.1);
+    border: 1px solid rgba(244, 63, 94, 0.25);
+    padding: 1px 8px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  :global(.check-note-tag) {
+    color: #94a3b8;
+    font-style: italic;
+  }
+
+  :global(.check-right-actions) {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  :global(.btn-item-action) {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #f1f5f9;
+  }
+
+  :global(.btn-item-action:hover) {
+    background: rgba(244, 63, 94, 0.25);
+    border-color: #fda4af;
+    box-shadow: 0 0 12px rgba(244, 63, 94, 0.3);
+    transform: translateY(-1px);
+  }
+
+  :global(.btn-item-delete:hover) {
+    background: rgba(239, 68, 68, 0.3);
+    border-color: #f87171;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
+  }
+
+  /* =========================================================================
+     COMPACT BUCKET MODAL (LUXURY GLASS DESIGN)
+     ========================================================================= */
+  .crud-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 8, 18, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .crud-modal-overlay.is-open {
+    display: flex;
+    animation: fadeInModal 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .compact-bucket-modal {
+    max-width: 660px;
+    width: 100%;
+    padding: 2.2rem 2.4rem;
+    background: rgba(11, 17, 32, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    border-radius: 24px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85), 0 0 35px rgba(244, 63, 94, 0.2);
+    box-sizing: border-box;
+  }
+
+  .compact-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.8rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .modal-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .modal-title-icon {
+    font-size: 1.8rem;
+    filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.6));
+  }
+
+  .modal-title {
+    font-size: 1.55rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .modal-close-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .modal-close-btn:hover {
+    background: rgba(244, 63, 94, 0.2);
+    border-color: #fda4af;
+    color: #ffffff;
+    transform: scale(1.08);
+  }
+
+  .compact-bucket-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.3rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 0;
+  }
+
+  .form-label {
+    font-size: 0.94rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.01em;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 50px;
+    padding: 12px 18px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 14px;
+    color: #ffffff;
+    font-size: 0.98rem;
+    font-family: inherit;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .form-input::placeholder,
+  .form-textarea::placeholder {
+    color: #64748b;
+    font-size: 0.94rem;
+  }
+
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    outline: none;
+    border-color: #fda4af;
+    background: rgba(15, 23, 42, 0.98);
+    box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25), 0 0 20px rgba(244, 63, 94, 0.2);
+  }
+
+  .form-select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23fda4af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 18px;
+    padding-right: 48px;
+  }
+
+  .form-select option {
+    background: #0b1120;
+    color: #ffffff;
+    padding: 12px;
+  }
+
+  .form-textarea {
+    min-height: 115px;
+    line-height: 1.6;
+    resize: vertical;
+  }
+
+  .modal-grid-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    align-items: flex-start;
+  }
+
+  .checkbox-toggle-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    padding: 12px 18px;
+    border-radius: 14px;
+    min-height: 50px;
+    box-sizing: border-box;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+    user-select: none;
+  }
+
+  .checkbox-toggle-pill:hover {
+    border-color: #fda4af;
+    background: rgba(244, 63, 94, 0.12);
+  }
+
+  .checkbox-toggle-pill input[type="checkbox"] {
+    accent-color: #f43f5e;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+
+  .compact-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1.2rem;
+    margin-top: 1.8rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .compact-actions .btn-outline-love,
+  .compact-actions .btn-love {
+    min-height: 46px;
+    padding: 11px 26px;
+    font-size: 0.98rem;
+    font-weight: 600;
+  }
+
+  @keyframes fadeInModal {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes heartBeat {
+    0% { transform: scale(1); }
+    14% { transform: scale(1.16); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.12); }
+    70% { transform: scale(1); }
+  }
+
+  @media (max-width: 640px) {
+    :global(.bucket-check-row) {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.8rem;
+    }
+    :global(.check-right-actions) {
+      justify-content: flex-end;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 0.5rem;
+    }
+  }
+</style>
+
+<script>
+  import { pushDataToFirebase } from '../lib/firebaseClient';
+  import { moveItemToTrash } from '../lib/trashBin';
+
+  const STORAGE_KEY = 'couple_bucket_list';
+  const CATEGORIES_KEY = 'couple_bucket_categories';
+  const DEFAULT_CATEGORIES = [
+    'Hẹn hò lãng mạn',
+    'Du lịch & Khám phá',
+    'Trải nghiệm mới lạ',
+    'Tương lai đôi lứa'
+  ];
+
+  let sortOrder: 'desc' | 'asc' = 'desc';
+  let activeFilter = 'Tất cả';
+
+  function escapeHtml(str: string): string {
+    return (str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function getStoredBucketList(): any[] {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    const initial = (window as any).__INITIAL_BUCKET_LIST__ || [];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
+    return initial;
+  }
+
+  function saveStoredBucketList(list: any[]) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    pushDataToFirebase({ bucketList: list, lastUpdatedBy: 'BucketList' }).catch(() => {});
+  }
+
+  function getStoredCategories(): string[] {
+    let list: string[] = [];
+    try {
+      const stored = localStorage.getItem(CATEGORIES_KEY);
+      if (stored) list = JSON.parse(stored);
+    } catch {}
+
+    // Ensure defaults and items' categories are included
+    const set = new Set([...DEFAULT_CATEGORIES, ...list]);
+    const items = getStoredBucketList();
+    items.forEach((item) => {
+      if (item.category && typeof item.category === 'string') {
+        set.add(item.category.trim());
+      }
+    });
+
+    const result = Array.from(set).filter(Boolean);
+    return result;
+  }
+
+  function saveStoredCategories(cats: string[]) {
+    localStorage.setItem(CATEGORIES_KEY, JSON.stringify(cats));
+    pushDataToFirebase({ bucketCategories: cats, lastUpdatedBy: 'BucketCategory' }).catch(() => {});
+  }
+
+  function addCustomCategory(rawName: string): string | null {
+    const name = (rawName || '').trim();
+    if (!name) return null;
+
+    const cats = getStoredCategories();
+    if (!cats.includes(name)) {
+      cats.push(name);
+      saveStoredCategories(cats);
+    }
+    return name;
+  }
+
+  function getCategoryClass(cat: string) {
+    switch (cat) {
+      case 'Du lịch & Khám phá': return 'badge-cat-travel';
+      case 'Trải nghiệm mới lạ': return 'badge-cat-experience';
+      case 'Tương lai đôi lứa': return 'badge-cat-future';
+      case 'Hẹn hò lãng mạn': return 'badge-cat-romantic';
+      default: return 'badge-cat-custom';
+    }
+  }
+
+  function getCategoryEmoji(cat: string): string {
+    if (cat.includes('Hẹn hò') || cat.includes('lãng mạn')) return '💖 ';
+    if (cat.includes('Du lịch') || cat.includes('Khám phá')) return '🏖️ ';
+    if (cat.includes('Trải nghiệm')) return '✨ ';
+    if (cat.includes('Tương lai')) return '💍 ';
+    return '🌸 ';
+  }
+
+  function getCreationTimestamp(item: any): number {
+    if (item.createdAt) {
+      const t = new Date(item.createdAt).getTime();
+      if (!isNaN(t)) return t;
+    }
+    if (item.completedDate) {
+      const t = new Date(item.completedDate).getTime();
+      if (!isNaN(t)) return t;
+    }
+    if (typeof item.id === 'string') {
+      if (item.id.startsWith('bl-')) {
+        const numeric = Number(item.id.replace('bl-', ''));
+        if (numeric > 1000000000) return numeric;
+        return new Date('2026-08-15').getTime() + (numeric || 1) * 86400000;
+      }
+    }
+    return 0;
+  }
+
+  function populateCategoryDropdown(selectedCat = 'Hẹn hò lãng mạn') {
+    const select = document.getElementById('form-category') as HTMLSelectElement | null;
+    if (!select) return;
+
+    const cats = getStoredCategories();
+    select.innerHTML = '';
+
+    cats.forEach((cat) => {
+      const opt = document.createElement('option');
+      opt.value = cat;
+      opt.textContent = `${getCategoryEmoji(cat)}${cat}`;
+      if (cat === selectedCat) opt.selected = true;
+      select.appendChild(opt);
+    });
+
+    const newOpt = document.createElement('option');
+    newOpt.value = '__create_new__';
+    newOpt.textContent = '➕ Tạo danh mục mới...';
+    select.appendChild(newOpt);
+  }
+
+  function renderCategoryFilters() {
+    const filterContainer = document.getElementById('bucket-filters-container');
+    if (!filterContainer) return;
+
+    const cats = getStoredCategories();
+    const standardFilterList = ['Tất cả', 'Đã hoàn thành', 'Đang ấp ủ', ...cats];
+
+    filterContainer.innerHTML = '';
+
+    standardFilterList.forEach((cat) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `filter-btn ${activeFilter === cat ? 'is-active' : ''}`;
+      btn.setAttribute('data-filter', cat);
+
+      let icon = '';
+      if (cat === 'Đã hoàn thành') icon = '❤️ ';
+      else if (cat === 'Đang ấp ủ') icon = '⏳ ';
+      else if (cat !== 'Tất cả') icon = getCategoryEmoji(cat);
+
+      btn.textContent = `${icon}${cat}`;
+
+      btn.addEventListener('click', () => {
+        activeFilter = cat;
+        renderCategoryFilters();
+        renderBucketChecklist(activeFilter);
+      });
+
+      filterContainer.appendChild(btn);
+    });
+  }
+
+  function renderBucketChecklist(currentFilter = 'Tất cả') {
+    const container = document.getElementById('bucket-cards-container');
+    const counterText = document.getElementById('bucket-counter-text');
+    const progressFill = document.getElementById('bucket-progress-fill');
+    if (!container) return;
+
+    const list: any[] = getStoredBucketList();
+    const completedCount = list.filter((i) => i.completed).length;
+    const totalCount = list.length;
+    const pct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+    if (counterText) {
+      counterText.innerHTML = `Đã hoàn thành <strong>${completedCount}/${totalCount}</strong> điều ước (${pct}%)`;
+    }
+    if (progressFill) {
+      progressFill.style.width = `${pct}%`;
+    }
+
+    container.innerHTML = '';
+
+    // Sắp xếp theo ngày tạo (sortOrder: 'desc' = Mới nhất trước, 'asc' = Cũ nhất trước)
+    const sortedList = [...list].sort((a, b) => {
+      const timeA = getCreationTimestamp(a);
+      const timeB = getCreationTimestamp(b);
+      return sortOrder === 'desc' ? timeB - timeA : timeA - timeB;
+    });
+
+    sortedList.forEach((item) => {
+      const statusLabel = item.completed ? 'Đã hoàn thành' : 'Đang ấp ủ';
+      const isVisible =
+        currentFilter === 'Tất cả' ||
+        currentFilter === statusLabel ||
+        currentFilter === item.category;
+
+      if (!isVisible) return;
+
+      const row = document.createElement('div');
+      row.className = `bucket-check-row romantic-card ${item.completed ? 'is-completed' : 'is-pending'}`;
+      row.setAttribute('data-id', item.id);
+
+      const formattedCompletedDate = item.completedDate
+        ? item.completedDate.split('-').reverse().join('/')
+        : '';
+
+      const formattedCreatedDate = item.createdAt
+        ? item.createdAt.split('-').reverse().join('/')
+        : '';
+
+      const catClass = getCategoryClass(item.category);
+
+      row.innerHTML = `
+        <div class="check-left-col">
+          <button type="button" class="check-toggle-btn ${item.completed ? 'is-done' : ''}" title="${item.completed ? 'Đánh dấu chưa làm' : 'Đánh dấu đã hoàn thành'}">
+            <span>${item.completed ? '❤️' : '🤍'}</span>
+          </button>
+          
+          <div class="check-info-block">
+            <div class="check-title-line">
+              <span class="check-title-text ${item.completed ? 'is-done' : ''}">${escapeHtml(item.title)}</span>
+            </div>
+            
+            <div class="check-meta-line">
+              <span class="check-cat-badge ${catClass}">${escapeHtml(item.category)}</span>
+              ${formattedCreatedDate ? `<span class="check-created-tag" title="Ngày tạo điều ước">🌱 Tạo: ${formattedCreatedDate}</span>` : ''}
+              ${item.completed && formattedCompletedDate ? `<span class="check-date-tag" title="Ngày đã hoàn thành">💖 Xong: ${formattedCompletedDate}</span>` : ''}
+              ${item.description ? `<span class="check-note-tag">${escapeHtml(item.description)}</span>` : ''}
+              ${!item.description && item.memoryNote ? `<span class="check-note-tag">💭 ${escapeHtml(item.memoryNote)}</span>` : ''}
+            </div>
+          </div>
+        </div>
+
+        <div class="check-right-actions">
+          <button type="button" class="btn-item-action btn-item-edit" title="Chỉnh sửa điều ước">✏️</button>
+          <button type="button" class="btn-item-action btn-item-delete" title="Xóa điều ước">🗑️</button>
+        </div>
+      `;
+
+      // 1. Toggle completed state
+      const toggleBtn = row.querySelector('.check-toggle-btn');
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+          item.completed = !item.completed;
+          if (item.completed && !item.completedDate) {
+            item.completedDate = new Date().toISOString().slice(0, 10);
+          }
+          // Update in main list
+          const target = list.find((i) => i.id === item.id);
+          if (target) {
+            target.completed = item.completed;
+            target.completedDate = item.completedDate;
+          }
+          saveStoredBucketList(list);
+          renderBucketChecklist(currentFilter);
+        });
+      }
+
+      // 2. Edit button
+      const editBtn = row.querySelector('.btn-item-edit');
+      if (editBtn) {
+        editBtn.addEventListener('click', () => openEditModal(item));
+      }
+
+      // 3. Delete button
+      const deleteBtn = row.querySelector('.btn-item-delete');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', async () => {
+          const confirmed = (window as any).romanticConfirm
+            ? await (window as any).romanticConfirm({
+                heading: 'Tạm Cất Điều Ước Này Nhé?',
+                subject: item.title,
+                subjectIcon: '💫',
+                quote: item.description || item.memoryNote || 'Một điều ước ngọt ngào trong danh sách của hai đứa...',
+                typeBadge: '💫 Điều Ước Đôi Lứa',
+                sealEmoji: '💌',
+                confirmText: 'Cất Đi 📦',
+                cancelText: 'Để Lại Đây 🌸',
+                notice: 'Điều ước này sẽ được cất giữ an toàn trong Thùng Rác và có thể khôi phục lại bất kỳ lúc nào.'
+              })
+            : confirm(`Bạn có chắc muốn chuyển điều ước "${item.title}" vào Thùng Rác không?`);
+
+          if (confirmed) {
+            moveItemToTrash(
+              {
+                originalId: item.id,
+                type: 'bucket_list',
+                title: item.title,
+                subtitle: item.category,
+                data: item
+              },
+              {
+                onUndo: () => renderBucketChecklist(currentFilter)
+              }
+            );
+            const updated = list.filter((i) => i.id !== item.id);
+            saveStoredBucketList(updated);
+            renderBucketChecklist(currentFilter);
+          }
+        });
+      }
+
+      container.appendChild(row);
+    });
+  }
+
+  function initBucketSection() {
+    const modal = document.getElementById('bucket-crud-modal');
+    const modalCloseBtn = document.getElementById('bucket-modal-close');
+    const cancelBtn = document.getElementById('btn-cancel-bucket');
+    const openAddBtn = document.getElementById('btn-open-add-bucket');
+    const form = document.getElementById('bucket-form') as HTMLFormElement;
+
+    const formId = document.getElementById('form-item-id') as HTMLInputElement;
+    const formTitle = document.getElementById('form-title') as HTMLInputElement;
+    const formCategory = document.getElementById('form-category') as HTMLSelectElement;
+    const formCreatedDate = document.getElementById('form-created-date') as HTMLInputElement;
+    const formDesc = document.getElementById('form-desc') as HTMLTextAreaElement;
+    const formCompleted = document.getElementById('form-completed') as HTMLInputElement;
+    const formCompletedDate = document.getElementById('form-completed-date') as HTMLInputElement;
+    const groupCompletedDate = document.getElementById('group-completed-date') as HTMLElement;
+    const labelCompletedText = document.getElementById('label-bucket-completed-text') as HTMLElement;
+    const modalTitle = document.getElementById('bucket-modal-title') as HTMLElement;
+
+    // Category Creation UI Elements inside Modal
+    const btnToggleInlineCat = document.getElementById('btn-toggle-inline-cat');
+    const boxInlineNewCat = document.getElementById('box-inline-new-cat');
+    const inputNewCatName = document.getElementById('input-new-cat-name') as HTMLInputElement;
+    const btnApplyNewCat = document.getElementById('btn-apply-new-cat');
+    const btnCancelNewCat = document.getElementById('btn-cancel-new-cat');
+
+    // Quick Add Category from Filter Bar
+    const btnQuickAddCategory = document.getElementById('btn-quick-add-category');
+
+    const sortToggleBtn = document.getElementById('btn-toggle-bucket-sort');
+    const sortLabel = document.getElementById('bucket-sort-label');
+    const sortArrow = document.getElementById('bucket-sort-arrow');
+
+    function openAddModal() {
+      if (!modal) return;
+      if (modalTitle) modalTitle.textContent = 'Thêm Điều Ước Mới';
+      if (formId) formId.value = '';
+      if (formTitle) formTitle.value = '';
+      populateCategoryDropdown('Hẹn hò lãng mạn');
+      if (boxInlineNewCat) boxInlineNewCat.style.display = 'none';
+      if (inputNewCatName) inputNewCatName.value = '';
+      if (formCreatedDate) formCreatedDate.value = new Date().toISOString().slice(0, 10);
+      if (formDesc) formDesc.value = '';
+      if (formCompleted) formCompleted.checked = false;
+      if (formCompletedDate) formCompletedDate.value = '';
+      if (groupCompletedDate) groupCompletedDate.style.display = 'none';
+      if (labelCompletedText) labelCompletedText.textContent = '🤍 Đang ấp ủ làm';
+
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      if (formTitle) formTitle.focus();
+    }
+
+    (window as any).openBucketEditModal = function(item: any) {
+      if (!modal) return;
+      if (modalTitle) modalTitle.textContent = 'Chỉnh Sửa Điều Ước';
+      if (formId) formId.value = item.id;
+      if (formTitle) formTitle.value = item.title || '';
+      populateCategoryDropdown(item.category || 'Hẹn hò lãng mạn');
+      if (boxInlineNewCat) boxInlineNewCat.style.display = 'none';
+      if (inputNewCatName) inputNewCatName.value = '';
+      if (formCreatedDate) formCreatedDate.value = item.createdAt || new Date().toISOString().slice(0, 10);
+      if (formDesc) formDesc.value = item.description || item.memoryNote || '';
+      if (formCompleted) formCompleted.checked = !!item.completed;
+      if (formCompletedDate) formCompletedDate.value = item.completedDate || '';
+
+      if (groupCompletedDate) {
+        groupCompletedDate.style.display = item.completed ? 'block' : 'none';
+      }
+      if (labelCompletedText) {
+        labelCompletedText.textContent = item.completed ? '❤️ Đã hoàn thành' : '🤍 Đang ấp ủ làm';
+      }
+
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      if (formTitle) formTitle.focus();
+    };
+
+    function closeModal() {
+      if (!modal) return;
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    // Inline Category creation in modal
+    if (btnToggleInlineCat && boxInlineNewCat) {
+      btnToggleInlineCat.addEventListener('click', () => {
+        const isHidden = boxInlineNewCat.style.display === 'none';
+        boxInlineNewCat.style.display = isHidden ? 'flex' : 'none';
+        if (isHidden && inputNewCatName) inputNewCatName.focus();
+      });
+    }
+
+    if (formCategory) {
+      formCategory.addEventListener('change', () => {
+        if (formCategory.value === '__create_new__') {
+          if (boxInlineNewCat) boxInlineNewCat.style.display = 'flex';
+          if (inputNewCatName) {
+            inputNewCatName.focus();
+            inputNewCatName.value = '';
+          }
+        }
+      });
+    }
+
+    function handleApplyNewCategory() {
+      if (!inputNewCatName) return;
+      const val = inputNewCatName.value.trim();
+      if (!val) {
+        inputNewCatName.focus();
+        return;
+      }
+
+      const created = addCustomCategory(val);
+      if (created) {
+        populateCategoryDropdown(created);
+        renderCategoryFilters();
+        if (boxInlineNewCat) boxInlineNewCat.style.display = 'none';
+        inputNewCatName.value = '';
+      }
+    }
+
+    if (btnApplyNewCat) btnApplyNewCat.addEventListener('click', handleApplyNewCategory);
+    if (inputNewCatName) {
+      inputNewCatName.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleApplyNewCategory();
+        }
+      });
+    }
+
+    if (btnCancelNewCat && boxInlineNewCat) {
+      btnCancelNewCat.addEventListener('click', () => {
+        boxInlineNewCat.style.display = 'none';
+        populateCategoryDropdown(formCategory.value !== '__create_new__' ? formCategory.value : 'Hẹn hò lãng mạn');
+      });
+    }
+
+    // Quick Add Category from Filter Bar Button
+    if (btnQuickAddCategory) {
+      btnQuickAddCategory.addEventListener('click', () => {
+        const newCat = prompt('Nhập tên phân loại danh mục mới cho điều ước (Ví dụ: 🏡 Xây tổ ấm, 🐾 Nuôi thú cưng, 🎨 Nghệ thuật...):');
+        if (newCat && newCat.trim()) {
+          const created = addCustomCategory(newCat.trim());
+          if (created) {
+            activeFilter = created;
+            renderCategoryFilters();
+            renderBucketChecklist(activeFilter);
+          }
+        }
+      });
+    }
+
+    if (openAddBtn) openAddBtn.addEventListener('click', openAddModal);
+    if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+    if (formCompleted) {
+      formCompleted.addEventListener('change', () => {
+        const isChecked = formCompleted.checked;
+        if (groupCompletedDate) {
+          groupCompletedDate.style.display = isChecked ? 'block' : 'none';
+        }
+        if (isChecked && !formCompletedDate.value) {
+          formCompletedDate.value = new Date().toISOString().slice(0, 10);
+        }
+        if (labelCompletedText) {
+          labelCompletedText.textContent = isChecked ? '❤️ Đã hoàn thành' : '🤍 Đang ấp ủ làm';
+        }
+      });
+    }
+
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const list = getStoredBucketList();
+        const id = formId ? formId.value.trim() : '';
+        const title = formTitle ? formTitle.value.trim() : '';
+        let category = formCategory ? formCategory.value : 'Hẹn hò lãng mạn';
+        if (category === '__create_new__') {
+          category = 'Hẹn hò lãng mạn';
+        }
+        const createdAt = formCreatedDate ? (formCreatedDate.value || new Date().toISOString().slice(0, 10)) : new Date().toISOString().slice(0, 10);
+        const description = formDesc ? formDesc.value.trim() : '';
+        const completed = formCompleted ? formCompleted.checked : false;
+        const completedDate = completed ? (formCompletedDate.value || new Date().toISOString().slice(0, 10)) : '';
+
+        if (!title) return;
+
+        if (id) {
+          // Edit existing
+          const idx = list.findIndex((i: any) => i.id === id);
+          if (idx !== -1) {
+            list[idx] = {
+              ...list[idx],
+              title,
+              category,
+              createdAt,
+              description,
+              completed,
+              completedDate
+            };
+          }
+        } else {
+          // Add new item
+          const newItem = {
+            id: `bl-${Date.now()}`,
+            title,
+            category,
+            createdAt,
+            description,
+            completed,
+            completedDate
+          };
+          list.unshift(newItem);
+        }
+
+        saveStoredBucketList(list);
+        renderCategoryFilters();
+        renderBucketChecklist(activeFilter);
+        closeModal();
+      });
+    }
+
+    // Sort Toggle Button
+    if (sortToggleBtn) {
+      sortToggleBtn.addEventListener('click', () => {
+        sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+        if (sortLabel) {
+          sortLabel.textContent = sortOrder === 'desc' ? 'Mới tạo nhất trước' : 'Cũ nhất trước';
+        }
+        if (sortArrow) {
+          sortArrow.textContent = sortOrder === 'desc' ? '↓' : '↑';
+        }
+        renderBucketChecklist(activeFilter);
+      });
+    }
+
+    // Listen for Realtime Cloud Updates from Firebase
+    window.addEventListener('couple-cloud-updated', () => {
+      renderCategoryFilters();
+      renderBucketChecklist(activeFilter);
+    });
+
+    // Listen for Item Restored from Trash
+    window.addEventListener('couple-item-restored', (e: any) => {
+      if (e.detail?.type === 'bucket_list') {
+        renderCategoryFilters();
+        renderBucketChecklist(activeFilter);
+      }
+    });
+
+    // Initial render
+    renderCategoryFilters();
+    renderBucketChecklist(activeFilter);
+  }
+
+  function openEditModal(item: any) {
+    if ((window as any).openBucketEditModal) {
+      (window as any).openBucketEditModal(item);
+    }
+  }
+
+  initBucketSection();
+  document.addEventListener('astro:after-swap', initBucketSection);
+</script>
