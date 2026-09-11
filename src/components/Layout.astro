@@ -2,6 +2,7 @@
 import { ClientRouter } from 'astro:transitions';
 import 'katex/dist/katex.min.css';
 import CosmosBackground from './CosmosBackground.astro';
+import LoveLockScreen from './LoveLockScreen.astro';
 import { COUPLE_CONFIG } from '../couple.config';
 import '../styles/couple-theme.css';
 
@@ -105,8 +106,11 @@ const ogImageUrl = new URL('/assets/og.png', site).toString();
           </button>
         </div>
 
-        <!-- Right Tools: Trash & Recovery -->
+        <!-- Right Tools: Lock & Trash -->
         <div class="header-couple-tools">
+          <button type="button" class="header-lock-btn" id="header-btn-lock" title="Khóa Màn Hình Tình Yêu">
+            <span>🔒 Khóa</span>
+          </button>
           <button type="button" class="header-trash-btn" id="header-btn-open-trash" title="Thùng Rác & Khôi Phục Ký Ức">
             <span>🗑️ Thùng rác</span>
             <span class="trash-badge-count" id="header-trash-count">0</span>
@@ -135,6 +139,9 @@ const ogImageUrl = new URL('/assets/og.png', site).toString();
             </button>
             <button type="button" class="mobile-tab-btn btn-open-trash-trigger" style="color: #fca5a5;">
               <span>🗑️ Thùng Rác &amp; Khôi Phục</span>
+            </button>
+            <button type="button" class="mobile-tab-btn btn-lock-app-trigger" style="color: #fda4af;">
+              <span>🔒 Khóa Tinh Cầu</span>
             </button>
             <div class="mobile-menu-footer">
               <span style="color: #fda4af; font-size: 0.8rem; font-weight: 600;">AI 🚀 &amp; Maze 🌸 · 15/08/2026</span>
@@ -406,11 +413,31 @@ const ogImageUrl = new URL('/assets/og.png', site).toString();
 
       document.addEventListener('astro:page-load', initSearch);
     </script>
+
+    <LoveLockScreen />
+
     <script>
       import { initGlobalSyncEngine } from '../lib/globalSyncEngine';
       initGlobalSyncEngine();
       document.addEventListener('astro:page-load', initGlobalSyncEngine);
       document.addEventListener('astro:after-swap', initGlobalSyncEngine);
+
+      function initHeaderLockAction() {
+        const lockBtn = document.getElementById('header-btn-lock');
+        const mobileLockBtns = document.querySelectorAll('.btn-lock-app-trigger');
+        const triggerLock = () => {
+          if (typeof (window as any).lockCoupleApp === 'function') {
+            (window as any).lockCoupleApp();
+          }
+        };
+
+        if (lockBtn) lockBtn.addEventListener('click', triggerLock);
+        mobileLockBtns.forEach((btn) => btn.addEventListener('click', triggerLock));
+      }
+
+      initHeaderLockAction();
+      document.addEventListener('astro:page-load', initHeaderLockAction);
+      document.addEventListener('astro:after-swap', initHeaderLockAction);
     </script>
   </body>
 </html>

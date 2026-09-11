@@ -1,0 +1,887 @@
+---
+// LoveLockScreen.astro - Màn hình khóa tình yêu bảo mật không gian của AI & Maze
+import { COUPLE_CONFIG } from '../couple.config';
+
+const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
+---
+
+<!-- Anti-FOUC Inline Lock Check Script -->
+<script is:inline>
+  (() => {
+    try {
+      const isUnlocked = localStorage.getItem('couple_auth_unlocked') === 'true';
+      if (!isUnlocked) {
+        document.documentElement.classList.add('couple-is-locked');
+      }
+    } catch {}
+  })();
+</script>
+
+<div class="love-lockscreen-overlay" id="love-lockscreen-overlay" aria-hidden="true">
+  <!-- Dynamic Stardust / Starfield Glow -->
+  <div class="lockscreen-glow-mesh">
+    <div class="glow-orb orb-pink"></div>
+    <div class="glow-orb orb-purple"></div>
+    <div class="glow-orb orb-cyan"></div>
+  </div>
+
+  <div class="love-lockscreen-container">
+    <div class="lockscreen-card">
+      <!-- Top Emblem: AI & Maze Avatars with Heart Pulse -->
+      <div class="lock-emblem-wrap">
+        <div class="emblem-avatar-box boy-avatar-box">
+          <img src={boysInfo.avatar} alt={boysInfo.name} class="emblem-avatar-img" />
+          <span class="emblem-tag">🚀 AI</span>
+        </div>
+
+        <div class="emblem-heart-beacon">
+          <span class="heart-pulse-icon" id="lock-heart-icon">💖</span>
+          <div class="heart-pulse-waves"></div>
+        </div>
+
+        <div class="emblem-avatar-box girl-avatar-box">
+          <img src={girlsInfo.avatar} alt={girlsInfo.name} class="emblem-avatar-img" />
+          <span class="emblem-tag">🌸 Maze</span>
+        </div>
+      </div>
+
+      <!-- Lock Header -->
+      <div class="lock-header-text">
+        <div class="lock-status-badge">
+          <span class="lock-icon" id="lock-badge-icon">🔒</span>
+          <span id="lock-status-text">Cổng Tinh Cầu Riêng Tư</span>
+        </div>
+        <h2 class="lock-main-title gradient-love-text">Tinh Cầu Của Hai Đứa</h2>
+        <p class="lock-sub-desc">
+          Vui lòng nhập mật mã tình yêu để bước vào dải ngân hà của AI &amp; Maze
+        </p>
+      </div>
+
+      <!-- PIN / Passcode Input Display -->
+      <div class="passcode-display-wrap">
+        <div class="passcode-dots-row" id="passcode-dots-row">
+          <span class="passcode-dot"></span>
+          <span class="passcode-dot"></span>
+          <span class="passcode-dot"></span>
+          <span class="passcode-dot"></span>
+          <span class="passcode-dot"></span>
+          <span class="passcode-dot"></span>
+          <span class="passcode-dot"></span>
+          <span class="passcode-dot"></span>
+        </div>
+
+        <div class="passcode-status-msg" id="passcode-status-msg">
+          Nhấn các phím số hoặc gõ bàn phím
+        </div>
+      </div>
+
+      <!-- Romantic Keypad (iOS Glassmorphism Style) -->
+      <div class="lock-keypad-grid" id="lock-keypad">
+        <button type="button" class="keypad-btn" data-key="1">
+          <span class="key-digit">1</span>
+        </button>
+        <button type="button" class="keypad-btn" data-key="2">
+          <span class="key-digit">2</span>
+          <span class="key-letters">ABC</span>
+        </button>
+        <button type="button" class="keypad-btn" data-key="3">
+          <span class="key-digit">3</span>
+          <span class="key-letters">DEF</span>
+        </button>
+
+        <button type="button" class="keypad-btn" data-key="4">
+          <span class="key-digit">4</span>
+          <span class="key-letters">GHI</span>
+        </button>
+        <button type="button" class="keypad-btn" data-key="5">
+          <span class="key-digit">5</span>
+          <span class="key-letters">JKL</span>
+        </button>
+        <button type="button" class="keypad-btn" data-key="6">
+          <span class="key-digit">6</span>
+          <span class="key-letters">MNO</span>
+        </button>
+
+        <button type="button" class="keypad-btn" data-key="7">
+          <span class="key-digit">7</span>
+          <span class="key-letters">PQRS</span>
+        </button>
+        <button type="button" class="keypad-btn" data-key="8">
+          <span class="key-digit">8</span>
+          <span class="key-letters">TUV</span>
+        </button>
+        <button type="button" class="keypad-btn" data-key="9">
+          <span class="key-digit">9</span>
+          <span class="key-letters">WXYZ</span>
+        </button>
+
+        <button type="button" class="keypad-btn key-action-btn" id="btn-lock-hint" title="Xem gợi ý mật khẩu">
+          <span class="key-icon">💡</span>
+          <span class="key-sub-text">Gợi ý</span>
+        </button>
+        <button type="button" class="keypad-btn" data-key="0">
+          <span class="key-digit">0</span>
+        </button>
+        <button type="button" class="keypad-btn key-action-btn" id="btn-lock-backspace" title="Xóa một số">
+          <span class="key-icon">⌫</span>
+          <span class="key-sub-text">Xóa</span>
+        </button>
+      </div>
+
+      <!-- Remember Device Option -->
+      <div class="lock-options-row">
+        <label class="remember-device-label" for="cb-remember-device">
+          <input type="checkbox" id="cb-remember-device" checked class="remember-checkbox" />
+          <span class="checkbox-custom"></span>
+          <span class="remember-text">✨ Ghi nhớ thiết bị này (Tự mở lần sau)</span>
+        </label>
+      </div>
+
+      <!-- Hint Modal / Tooltip Box -->
+      <div class="lock-hint-box" id="lock-hint-box" style="display: none;">
+        <div class="hint-icon">💌</div>
+        <div class="hint-content">
+          <strong>Gợi ý mật mã:</strong>
+          <p>
+            Mật mã là ngày kỷ niệm tình yêu của hai bạn (<code>15082026</code> hoặc <code>1508</code>) 💕
+          </p>
+        </div>
+        <button type="button" class="hint-close-btn" id="btn-close-hint" aria-label="Đóng gợi ý">&times;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Base locked state for page body */
+  :global(html.couple-is-locked body > *:not(#love-lockscreen-overlay)) {
+    filter: blur(20px) brightness(0.2);
+    pointer-events: none !important;
+    user-select: none !important;
+    overflow: hidden !important;
+  }
+
+  :global(html.couple-is-locked) {
+    overflow: hidden !important;
+  }
+
+  .love-lockscreen-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.2rem;
+    background: radial-gradient(circle at 50% 30%, #171026 0%, #080b14 70%, #03050a 100%);
+    overflow-y: auto;
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+  }
+
+  .love-lockscreen-overlay.is-active {
+    display: flex;
+    animation: fadeInLock 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .love-lockscreen-overlay.is-unlocking {
+    animation: unlockFadeOut 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes fadeInLock {
+    from { opacity: 0; transform: scale(1.04); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes unlockFadeOut {
+    0% { opacity: 1; transform: scale(1); filter: blur(0); }
+    50% { opacity: 0.8; transform: scale(1.08); filter: blur(4px) brightness(1.3); }
+    100% { opacity: 0; transform: scale(1.15); filter: blur(12px) brightness(1.5); visibility: hidden; }
+  }
+
+  /* Glowing ambient orbs */
+  .lockscreen-glow-mesh {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .glow-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.45;
+    animation: floatOrb 8s infinite alternate ease-in-out;
+  }
+
+  .orb-pink {
+    width: 320px;
+    height: 320px;
+    background: #f43f5e;
+    top: 10%;
+    left: 20%;
+  }
+
+  .orb-purple {
+    width: 380px;
+    height: 380px;
+    background: #9333ea;
+    bottom: 10%;
+    right: 20%;
+    animation-delay: -3s;
+  }
+
+  .orb-cyan {
+    width: 260px;
+    height: 260px;
+    background: #06b6d4;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation-delay: -5s;
+  }
+
+  @keyframes floatOrb {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(30px, 40px) scale(1.15); }
+  }
+
+  .love-lockscreen-container {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 440px;
+    margin: auto;
+  }
+
+  .lockscreen-card {
+    background: rgba(15, 23, 42, 0.72);
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(244, 63, 94, 0.2);
+    border-radius: 28px;
+    padding: 2rem 1.6rem;
+    text-align: center;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+
+  .lockscreen-card.is-shaking {
+    animation: shakeCard 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    border-color: #ef4444;
+  }
+
+  @keyframes shakeCard {
+    10%, 90% { transform: translate3d(-3px, 0, 0); }
+    20%, 80% { transform: translate3d(5px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+    40%, 60% { transform: translate3d(6px, 0, 0); }
+  }
+
+  /* Emblem */
+  .lock-emblem-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 1.2rem;
+  }
+
+  .emblem-avatar-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .emblem-avatar-img {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    background: #1e293b;
+  }
+
+  .boy-avatar-box .emblem-avatar-img {
+    border-color: #38bdf8;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+  }
+
+  .girl-avatar-box .emblem-avatar-img {
+    border-color: #f43f5e;
+    box-shadow: 0 0 16px rgba(244, 63, 94, 0.4);
+  }
+
+  .emblem-tag {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    letter-spacing: 0.05em;
+  }
+
+  .emblem-heart-beacon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+  }
+
+  .heart-pulse-icon {
+    font-size: 1.8rem;
+    z-index: 2;
+    animation: heartBeatPulse 1.4s infinite ease-in-out;
+  }
+
+  @keyframes heartBeatPulse {
+    0%, 100% { transform: scale(1); }
+    20% { transform: scale(1.25); }
+    40% { transform: scale(1.05); }
+    60% { transform: scale(1.2); }
+  }
+
+  /* Header text */
+  .lock-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(244, 63, 94, 0.15);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    color: #fda4af;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .lock-main-title {
+    font-size: 1.55rem;
+    font-weight: 800;
+    margin: 0 0 0.35rem;
+    letter-spacing: 0.02em;
+  }
+
+  .lock-sub-desc {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin: 0 0 1.4rem;
+    line-height: 1.4;
+  }
+
+  /* Passcode Dots Display */
+  .passcode-display-wrap {
+    margin-bottom: 1.4rem;
+    position: relative;
+  }
+
+  .passcode-dots-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 0.6rem;
+    min-height: 24px;
+  }
+
+  .passcode-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid rgba(244, 63, 94, 0.4);
+    background: transparent;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .passcode-dot.is-filled {
+    background: linear-gradient(135deg, #e11d48, #f43f5e, #fbbf24);
+    border-color: #fbbf24;
+    box-shadow: 0 0 12px rgba(244, 63, 94, 0.8), 0 0 20px rgba(251, 191, 36, 0.6);
+    transform: scale(1.15);
+  }
+
+  .passcode-dot.is-success {
+    background: #22c55e !important;
+    border-color: #4ade80 !important;
+    box-shadow: 0 0 16px #22c55e !important;
+  }
+
+  .passcode-hidden-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 1px;
+    height: 1px;
+  }
+
+  .passcode-status-msg {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    min-height: 1.2rem;
+    transition: color 0.2s ease;
+  }
+
+  .passcode-status-msg.msg-error {
+    color: #f87171;
+    font-weight: 600;
+  }
+
+  .passcode-status-msg.msg-success {
+    color: #4ade80;
+    font-weight: 700;
+  }
+
+  /* Keypad */
+  .lock-keypad-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 290px;
+    margin: 0 auto 1.2rem;
+  }
+
+  .keypad-btn {
+    width: 72px;
+    height: 72px;
+    margin: auto;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(30, 41, 59, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #ffffff;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.15s ease;
+  }
+
+  .keypad-btn:hover {
+    background: rgba(244, 63, 94, 0.25);
+    border-color: rgba(244, 63, 94, 0.5);
+    transform: scale(1.06);
+    box-shadow: 0 0 16px rgba(244, 63, 94, 0.35);
+  }
+
+  .keypad-btn:active {
+    transform: scale(0.92);
+    background: rgba(244, 63, 94, 0.45);
+  }
+
+  .key-digit {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+    font-family: inherit;
+  }
+
+  .key-letters {
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    color: #94a3b8;
+    margin-top: 2px;
+  }
+
+  .key-action-btn {
+    background: transparent;
+    border-color: transparent;
+  }
+
+  .key-action-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .key-icon {
+    font-size: 1.3rem;
+  }
+
+  .key-sub-text {
+    font-size: 0.65rem;
+    color: #cbd5e1;
+    margin-top: 2px;
+  }
+
+  /* Remember checkbox */
+  .lock-options-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.8rem;
+  }
+
+  .remember-device-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    color: #cbd5e1;
+    user-select: none;
+  }
+
+  .remember-checkbox {
+    accent-color: #f43f5e;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+
+  /* Hint Box */
+  .lock-hint-box {
+    margin-top: 0.8rem;
+    background: rgba(244, 63, 94, 0.12);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    border-radius: 14px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    text-align: left;
+    position: relative;
+    animation: fadeInHint 0.2s ease-out;
+  }
+
+  @keyframes fadeInHint {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hint-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .hint-content {
+    font-size: 0.78rem;
+    color: #fce7f3;
+    line-height: 1.4;
+  }
+
+  .hint-content p {
+    margin: 2px 0 0;
+  }
+
+  .hint-content code {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2px 6px;
+    border-radius: 6px;
+    color: #fbbf24;
+    font-weight: 700;
+  }
+
+  .hint-close-btn {
+    background: none;
+    border: none;
+    color: #fda4af;
+    font-size: 1.2rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    margin-left: auto;
+  }
+
+  @media (max-width: 480px) {
+    .lockscreen-card {
+      padding: 1.6rem 1.2rem;
+      border-radius: 22px;
+    }
+
+    .keypad-btn {
+      width: 64px;
+      height: 64px;
+    }
+
+    .key-digit {
+      font-size: 1.45rem;
+    }
+
+    .lock-main-title {
+      font-size: 1.35rem;
+    }
+  }
+</style>
+
+<script>
+  const AUTH_STORAGE_KEY = 'couple_auth_unlocked';
+  
+  // Valid Passcodes:
+  // 1. 15082026 (Ngày chính thức yêu nhau đầy đủ)
+  // 2. 1508 (Mã PIN rút gọn 4 số)
+  // 3. aimaze / ai&maze / ai maze
+  // 4. Sinh nhật hai bạn: 2809, 1112
+  const VALID_PASSCODES = [
+    '15082026',
+    '1508',
+    'aimaze',
+    'ai&maze',
+    'ai maze',
+    '2809',
+    '1112'
+  ];
+
+  let currentEnteredCode = '';
+  const MAX_CODE_LENGTH = 8;
+
+  function fireRomanticHeartBurst() {
+    const emojis = ['💖', '✨', '🌸', '💫', '💕', '⭐', '🚀', '🎉'];
+    const count = 38;
+    const container = document.body;
+
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement('div');
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.position = 'fixed';
+      el.style.left = '50%';
+      el.style.top = '50%';
+      el.style.zIndex = '9999999';
+      el.style.pointerEvents = 'none';
+      el.style.fontSize = `${Math.random() * 22 + 16}px`;
+      el.style.transition = 'all 1s cubic-bezier(0.22, 1, 0.36, 1)';
+      el.style.transform = 'translate(-50%, -50%) scale(0.5)';
+      el.style.opacity = '1';
+      container.appendChild(el);
+
+      const angle = Math.random() * Math.PI * 2;
+      const distance = Math.random() * 280 + 90;
+      const x = Math.cos(angle) * distance;
+      const y = Math.sin(angle) * distance - 40;
+
+      requestAnimationFrame(() => {
+        el.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${Math.random() * 0.8 + 0.8}) rotate(${Math.random() * 360}deg)`;
+        el.style.opacity = '0';
+      });
+
+      setTimeout(() => {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      }, 1100);
+    }
+  }
+
+  function initLoveLockScreen() {
+    const overlay = document.getElementById('love-lockscreen-overlay');
+    if (!overlay) return;
+
+    const dots = document.querySelectorAll('.passcode-dot');
+    const statusMsg = document.getElementById('passcode-status-msg');
+    const keypad = document.getElementById('lock-keypad');
+    const card = overlay.querySelector('.lockscreen-card');
+    const hintBox = document.getElementById('lock-hint-box');
+    const btnHint = document.getElementById('btn-lock-hint');
+    const btnCloseHint = document.getElementById('btn-close-hint');
+    const btnBackspace = document.getElementById('btn-lock-backspace');
+    const cbRemember = document.getElementById('cb-remember-device') as HTMLInputElement | null;
+    const heartIcon = document.getElementById('lock-heart-icon');
+    const lockIcon = document.getElementById('lock-badge-icon');
+    const lockStatusText = document.getElementById('lock-status-text');
+
+    // Check if already unlocked
+    const isUnlocked = localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
+
+    if (isUnlocked) {
+      document.documentElement.classList.remove('couple-is-locked');
+      overlay.classList.remove('is-active');
+    } else {
+      document.documentElement.classList.add('couple-is-locked');
+      overlay.classList.add('is-active');
+    }
+
+    function updateDotsUI() {
+      const len = currentEnteredCode.length;
+      dots.forEach((dot, idx) => {
+        if (idx < len) {
+          dot.classList.add('is-filled');
+        } else {
+          dot.classList.remove('is-filled', 'is-success');
+        }
+      });
+    }
+
+    function resetInput(isError = false) {
+      currentEnteredCode = '';
+      updateDotsUI();
+
+      if (isError && card) {
+        card.classList.add('is-shaking');
+        if (statusMsg) {
+          statusMsg.className = 'passcode-status-msg msg-error';
+          statusMsg.textContent = 'Mật mã chưa đúng rồi nè! Thử lại nha người thương 🌸';
+        }
+        setTimeout(() => card.classList.remove('is-shaking'), 500);
+      }
+    }
+
+    function unlockSuccessfully() {
+      const remember = cbRemember ? cbRemember.checked : true;
+      if (remember) {
+        localStorage.setItem(AUTH_STORAGE_KEY, 'true');
+      }
+
+      dots.forEach((dot) => dot.classList.add('is-success'));
+      if (statusMsg) {
+        statusMsg.className = 'passcode-status-msg msg-success';
+        statusMsg.textContent = '✨ Mở khóa thành công! Chào mừng hai bạn về nhà 💖';
+      }
+      if (heartIcon) heartIcon.textContent = '🎉';
+      if (lockIcon) lockIcon.textContent = '🔓';
+      if (lockStatusText) lockStatusText.textContent = 'Đã mở khóa Tinh cầu';
+
+      try {
+        fireRomanticHeartBurst();
+      } catch {}
+
+      setTimeout(() => {
+        overlay?.classList.add('is-unlocking');
+        setTimeout(() => {
+          document.documentElement.classList.remove('couple-is-locked');
+          overlay?.classList.remove('is-active', 'is-unlocking');
+        }, 550);
+      }, 650);
+    }
+
+    function checkPasscode() {
+      const clean = currentEnteredCode.trim().toLowerCase();
+      const isValid = VALID_PASSCODES.some((p) => p.toLowerCase() === clean);
+
+      if (isValid) {
+        unlockSuccessfully();
+      } else {
+        if (clean.length >= 4) {
+          resetInput(true);
+        }
+      }
+    }
+
+    function appendDigit(digit: string) {
+      if (currentEnteredCode.length >= MAX_CODE_LENGTH) return;
+      currentEnteredCode += digit;
+      updateDotsUI();
+
+      if (statusMsg) {
+        statusMsg.className = 'passcode-status-msg';
+        statusMsg.textContent = 'Đang nhập mật mã...';
+      }
+
+      // Check after 4 or 8 characters
+      if (currentEnteredCode.length === 4) {
+        const clean = currentEnteredCode.trim().toLowerCase();
+        if (VALID_PASSCODES.includes(clean)) {
+          unlockSuccessfully();
+          return;
+        }
+      }
+
+      if (currentEnteredCode.length === 8) {
+        checkPasscode();
+      }
+    }
+
+    function removeDigit() {
+      if (currentEnteredCode.length > 0) {
+        currentEnteredCode = currentEnteredCode.slice(0, -1);
+        updateDotsUI();
+        if (statusMsg) {
+          statusMsg.className = 'passcode-status-msg';
+          statusMsg.textContent = 'Nhấn các phím số hoặc gõ bàn phím';
+        }
+      }
+    }
+
+    // Attach DOM event listeners ONLY ONCE
+    if (overlay.dataset.listenersAttached !== 'true') {
+      overlay.dataset.listenersAttached = 'true';
+
+      // Keypad Button Clicks
+      if (keypad) {
+        keypad.addEventListener('click', (e) => {
+          const target = (e.target as HTMLElement).closest('.keypad-btn') as HTMLElement | null;
+          if (!target) return;
+
+          const digit = target.getAttribute('data-key');
+          if (digit !== null) {
+            e.preventDefault();
+            e.stopPropagation();
+            appendDigit(digit);
+          }
+        });
+      }
+
+      // Backspace button
+      if (btnBackspace) {
+        btnBackspace.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          removeDigit();
+        });
+      }
+
+      // Hint button
+      if (btnHint && hintBox) {
+        btnHint.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          hintBox.style.display = hintBox.style.display === 'none' ? 'flex' : 'none';
+        });
+      }
+
+      if (btnCloseHint && hintBox) {
+        btnCloseHint.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          hintBox.style.display = 'none';
+        });
+      }
+
+      // Physical Keyboard Single Global Listener
+      window.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (!overlay.classList.contains('is-active')) return;
+
+        // Ignore modifier keys
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+        if (e.key >= '0' && e.key <= '9') {
+          e.preventDefault();
+          appendDigit(e.key);
+        } else if (e.key === 'Backspace') {
+          e.preventDefault();
+          removeDigit();
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          checkPasscode();
+        } else if (e.key.length === 1 && /[a-zA-Z&]/.test(e.key)) {
+          e.preventDefault();
+          appendDigit(e.key);
+        }
+      });
+    }
+
+    // Global Lock App Function (Accessible by Header lock button)
+    (window as any).lockCoupleApp = () => {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+      document.documentElement.classList.add('couple-is-locked');
+      overlay.classList.remove('is-unlocking');
+      overlay.classList.add('is-active');
+      resetInput(false);
+      if (statusMsg) {
+        statusMsg.className = 'passcode-status-msg';
+        statusMsg.textContent = 'Tinh cầu đã được khóa lại an toàn 🔒';
+      }
+      if (lockIcon) lockIcon.textContent = '🔒';
+      if (lockStatusText) lockStatusText.textContent = 'Cổng Tinh Cầu Riêng Tư';
+      if (heartIcon) heartIcon.textContent = '💖';
+    };
+  }
+
+  initLoveLockScreen();
+  document.addEventListener('astro:page-load', initLoveLockScreen);
+  document.addEventListener('astro:after-swap', initLoveLockScreen);
+</script>
