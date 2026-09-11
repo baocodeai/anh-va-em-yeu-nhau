@@ -11,7 +11,7 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
     </div>
     <h2 class="section-title gradient-love-text">21 Ngày Cùng Em Rèn Thói Quen Tiếng Anh</h2>
     <p class="section-desc">
-      Mỗi ngày là một vì sao được thắp sáng. Dù chỉ là 15 phút bên nhau, từng từ vựng và câu nói đều là minh chứng cho sự kiên trì và tình yêu của hai đứa.
+      Mỗi ngày là một vì sao được thắp sáng. Hãy cùng nhau kiên trì mỗi ngày và đánh dấu hoàn thành chặng đường 21 ngày của hai đứa!
     </p>
   </div>
 
@@ -30,7 +30,7 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
       </div>
       <div class="stat-box">
         <span class="stat-number" id="habit-stat-remaining" style="color: #fbbf24;">--</span>
-        <span class="stat-name">Ngày Cùng Chinh Phục Tiếp</span>
+        <span class="stat-name">Ngày Còn Lại</span>
       </div>
     </div>
 
@@ -41,227 +41,18 @@ const defaultHabitJSON = JSON.stringify(HABIT_21_DAYS).replace(/</g, '\\u003c');
 
     <!-- 21-Day Constellation Track -->
     <div class="constellation-nav-wrap">
-      <p class="constellation-guide-text">⭐ Chọn một ngày để xem và cập nhật nhật ký học tập của Maze &amp; AI:</p>
+      <p class="constellation-guide-text">⭐ Bấm vào một ngày để xem và đánh dấu hoàn thành:</p>
       <div class="constellation-nodes-grid" id="day-selector-strip">
         <!-- 21 node buttons dynamically rendered / updated by script -->
       </div>
     </div>
   </div>
 
-  <!-- Day Detail Active Panel (Dynamic) -->
+  <!-- Day Detail Active Panel -->
   <div class="day-details-container" id="habit-panels-container">
     <article class="day-detail-panel romantic-card active-panel" id="active-day-panel">
       <!-- Dynamic content rendered by client script -->
     </article>
-  </div>
-
-  <!-- Dedicated Notion / Medium Zen Love Journal Studio Modal for 21 Days -->
-  <div class="crud-modal-overlay" id="habit-edit-modal" aria-hidden="true">
-    <div class="crud-modal-card zen-journal-card romantic-card">
-      
-      <!-- 1. Zen Hero Cover Banner -->
-      <div class="zen-cover-hero" id="habit-cover-hero-wrap">
-        <div class="zen-cover-constellation-bg">
-          <div class="zen-cover-nebula"></div>
-          <div class="zen-cover-badge-pill" id="habit-cover-day-badge">⭐ Chặng Học 21 Ngày</div>
-        </div>
-        <div class="zen-cover-gradient"></div>
-
-        <button type="button" class="zen-modal-close-btn" id="habit-modal-close" aria-label="Đóng">&times;</button>
-      </div>
-
-      <!-- 2. Main Scrollable Zen Journal Book -->
-      <form id="habit-edit-form" class="zen-journal-form">
-        <input type="hidden" id="form-day-num" value="1" />
-
-        <div class="zen-scrollable-content">
-          <!-- Big Seamless Title & Theme -->
-          <div class="zen-title-container">
-            <textarea
-              id="form-day-title"
-              class="zen-title-textarea"
-              rows="1"
-              required
-              placeholder="Tên chặng / Tiêu đề ngày học..."
-            ></textarea>
-            <input
-              type="text"
-              id="form-day-theme"
-              class="zen-theme-input"
-              required
-              placeholder="Chủ đề bài học (ví dụ: Daily Routines & Love Words)..."
-            />
-          </div>
-
-          <!-- Interactive Metadata Tag Bar -->
-          <div class="zen-meta-row">
-            <!-- Số ngày -->
-            <div class="zen-pill-item">
-              <span class="zen-pill-icon">🗓️</span>
-              <span class="zen-pill-text" id="habit-pill-day-text">Ngày 1 / 21</span>
-            </div>
-
-            <!-- Người chắp bút đang chọn -->
-            <div class="zen-pill-item zen-pill-author">
-              <span class="zen-pill-icon">✍️</span>
-              <select id="form-habit-author" class="zen-pill-select" title="Chọn người chắp bút">
-                <option value="both">Cả hai đứa 💖</option>
-                <option value="maze">Maze 🌸</option>
-                <option value="ai">AI 🚀</option>
-              </select>
-            </div>
-
-            <!-- Trạng thái hoàn thành -->
-            <div class="zen-pill-item zen-pill-status">
-              <label class="zen-checkbox-pill" title="Đánh dấu hoàn thành ngày học">
-                <input type="checkbox" id="form-day-completed" />
-                <span id="label-day-completed-text">★ Hoàn thành</span>
-              </label>
-            </div>
-
-            <!-- Ngày hoàn thành -->
-            <div class="zen-pill-item zen-pill-date" id="group-day-completed-date" style="display: none;">
-              <span class="zen-pill-icon">📅</span>
-              <input
-                type="date"
-                id="form-day-completed-date"
-                class="zen-pill-input"
-                title="Ngày hoàn thành"
-              />
-            </div>
-          </div>
-
-          <!-- Sticky Format & View Toolbar -->
-          <div class="zen-sticky-toolbar">
-            <div class="zen-tools-group">
-              <button type="button" class="zen-tb-btn" data-action="bold" title="In đậm (**chữ**)"><strong>B</strong></button>
-              <button type="button" class="zen-tb-btn" data-action="italic" title="In nghiêng (*chữ*)"><em>I</em></button>
-              <button type="button" class="zen-tb-btn" data-action="h3" title="Tiêu đề phân đoạn (### Tiêu đề)"><strong>H3</strong></button>
-              <button type="button" class="zen-tb-btn" data-action="quote" title="Trích dẫn lãng mạn (&gt; Trích dẫn)">❝</button>
-              <button type="button" class="zen-tb-btn" data-action="poem" title="Khổ thơ tình yêu">📜 Thơ</button>
-              <button type="button" class="zen-tb-btn" data-action="vocab" title="Chèn cú pháp từ vựng">📖 Vocab</button>
-              <button type="button" class="zen-tb-btn" data-action="list" title="Danh sách (- việc đã học)">• List</button>
-              
-              <div class="zen-emoji-strip">
-                <button type="button" class="zen-emoji-btn" data-emoji="💖">💖</button>
-                <button type="button" class="zen-emoji-btn" data-emoji="🌸">🌸</button>
-                <button type="button" class="zen-emoji-btn" data-emoji="🚀">🚀</button>
-                <button type="button" class="zen-emoji-btn" data-emoji="🌌">🌌</button>
-                <button type="button" class="zen-emoji-btn" data-emoji="✨">✨</button>
-                <button type="button" class="zen-emoji-btn" data-emoji="⭐">⭐</button>
-                <button type="button" class="zen-emoji-btn" data-emoji="📖">📖</button>
-                <button type="button" class="zen-emoji-btn" data-emoji="🥰">🥰</button>
-              </div>
-            </div>
-
-            <div class="zen-view-toggle-group">
-              <button type="button" class="zen-toggle-btn is-active" data-mode="editor" id="btn-habit-mode-editor">✍️ Soạn thảo</button>
-              <button type="button" class="zen-toggle-btn" data-mode="preview" id="btn-habit-mode-preview">👁️ Xem trang báo</button>
-            </div>
-          </div>
-
-          <!-- Zen Workspace: Editor or Preview -->
-          <div class="zen-workspace-container mode-editor" id="habit-studio-workspace">
-            
-            <!-- Editor View -->
-            <div class="zen-editor-view" id="habit-workspace-editor-col">
-              
-              <!-- 2 Separate Spaces for Maze and AI -->
-              <div class="habit-dual-notes-grid">
-                
-                <!-- Maze's Space -->
-                <div class="habit-partner-pane habit-maze-pane" id="pane-maze-learned-wrap">
-                  <div class="habit-pane-header">
-                    <div class="habit-pane-title-wrap">
-                      <span class="habit-pane-avatar">🌸</span>
-                      <div>
-                        <h4 class="habit-pane-title">Không Gian Của Maze</h4>
-                        <span class="habit-pane-sub">Nàng Tinh Cầu ghi lại những điều tâm đắc</span>
-                      </div>
-                    </div>
-                  </div>
-                  <textarea
-                    id="form-maze-learned"
-                    class="zen-pane-textarea"
-                    rows="4"
-                    placeholder="Hôm nay Maze đã học được những từ, câu hoặc cảm nghĩ gì? (Hỗ trợ Markdown)..."
-                  ></textarea>
-                </div>
-
-                <!-- AI's Space -->
-                <div class="habit-partner-pane habit-ai-pane" id="pane-ai-learned-wrap">
-                  <div class="habit-pane-header">
-                    <div class="habit-pane-title-wrap">
-                      <span class="habit-pane-avatar">🚀</span>
-                      <div>
-                        <h4 class="habit-pane-title">Không Gian Của AI</h4>
-                        <span class="habit-pane-sub">Chàng Kỹ Sư ghi lại bài học &amp; lời gửi Maze</span>
-                      </div>
-                    </div>
-                  </div>
-                  <textarea
-                    id="form-ai-learned"
-                    class="zen-pane-textarea"
-                    rows="4"
-                    placeholder="Hôm nay AI đã học được điều gì và muốn nhắn nhủ gì tới Maze? (Hỗ trợ Markdown)..."
-                  ></textarea>
-                </div>
-
-              </div>
-
-              <!-- Key Vocabulary Section -->
-              <div class="zen-card-section">
-                <div class="zen-section-header">
-                  <span class="zen-section-icon">📖</span>
-                  <h4 class="zen-section-title">Từ Vựng &amp; Điểm Ngữ Pháp Tâm Đắc</h4>
-                </div>
-                <p class="zen-section-sub">Nhập mỗi từ trên 1 dòng theo cú pháp: <code>Từ - Nghĩa - Câu ví dụ</code></p>
-                <textarea
-                  id="form-day-vocab"
-                  class="zen-vocab-textarea"
-                  rows="3"
-                  placeholder="Cherish - Yêu thương trân trọng - I cherish every second with you.
-Routine - Thói quen ngọt ngào - Learning English with you is my sweetest routine."
-                ></textarea>
-              </div>
-
-              <!-- Romantic Note Section -->
-              <div class="zen-card-section">
-                <div class="zen-section-header">
-                  <span class="zen-section-icon">💌</span>
-                  <h4 class="zen-section-title">Lời Nhắn Gửi Yêu Thương</h4>
-                </div>
-                <textarea
-                  id="form-romantic-note"
-                  class="zen-caption-textarea"
-                  rows="2"
-                  placeholder="Lời khích lệ ngọt ngào hoặc câu thơ dành tặng đối phương sau buổi học..."
-                ></textarea>
-              </div>
-
-            </div>
-
-            <!-- Live Preview View -->
-            <div class="zen-preview-view" id="habit-workspace-preview-col" style="display: none;">
-              <div class="studio-live-preview-box zen-preview-content-box" id="habit-live-preview">
-                <!-- Dynamically rendered -->
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-
-        <!-- Floating Footer -->
-        <div class="zen-footer-bar">
-          <div class="zen-footer-wordcount" id="habit-word-count">0 từ</div>
-          <div class="zen-footer-buttons">
-            <button type="button" class="btn-outline-love" id="btn-cancel-habit">Hủy Bỏ</button>
-            <button type="submit" class="btn-love" id="btn-save-habit">💖 Lưu Bài Học</button>
-          </div>
-        </div>
-      </form>
-    </div>
   </div>
 </section>
 
@@ -272,8 +63,8 @@ Routine - Thói quen ngọt ngào - Learning English with you is my sweetest rou
 
 <style>
   .habit-tracker-section {
-    max-width: 980px;
-    margin: 4rem auto;
+    max-width: 920px;
+    margin: 3.5rem auto;
     padding: 0 1.2rem;
   }
 
@@ -299,16 +90,20 @@ Routine - Thói quen ngọt ngào - Learning English with you is my sweetest rou
 
   /* Overview Card */
   .habit-overview-card {
-    padding: 2rem;
+    padding: 2.2rem 2rem;
     margin-bottom: 2rem;
+    background: radial-gradient(circle at 50% 0%, rgba(244, 63, 94, 0.12) 0%, rgba(11, 17, 32, 0.9) 80%);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    border-radius: 22px;
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.7), 0 0 30px rgba(244, 63, 94, 0.1);
   }
 
   .progress-stats-row {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: 1.5rem;
+    margin-bottom: 1.8rem;
     flex-wrap: wrap;
   }
 
@@ -316,52 +111,55 @@ Routine - Thói quen ngọt ngào - Learning English with you is my sweetest rou
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
   }
 
   .stat-number {
-    font-size: 2.2rem;
+    font-size: 2.4rem;
     font-weight: 800;
     font-family: var(--mono);
     line-height: 1;
   }
 
   .stat-total {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     color: #64748b;
   }
 
   .stat-name {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     color: #94a3b8;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
+    font-weight: 600;
   }
 
   .progress-bar-container {
     width: 100%;
-    height: 10px;
-    background: rgba(30, 41, 59, 0.8);
+    height: 12px;
+    background: rgba(30, 41, 59, 0.85);
     border-radius: 9999px;
     overflow: hidden;
-    margin-bottom: 1.8rem;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
   }
 
   .progress-bar-fill {
     height: 100%;
     background: linear-gradient(90deg, #f43f5e, #c084fc, #38bdf8);
     border-radius: 9999px;
-    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 0 16px rgba(244, 63, 94, 0.6);
+    transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 16px rgba(244, 63, 94, 0.7);
   }
 
   /* 21 Nodes */
   .constellation-guide-text {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: #cbd5e1;
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
     text-align: center;
+    font-weight: 500;
   }
 
   .constellation-nodes-grid {
@@ -372,16 +170,16 @@ Routine - Thói quen ngọt ngào - Learning English with you is my sweetest rou
   }
 
   :global(.day-node-btn) {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
     border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: rgba(11, 17, 32, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(11, 17, 32, 0.85);
     backdrop-filter: blur(10px);
     color: #cbd5e1;
-    font-size: 0.96rem;
+    font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
     display: flex;
@@ -390,917 +188,182 @@ Routine - Thói quen ngọt ngào - Learning English with you is my sweetest rou
     position: relative;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     user-select: none;
+    font-family: var(--mono);
   }
 
   :global(.day-node-btn:hover) {
-    transform: translateY(-2px) scale(1.05);
+    transform: translateY(-2px) scale(1.08);
     border-color: #fda4af;
-    box-shadow: 0 0 16px rgba(244, 63, 94, 0.35);
+    box-shadow: 0 0 18px rgba(244, 63, 94, 0.4);
     color: #ffffff;
   }
 
   :global(.day-node-btn.is-active) {
     border-color: #38bdf8;
-    box-shadow: 0 0 20px rgba(56, 189, 248, 0.6), inset 0 0 8px rgba(56, 189, 248, 0.3);
+    box-shadow: 0 0 22px rgba(56, 189, 248, 0.7), inset 0 0 10px rgba(56, 189, 248, 0.35);
     color: #ffffff;
-    transform: scale(1.12);
+    transform: scale(1.14);
   }
 
   :global(.day-node-btn.is-completed) {
-    background: linear-gradient(135deg, rgba(244, 63, 94, 0.35), rgba(192, 132, 252, 0.45));
-    border-color: rgba(244, 63, 94, 0.6);
+    background: linear-gradient(135deg, rgba(244, 63, 94, 0.4), rgba(192, 132, 252, 0.5));
+    border-color: rgba(244, 63, 94, 0.7);
     color: #ffffff;
-    box-shadow: 0 0 14px rgba(244, 63, 94, 0.25);
+    box-shadow: 0 0 16px rgba(244, 63, 94, 0.35);
   }
 
   :global(.day-star-badge) {
     position: absolute;
-    top: -4px;
-    right: -4px;
-    font-size: 0.72rem;
+    top: -5px;
+    right: -5px;
+    font-size: 0.8rem;
     color: #fbbf24;
-    text-shadow: 0 0 8px rgba(251, 191, 36, 0.9);
+    text-shadow: 0 0 8px rgba(251, 191, 36, 0.95);
   }
 
   /* Active Day Panel */
   .day-details-container {
-    margin-top: 2rem;
+    margin-top: 1.5rem;
   }
 
   .day-detail-panel {
-    padding: 2.2rem;
-    background: var(--card-bg);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--card-border);
-    border-radius: 18px;
-    box-shadow: var(--card-glow);
+    padding: 2.2rem 2.4rem;
+    background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.08) 0%, rgba(11, 17, 32, 0.92) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 22px;
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.7);
   }
 
-  :global(.panel-header-row) {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    flex-wrap: wrap;
-  }
-
-  :global(.panel-title-area) {
+  :global(.panel-main-content) {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: 1.8rem;
+    text-align: center;
+  }
+
+  :global(.panel-top-row) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 1rem;
+    flex-wrap: wrap;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 1.2rem;
+  }
+
+  :global(.day-nav-group) {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  :global(.btn-day-nav) {
+    padding: 6px 14px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(15, 23, 42, 0.6);
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  :global(.btn-day-nav:hover:not(:disabled)) {
+    background: rgba(244, 63, 94, 0.2);
+    border-color: #fda4af;
+    color: #ffffff;
+  }
+
+  :global(.btn-day-nav:disabled) {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  :global(.panel-info-body) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 0.5rem;
+    margin: 0.5rem 0;
   }
 
   :global(.day-heading) {
-    font-size: 1.85rem;
+    font-size: 2.4rem;
     font-weight: 800;
     color: #ffffff;
     margin: 0;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
   }
 
-  :global(.day-prefix) {
-    color: #fda4af;
-  }
-
-  :global(.day-theme-label) {
-    font-size: 0.96rem;
-    color: #94a3b8;
-    margin: 0;
-  }
-
-  :global(.panel-actions-group) {
+  :global(.panel-actions-center) {
     display: flex;
-    gap: 0.8rem;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  :global(.learning-columns-grid) {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.6rem;
-    margin-bottom: 2rem;
-    align-items: stretch;
-  }
-
-  :global(.partner-learn-box) {
-    background: rgba(7, 10, 19, 0.6);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    padding: 1.6rem;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 220px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  }
-
-  :global(.maze-box) {
-    border-left: 4px solid #f43f5e;
-    background: linear-gradient(180deg, rgba(244, 63, 94, 0.08) 0%, rgba(11, 17, 32, 0.85) 100%);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(244, 63, 94, 0.1);
-  }
-
-  :global(.ai-box) {
-    border-left: 4px solid #38bdf8;
-    background: linear-gradient(180deg, rgba(56, 189, 248, 0.08) 0%, rgba(11, 17, 32, 0.85) 100%);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.1);
-  }
-
-  :global(.box-header) {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    margin-bottom: 1rem;
-  }
-
-  :global(.partner-learn-avatar) {
-    font-size: 1.8rem;
-    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
-  }
-
-  :global(.partner-learn-title) {
-    font-size: 1.12rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin: 0 0 2px;
-  }
-
-  :global(.partner-learn-sub) {
-    font-size: 0.8rem;
-    color: #94a3b8;
-  }
-
-  :global(.learn-text) {
-    font-size: 0.95rem;
-    color: #cbd5e1;
-    line-height: 1.7;
-    margin: 0;
-    flex: 1;
-  }
-
-  :global(.vocab-section-wrap) {
-    margin-bottom: 2rem;
-    background: rgba(7, 10, 19, 0.6);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    padding: 1.6rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  }
-
-  :global(.vocab-title) {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin: 0 0 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  :global(.vocab-chips-grid) {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1rem;
-  }
-
-  :global(.vocab-chip) {
-    background: rgba(15, 23, 42, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    transition: transform 0.2s, border-color 0.2s;
-  }
-
-  :global(.vocab-chip:hover) {
-    transform: translateY(-2px);
-    border-color: rgba(244, 63, 94, 0.4);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  }
-
-  :global(.vocab-word) {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #fda4af;
-  }
-
-  :global(.vocab-meaning) {
-    font-size: 0.88rem;
-    color: #f1f5f9;
-  }
-
-  :global(.vocab-example) {
-    font-size: 0.82rem;
-    color: #94a3b8;
-    font-style: italic;
-  }
-
-  :global(.romantic-note-box) {
-    display: flex;
-    gap: 1.2rem;
-    background: linear-gradient(135deg, rgba(244, 63, 94, 0.12), rgba(192, 132, 252, 0.12));
-    border: 1px solid rgba(244, 63, 94, 0.3);
-    border-radius: 14px;
-    padding: 1.4rem 1.8rem;
-    align-items: center;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  }
-
-  :global(.romantic-note-quote-icon) {
-    font-size: 2.2rem;
-    filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.4));
-  }
-
-  :global(.romantic-note-title) {
-    font-size: 0.82rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: #fda4af;
-    letter-spacing: 0.05em;
-    margin: 0 0 4px;
-  }
-
-  :global(.romantic-note-text) {
-    font-family: var(--body);
-    font-style: italic;
-    font-size: 1rem;
-    color: #f1f5f9;
-    line-height: 1.55;
-    margin: 0;
-  }
-
-  /* =========================================================================
-     NOTION / MEDIUM ZEN LOVE JOURNAL STUDIO MODAL (21 DAYS)
-     ========================================================================= */
-  .crud-modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(5, 8, 18, 0.88);
-    backdrop-filter: blur(14px);
-    z-index: 9999;
-    display: none;
-    align-items: center;
     justify-content: center;
-    padding: 1.5rem;
-  }
-
-  .crud-modal-overlay.is-open {
-    display: flex;
-    animation: fadeInModal 0.25s ease-out;
-  }
-
-  .zen-journal-card {
-    max-width: 960px;
-    width: 100%;
-    height: 92vh;
-    background: #090e1a;
-    border: 1px solid rgba(244, 63, 94, 0.35);
-    border-radius: 20px;
-    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 40px rgba(244, 63, 94, 0.15);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* 1. Zen Cover Hero */
-  .zen-cover-hero {
-    position: relative;
-    height: 160px;
-    width: 100%;
-    flex-shrink: 0;
-    overflow: hidden;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-  }
-
-  .zen-cover-constellation-bg {
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at 50% 20%, rgba(56, 189, 248, 0.25), rgba(15, 23, 42, 0.95)),
-                linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #090e1a 100%);
-    display: flex;
     align-items: center;
-    justify-content: center;
-    position: relative;
-  }
-
-  .zen-cover-nebula {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at center, rgba(244, 63, 94, 0.2) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .zen-cover-badge-pill {
-    position: relative;
-    z-index: 2;
-    background: rgba(15, 23, 42, 0.7);
-    border: 1px solid rgba(244, 63, 94, 0.4);
-    padding: 6px 18px;
-    border-radius: 9999px;
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: #fbcfe8;
-    box-shadow: 0 0 20px rgba(244, 63, 94, 0.3);
-  }
-
-  .zen-cover-gradient {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, transparent 40%, #090e1a 100%);
-    pointer-events: none;
-  }
-
-  .zen-modal-close-btn {
-    position: absolute;
-    top: 14px;
-    right: 18px;
-    z-index: 10;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #ffffff;
-    font-size: 1.6rem;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .zen-modal-close-btn:hover {
-    background: rgba(244, 63, 94, 0.8);
-    border-color: #fda4af;
-  }
-
-  /* 2. Zen Journal Form & Content */
-  .zen-journal-form {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    overflow: hidden;
-  }
-
-  .zen-scrollable-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1.5rem 3.5rem 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-  }
-
-  /* Title & Theme Inputs */
-  .zen-title-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    padding-bottom: 0.6rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .zen-title-textarea {
     width: 100%;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: #ffffff;
-    font-size: 1.8rem;
-    font-weight: 800;
-    line-height: 1.3;
-    font-family: var(--font-sans, inherit);
-    resize: none;
   }
 
-  .zen-title-textarea::placeholder {
-    color: #475569;
-  }
-
-  .zen-theme-input {
-    width: 100%;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: #38bdf8;
-    font-size: 1.05rem;
-    font-weight: 600;
-  }
-
-  .zen-theme-input::placeholder {
-    color: #334155;
-  }
-
-  /* Metadata Tag Bar */
-  .zen-meta-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-    padding: 4px 0;
-  }
-
-  .zen-pill-item {
+  :global(.btn-toggle-day-status) {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    background: rgba(30, 41, 59, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 15px 38px;
+    font-size: 1.15rem;
+    font-weight: 700;
     border-radius: 9999px;
-    padding: 4px 12px;
-    font-size: 0.82rem;
-    color: #e2e8f0;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    outline: none;
   }
 
-  .zen-pill-text {
-    font-weight: 600;
+  :global(.btn-toggle-day-status.btn-mark-pending) {
+    background: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #c084fc 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 25px rgba(244, 63, 94, 0.45);
+  }
+
+  :global(.btn-toggle-day-status.btn-mark-pending:hover) {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 8px 32px rgba(244, 63, 94, 0.65);
+  }
+
+  :global(.btn-toggle-day-status.btn-mark-completed) {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(16, 185, 129, 0.25) 100%);
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.4);
+    box-shadow: 0 4px 20px rgba(34, 197, 94, 0.25);
+  }
+
+  :global(.btn-toggle-day-status.btn-mark-completed:hover) {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(244, 63, 94, 0.25) 100%);
+    border-color: rgba(244, 63, 94, 0.5);
     color: #fda4af;
-  }
-
-  .zen-pill-select,
-  .zen-pill-input {
-    background: transparent;
-    border: none;
-    outline: none;
-    color: #ffffff;
-    font-size: 0.82rem;
-    font-family: inherit;
-  }
-
-  .zen-pill-select option {
-    background: #0f172a;
-    color: #ffffff;
-  }
-
-  .zen-checkbox-pill {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    color: #fbbf24;
-  }
-
-  /* Sticky Toolbar */
-  .zen-sticky-toolbar {
-    position: sticky;
-    top: 0;
-    z-index: 30;
-    background: rgba(9, 14, 26, 0.92);
-    backdrop-filter: blur(12px);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 0.6rem 0.8rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.8rem;
-    margin: 0.4rem 0 0.8rem;
-    border-radius: 10px;
-  }
-
-  .zen-tools-group {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    flex-wrap: wrap;
-  }
-
-  .zen-tb-btn {
-    background: rgba(30, 41, 59, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #cbd5e1;
-    border-radius: 6px;
-    padding: 5px 10px;
-    font-size: 0.82rem;
-    cursor: pointer;
-    transition: all 0.15s ease;
-  }
-
-  .zen-tb-btn:hover {
-    background: rgba(244, 63, 94, 0.3);
-    border-color: #fda4af;
-    color: #ffffff;
-  }
-
-  .zen-emoji-strip {
-    display: flex;
-    gap: 3px;
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-    padding-left: 6px;
-    margin-left: 4px;
-  }
-
-  .zen-emoji-btn {
-    background: transparent;
-    border: none;
-    font-size: 1rem;
-    cursor: pointer;
-    padding: 2px 4px;
-    border-radius: 4px;
-    transition: transform 0.15s ease;
-  }
-
-  .zen-emoji-btn:hover {
-    transform: scale(1.25);
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .zen-view-toggle-group {
-    display: flex;
-    gap: 4px;
-    background: rgba(15, 23, 42, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 3px;
-    flex-shrink: 0;
-  }
-
-  .zen-toggle-btn {
-    background: transparent;
-    border: none;
-    color: #94a3b8;
-    font-size: 0.78rem;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .zen-toggle-btn.is-active {
-    background: linear-gradient(135deg, #f43f5e, #c084fc);
-    color: #ffffff;
-    box-shadow: 0 0 10px rgba(244, 63, 94, 0.4);
-  }
-
-  /* Dual Notes Grid */
-  .habit-dual-notes-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.2rem;
-    margin-bottom: 1.2rem;
-  }
-
-  .habit-partner-pane {
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 1.2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    transition: border-color 0.2s ease;
-  }
-
-  .habit-maze-pane {
-    border-left: 4px solid #f43f5e;
-  }
-
-  .habit-ai-pane {
-    border-left: 4px solid #38bdf8;
-  }
-
-  .habit-pane-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .habit-pane-title-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .habit-pane-avatar {
-    font-size: 1.4rem;
-  }
-
-  .habit-pane-title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin: 0;
-  }
-
-  .habit-pane-sub {
-    font-size: 0.75rem;
-    color: #94a3b8;
-  }
-
-  .zen-pane-textarea {
-    width: 100%;
-    background: rgba(30, 41, 59, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 0.8rem 1rem;
-    color: #f1f5f9;
-    font-size: 0.95rem;
-    line-height: 1.7;
-    font-family: var(--font-sans, inherit);
-    resize: vertical;
-    outline: none;
-    min-height: 130px;
-  }
-
-  .zen-pane-textarea:focus {
-    border-color: #fda4af;
-    box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.2);
-  }
-
-  /* Card sections (Vocab & Romantic Note) */
-  .zen-card-section {
-    background: rgba(15, 23, 42, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: 1.2rem;
-    margin-bottom: 1.2rem;
-  }
-
-  .zen-section-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 4px;
-  }
-
-  .zen-section-icon {
-    font-size: 1.2rem;
-  }
-
-  .zen-section-title {
-    font-size: 0.98rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin: 0;
-  }
-
-  .zen-section-sub {
-    font-size: 0.8rem;
-    color: #94a3b8;
-    margin: 0 0 8px;
-  }
-
-  .zen-section-sub code {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 2px 6px;
-    border-radius: 4px;
-    color: #fbcfe8;
-  }
-
-  .zen-vocab-textarea,
-  .zen-caption-textarea {
-    width: 100%;
-    background: rgba(30, 41, 59, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 0.8rem 1rem;
-    color: #f1f5f9;
-    font-size: 0.92rem;
-    line-height: 1.6;
-    font-family: inherit;
-    resize: vertical;
-    outline: none;
-  }
-
-  .zen-vocab-textarea:focus,
-  .zen-caption-textarea:focus {
-    border-color: #38bdf8;
-    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
-  }
-
-  /* Live Preview Body */
-  .zen-preview-content-box {
-    background: rgba(15, 23, 42, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 2rem;
-    min-height: 380px;
-  }
-
-  /* Floating Footer */
-  .zen-footer-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 3.5rem;
-    background: #090e1a;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    flex-shrink: 0;
-  }
-
-  .zen-footer-wordcount {
-    font-size: 0.82rem;
-    color: #64748b;
-  }
-
-  .zen-footer-buttons {
-    display: flex;
-    gap: 0.8rem;
+    box-shadow: 0 4px 20px rgba(244, 63, 94, 0.3);
   }
 
   @media (max-width: 768px) {
-    .habit-tracker-section {
-      padding: 0 0.8rem;
-      margin: 2rem auto;
-    }
-    .habit-overview-card {
-      padding: 1.4rem 1rem;
-    }
-    :global(.learning-columns-grid) {
-      grid-template-columns: 1fr;
-      gap: 1.2rem;
-    }
-    :global(.partner-learn-box) {
-      padding: 1.2rem 1.1rem;
-      min-height: auto;
-    }
-    :global(.vocab-chips-grid) {
-      grid-template-columns: 1fr;
-      gap: 0.8rem;
-    }
-    :global(.romantic-note-box) {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.6rem;
-      padding: 1.1rem 1.2rem;
-    }
-    .zen-scrollable-content,
-    .zen-footer-bar {
-      padding-left: 1rem;
-      padding-right: 1rem;
-    }
-    .zen-sticky-toolbar {
-      overflow-x: auto;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-      padding: 6px 4px;
-      justify-content: flex-start;
-      gap: 0.6rem;
-    }
-    .zen-sticky-toolbar::-webkit-scrollbar {
-      display: none;
-    }
-    .zen-tools-group {
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-    }
-    .zen-tools-group::-webkit-scrollbar {
-      display: none;
-    }
-    .habit-dual-notes-grid {
-      grid-template-columns: 1fr;
-    }
-    .crud-modal-overlay {
-      padding: 0.4rem;
-    }
-    .zen-journal-card {
-      height: 96vh;
-      border-radius: 16px;
-    }
-    .zen-title-textarea {
-      font-size: 1.4rem;
-    }
-  }
-
-  @media (max-width: 520px) {
-    .habit-tracker-section {
-      padding: 0 0.5rem;
-      margin: 1.5rem auto;
-    }
     .section-title {
-      font-size: 1.5rem;
-      line-height: 1.3;
-    }
-    .section-desc {
-      font-size: 0.88rem;
-      line-height: 1.55;
+      font-size: 1.7rem;
     }
     .habit-overview-card {
-      padding: 1rem 0.5rem;
-      border-radius: 16px;
-    }
-    .progress-stats-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.2rem;
-      margin-bottom: 1rem;
-    }
-    .stat-number {
-      font-size: 1.3rem;
-    }
-    .stat-total {
-      font-size: 0.8rem;
-    }
-    .stat-name {
-      font-size: 0.62rem;
-      text-align: center;
-    }
-    .constellation-guide-text {
-      font-size: 0.8rem;
-      margin-bottom: 0.75rem;
-      padding: 0 0.4rem;
-    }
-    .constellation-nodes-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
-      max-width: 320px;
-      margin: 0 auto;
-      justify-items: center;
-    }
-    :global(.day-node-btn) {
-      width: 34px;
-      height: 34px;
-      min-width: 34px;
-      min-height: 34px;
-      font-size: 0.76rem;
+      padding: 1.5rem 1.2rem;
     }
     .day-detail-panel {
-      padding: 1.1rem 0.75rem;
-      border-radius: 16px;
-    }
-    :global(.panel-header-row) {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 0.8rem;
-      margin-bottom: 1rem;
-      padding-bottom: 0.9rem;
+      padding: 1.6rem 1.2rem;
     }
     :global(.day-heading) {
-      font-size: 1.35rem;
+      font-size: 1.8rem;
     }
-    :global(.day-theme-label) {
-      font-size: 0.88rem;
-    }
-    :global(.panel-actions-group) {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
+    :global(.btn-toggle-day-status) {
       width: 100%;
-    }
-    :global(.panel-actions-group .btn-love),
-    :global(.panel-actions-group .btn-outline-love) {
-      flex: 1;
-      justify-content: center;
-      min-height: 40px;
-      font-size: 0.85rem;
-      padding: 8px 12px;
-    }
-    :global(.vocab-section-wrap) {
-      padding: 1.1rem 0.9rem;
-      border-radius: 14px;
-    }
-    :global(.vocab-chip) {
-      padding: 0.75rem;
-    }
-    :global(.vocab-word) {
-      font-size: 0.95rem;
-    }
-    :global(.vocab-meaning) {
-      font-size: 0.84rem;
-    }
-    :global(.vocab-example) {
-      font-size: 0.78rem;
-    }
-    .zen-cover-hero {
-      height: 110px;
-    }
-    .zen-meta-row {
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .zen-pill-item {
-      font-size: 0.78rem;
-      padding: 4px 10px;
-    }
-    .zen-footer-bar {
-      padding: 0.8rem 1rem;
-    }
-    .zen-footer-buttons {
-      width: 100%;
-      justify-content: flex-end;
-    }
-    .zen-footer-buttons button {
-      min-height: 38px;
-      font-size: 0.85rem;
-      padding: 6px 14px;
+      padding: 14px 20px;
+      font-size: 1.05rem;
     }
   }
 </style>
@@ -1310,106 +373,7 @@ Routine - Thói quen ngọt ngào - Learning English with you is my sweetest rou
 
   const HABIT_STORAGE_KEY = 'couple_habit_21';
 
-  function escapeHtml(str: string): string {
-    return (str || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
-
-  function renderMarkdownToHtml(markdown: string): string {
-    if (!markdown) return '';
-    const lines = markdown.split('\n');
-    const htmlBlocks: string[] = [];
-    let currentParagraph: string[] = [];
-    let inList = false;
-    let listItems: string[] = [];
-    let inBlockquote = false;
-    let blockquoteLines: string[] = [];
-
-    const formatInline = (text: string) => {
-      return text
-        .replace(/\*\*(.+?)\*\*/g, '<strong style="color: #fda4af;">$1</strong>')
-        .replace(/\*(.+?)\*/g, '<em style="color: #fbcfe8;">$1</em>')
-        .replace(/`(.+?)`/g, '<code style="background: rgba(244,63,94,0.15); padding: 2px 6px; border-radius: 4px; color: #fda4af;">$1</code>');
-    };
-
-    const flushParagraph = () => {
-      if (currentParagraph.length > 0) {
-        htmlBlocks.push(`<p class="learn-text" style="margin-bottom: 0.8rem;">${formatInline(currentParagraph.join('<br/>'))}</p>`);
-        currentParagraph = [];
-      }
-    };
-
-    const flushList = () => {
-      if (inList && listItems.length > 0) {
-        const itemsHtml = listItems.map((it) => `<li style="margin-bottom: 4px; color: #cbd5e1;">${formatInline(it)}</li>`).join('');
-        htmlBlocks.push(`<ul style="margin: 0.5rem 0 1rem 1.4rem; padding: 0;">${itemsHtml}</ul>`);
-        listItems = [];
-        inList = false;
-      }
-    };
-
-    const flushBlockquote = () => {
-      if (inBlockquote && blockquoteLines.length > 0) {
-        const quoteContent = blockquoteLines.join('<br/>');
-        htmlBlocks.push(`<blockquote style="border-left: 3px solid #fda4af; padding-left: 1rem; margin: 0.8rem 0; font-style: italic; color: #fbcfe8;">${formatInline(quoteContent)}</blockquote>`);
-        blockquoteLines = [];
-        inBlockquote = false;
-      }
-    };
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-
-      if (!line) {
-        flushParagraph();
-        flushList();
-        flushBlockquote();
-        continue;
-      }
-
-      if (line.startsWith('### ')) {
-        flushParagraph();
-        flushList();
-        flushBlockquote();
-        htmlBlocks.push(`<h4 style="font-size: 1.1rem; color: #fda4af; margin: 1rem 0 0.4rem;">${formatInline(escapeHtml(line.slice(4)))}</h4>`);
-        continue;
-      }
-
-      if (line.startsWith('>')) {
-        flushParagraph();
-        flushList();
-        inBlockquote = true;
-        blockquoteLines.push(escapeHtml(line.replace(/^>\s*/, '')));
-        continue;
-      } else if (inBlockquote) {
-        flushBlockquote();
-      }
-
-      if (line.startsWith('- ') || line.startsWith('* ')) {
-        flushParagraph();
-        flushBlockquote();
-        inList = true;
-        listItems.push(escapeHtml(line.slice(2)));
-        continue;
-      } else if (inList) {
-        flushList();
-      }
-
-      currentParagraph.push(escapeHtml(line));
-    }
-
-    flushParagraph();
-    flushList();
-    flushBlockquote();
-
-    return htmlBlocks.join('\n');
-  }
-
-  function getStoredHabits() {
+  function getStoredHabits(): any[] {
     try {
       const stored = localStorage.getItem(HABIT_STORAGE_KEY);
       if (stored) return JSON.parse(stored);
@@ -1425,7 +389,6 @@ Routine - Thói quen ngọt ngào - Learning English with you is my sweetest rou
   }
 
   let currentSelectedDay = 1;
-  let activeFocusTextarea: HTMLTextAreaElement | null = null;
 
   function renderHabitUI() {
     const list: any[] = getStoredHabits();
@@ -1477,96 +440,39 @@ Routine - Thói quen ngọt ngào - Learning English with you is my sweetest rou
       ? dayData.completedDate.split('-').reverse().join('/')
       : 'Ghi nhận';
 
-    let vocabHtml = '';
-    if (dayData.keyVocabulary && dayData.keyVocabulary.length > 0) {
-      const chips = dayData.keyVocabulary
-        .map(
-          (v: any) => `
-          <div class="vocab-chip">
-            <span class="vocab-word">${escapeHtml(v.word)}</span>
-            <span class="vocab-meaning">${escapeHtml(v.meaning)}</span>
-            ${v.example ? `<span class="vocab-example">"${escapeHtml(v.example)}"</span>` : ''}
-          </div>
-        `
-        )
-        .join('');
-
-      vocabHtml = `
-        <div class="vocab-section-wrap">
-          <h4 class="vocab-title"><span>📖</span> Từ Vựng Tâm Đắc Của Ngày ${dayData.day}</h4>
-          <div class="vocab-chips-grid">${chips}</div>
-        </div>
-      `;
-    }
-
-    const mazeRendered = renderMarkdownToHtml(dayData.mazeLearned) || '<p class="learn-text" style="color: #64748b; font-style: italic;">Maze chưa có ghi chép cho ngày này...</p>';
-    const aiRendered = renderMarkdownToHtml(dayData.aiLearned) || '<p class="learn-text" style="color: #64748b; font-style: italic;">AI chưa có ghi chép cho ngày này...</p>';
-
     panel.innerHTML = `
-      <div class="panel-header-row">
-        <div class="panel-title-area">
-          <span class="badge-love ${dayData.completed ? 'badge-green' : 'badge-gold'}" style="align-self: flex-start;">
+      <div class="panel-main-content">
+        <div class="panel-top-row">
+          <span class="badge-love ${dayData.completed ? 'badge-green' : 'badge-gold'}">
             ${dayData.completed ? `✓ Đã Hoàn Thành (${formattedCompletedDate})` : '⏳ Đang Chờ Hoàn Thành'}
           </span>
-          <h3 class="day-heading">
-            <span class="day-prefix">Ngày ${dayData.day}:</span> ${escapeHtml(dayData.title)}
+
+          <div class="day-nav-group">
+            <button type="button" class="btn-day-nav" id="btn-prev-day" ${dayData.day <= 1 ? 'disabled' : ''}>
+              ‹ Ngày trước
+            </button>
+            <button type="button" class="btn-day-nav" id="btn-next-day" ${dayData.day >= 21 ? 'disabled' : ''}>
+              Ngày tiếp ›
+            </button>
+          </div>
+        </div>
+
+        <div class="panel-info-body">
+          <h3 class="day-heading gradient-love-text">
+            Ngày ${dayData.day}
           </h3>
-          <p class="day-theme-label">Chủ đề: <strong>${escapeHtml(dayData.theme)}</strong></p>
         </div>
 
-        <div class="panel-actions-group">
-          <button type="button" class="btn-card-action btn-toggle-day-status btn-outline-love" id="btn-toggle-day">
-            ${dayData.completed ? '★ Bỏ đánh dấu' : '★ Đánh dấu hoàn thành'}
-          </button>
-          <button type="button" class="btn-love btn-edit-day" id="btn-open-edit-day">
-            ✏️ Ghi Chép Bài Học
+        <div class="panel-actions-center">
+          <button 
+            type="button" 
+            class="btn-toggle-day-status ${dayData.completed ? 'btn-mark-completed' : 'btn-mark-pending'}" 
+            id="btn-toggle-day"
+          >
+            ${dayData.completed ? '✓ Đã Hoàn Thành (Bấm để bỏ đánh dấu)' : '★ Đánh Dấu Hoàn Thành'}
           </button>
         </div>
       </div>
-
-      <div class="learning-columns-grid">
-        <div class="partner-learn-box maze-box">
-          <div class="box-header">
-            <span class="partner-learn-avatar">🌸</span>
-            <div class="box-title-wrap">
-              <h4 class="partner-learn-title">Maze Đã Học Hôm Nay</h4>
-              <span class="partner-learn-sub">Ghi chép của Nàng Tinh Cầu</span>
-            </div>
-          </div>
-          <div class="learn-body-content">
-            ${mazeRendered}
-          </div>
-        </div>
-
-        <div class="partner-learn-box ai-box">
-          <div class="box-header">
-            <span class="partner-learn-avatar">🚀</span>
-            <div class="box-title-wrap">
-              <h4 class="partner-learn-title">AI Đã Học Hôm Nay</h4>
-              <span class="partner-learn-sub">Ghi chép của Chàng Kỹ Sư</span>
-            </div>
-          </div>
-          <div class="learn-body-content">
-            ${aiRendered}
-          </div>
-        </div>
-      </div>
-
-      ${vocabHtml}
-
-      ${
-        dayData.romanticNote
-          ? `
-        <div class="romantic-note-box">
-          <div class="romantic-note-quote-icon">💌</div>
-          <div class="romantic-note-content">
-            <p class="romantic-note-title">Lời Nhắn Gửi Yêu Thương:</p>
-            <p class="romantic-note-text">"${escapeHtml(dayData.romanticNote)}"</p>
-          </div>
-        </div>
-      `
-          : ''
-      }
     `;
 
     // Toggle button event
@@ -1574,401 +480,40 @@ Routine - Thói quen ngọt ngào - Learning English with you is my sweetest rou
     if (toggleBtn) {
       toggleBtn.addEventListener('click', () => {
         dayData.completed = !dayData.completed;
-        if (dayData.completed && !dayData.completedDate) {
+        if (dayData.completed) {
           dayData.completedDate = new Date().toISOString().slice(0, 10);
+        } else {
+          dayData.completedDate = undefined;
         }
         saveStoredHabits(list);
         renderHabitUI();
       });
     }
 
-    // Open Edit Modal event
-    const openEditBtn = panel.querySelector('#btn-open-edit-day');
-    if (openEditBtn) {
-      openEditBtn.addEventListener('click', () => openHabitModal(dayData));
-    }
-  }
-
-  // =========================================================================
-  // HABIT ZEN STUDIO MODAL CONTROLS
-  // =========================================================================
-  function setHabitStudioViewMode(mode: 'editor' | 'preview') {
-    const workspace = document.getElementById('habit-studio-workspace');
-    const editorCol = document.getElementById('habit-workspace-editor-col');
-    const previewCol = document.getElementById('habit-workspace-preview-col');
-    const editorBtn = document.getElementById('btn-habit-mode-editor');
-    const previewBtn = document.getElementById('btn-habit-mode-preview');
-
-    if (editorBtn && previewBtn) {
-      if (mode === 'preview') {
-        editorBtn.classList.remove('is-active');
-        previewBtn.classList.add('is-active');
-      } else {
-        editorBtn.classList.add('is-active');
-        previewBtn.classList.remove('is-active');
-      }
+    // Previous day button event
+    const prevBtn = panel.querySelector('#btn-prev-day');
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        if (currentSelectedDay > 1) {
+          currentSelectedDay -= 1;
+          renderHabitUI();
+        }
+      });
     }
 
-    if (workspace) {
-      workspace.classList.remove('mode-editor', 'mode-preview');
-      workspace.classList.add(`mode-${mode}`);
+    // Next day button event
+    const nextBtn = panel.querySelector('#btn-next-day');
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        if (currentSelectedDay < 21) {
+          currentSelectedDay += 1;
+          renderHabitUI();
+        }
+      });
     }
-
-    if (editorCol && previewCol) {
-      if (mode === 'preview') {
-        editorCol.style.display = 'none';
-        previewCol.style.display = 'block';
-        updateHabitLivePreview();
-      } else {
-        editorCol.style.display = 'block';
-        previewCol.style.display = 'none';
-      }
-    }
-  }
-
-  function updateHabitLivePreview() {
-    const previewBox = document.getElementById('habit-live-preview');
-    const wordCountEl = document.getElementById('habit-word-count');
-    if (!previewBox) return;
-
-    const dayNum = (document.getElementById('form-day-num') as HTMLInputElement)?.value || '1';
-    const title = (document.getElementById('form-day-title') as HTMLTextAreaElement)?.value.trim() || `Ngày ${dayNum}`;
-    const theme = (document.getElementById('form-day-theme') as HTMLInputElement)?.value.trim() || 'Chủ đề bài học';
-    const author = (document.getElementById('form-habit-author') as HTMLSelectElement)?.value || 'both';
-    const isCompleted = (document.getElementById('form-day-completed') as HTMLInputElement)?.checked;
-    const completedDate = (document.getElementById('form-day-completed-date') as HTMLInputElement)?.value;
-    const mazeText = (document.getElementById('form-maze-learned') as HTMLTextAreaElement)?.value || '';
-    const aiText = (document.getElementById('form-ai-learned') as HTMLTextAreaElement)?.value || '';
-    const vocabRaw = (document.getElementById('form-day-vocab') as HTMLTextAreaElement)?.value || '';
-    const romanticNote = (document.getElementById('form-romantic-note') as HTMLTextAreaElement)?.value || '';
-
-    // Word counter
-    const totalWords = `${mazeText} ${aiText} ${romanticNote}`.trim()
-      ? `${mazeText} ${aiText} ${romanticNote}`.trim().split(/\s+/).length
-      : 0;
-    if (wordCountEl) wordCountEl.textContent = `${totalWords} từ`;
-
-    // Process Vocab
-    let vocabChipsHtml = '';
-    if (vocabRaw.trim()) {
-      const lines = vocabRaw.trim().split('\n');
-      const chips = lines
-        .map((line) => {
-          const parts = line.split('-').map((p) => p.trim());
-          if (!parts[0]) return '';
-          return `
-            <div class="vocab-chip">
-              <span class="vocab-word">${escapeHtml(parts[0])}</span>
-              <span class="vocab-meaning">${escapeHtml(parts[1] || '')}</span>
-              ${parts[2] ? `<span class="vocab-example">"${escapeHtml(parts[2])}"</span>` : ''}
-            </div>
-          `;
-        })
-        .filter(Boolean)
-        .join('');
-      if (chips) {
-        vocabChipsHtml = `
-          <div class="vocab-section-wrap" style="margin-top: 1.5rem;">
-            <h4 class="vocab-title"><span>📖</span> Từ Vựng Tâm Đắc</h4>
-            <div class="vocab-chips-grid">${chips}</div>
-          </div>
-        `;
-      }
-    }
-
-    let authorBadge = '✍️ Cả hai đứa cùng chắp bút 💖';
-    if (author === 'maze') authorBadge = '✍️ Chắp bút bởi Maze 🌸';
-    else if (author === 'ai') authorBadge = '✍️ Chắp bút bởi AI 🚀';
-
-    previewBox.innerHTML = `
-      <div style="border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 1rem; margin-bottom: 1.5rem;">
-        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 0.6rem; align-items: center;">
-          <span class="journal-pill" style="font-size: 0.78rem; padding: 3px 12px; background: rgba(244,63,94,0.15); color: #fda4af;">🗓️ Ngày ${dayNum} / 21</span>
-          <span class="journal-pill" style="font-size: 0.78rem; padding: 3px 12px; border-color: rgba(255,255,255,0.2);">${authorBadge}</span>
-          ${isCompleted ? `<span class="journal-pill" style="font-size: 0.78rem; padding: 3px 12px; background: rgba(34,197,94,0.15); color: #86efac;">✓ Hoàn thành ${completedDate ? `(${completedDate})` : ''}</span>` : '<span class="journal-pill" style="font-size: 0.78rem; padding: 3px 12px; color: #fbbf24;">⏳ Đang học</span>'}
-        </div>
-        <h2 style="font-size: 1.8rem; font-weight: 800; color: #ffffff; margin: 0 0 0.3rem;" class="gradient-love-text">${escapeHtml(title)}</h2>
-        <p style="color: #38bdf8; font-size: 0.95rem; margin: 0; font-weight: 600;">Chủ đề: ${escapeHtml(theme)}</p>
-      </div>
-
-      <div class="learning-columns-grid">
-        <div class="partner-learn-box maze-box">
-          <div class="box-header">
-            <span class="partner-learn-avatar">🌸</span>
-            <div class="box-title-wrap">
-              <h4 class="partner-learn-title">Maze Đã Học</h4>
-              <span class="partner-learn-sub">Ghi chép của Nàng Tinh Cầu</span>
-            </div>
-          </div>
-          <div class="learn-body-content">
-            ${renderMarkdownToHtml(mazeText) || '<p class="learn-text" style="color: #64748b; font-style: italic;">Chưa có ghi chép...</p>'}
-          </div>
-        </div>
-
-        <div class="partner-learn-box ai-box">
-          <div class="box-header">
-            <span class="partner-learn-avatar">🚀</span>
-            <div class="box-title-wrap">
-              <h4 class="partner-learn-title">AI Đã Học</h4>
-              <span class="partner-learn-sub">Ghi chép của Chàng Kỹ Sư</span>
-            </div>
-          </div>
-          <div class="learn-body-content">
-            ${renderMarkdownToHtml(aiText) || '<p class="learn-text" style="color: #64748b; font-style: italic;">Chưa có ghi chép...</p>'}
-          </div>
-        </div>
-      </div>
-
-      ${vocabChipsHtml}
-
-      ${
-        romanticNote
-          ? `
-        <div class="romantic-note-box" style="margin-top: 1.5rem;">
-          <div class="romantic-note-quote-icon">💌</div>
-          <div class="romantic-note-content">
-            <p class="romantic-note-title">Lời Nhắn Gửi Yêu Thương:</p>
-            <p class="romantic-note-text">"${escapeHtml(romanticNote)}"</p>
-          </div>
-        </div>
-      `
-          : ''
-      }
-    `;
-  }
-
-  function insertHabitMarkdown(prefix: string, suffix = '', defaultText = '') {
-    const targetTextarea = activeFocusTextarea || (document.getElementById('form-maze-learned') as HTMLTextAreaElement);
-    if (!targetTextarea) return;
-
-    const start = targetTextarea.selectionStart;
-    const end = targetTextarea.selectionEnd;
-    const selectedText = targetTextarea.value.substring(start, end);
-    const replacement = selectedText ? `${prefix}${selectedText}${suffix}` : `${prefix}${defaultText}${suffix}`;
-
-    targetTextarea.setRangeText(replacement, start, end, 'select');
-    targetTextarea.focus();
-
-    if (!selectedText && defaultText) {
-      targetTextarea.setSelectionRange(start + prefix.length, start + prefix.length + defaultText.length);
-    }
-    updateHabitLivePreview();
-  }
-
-  function insertHabitEmoji(emoji: string) {
-    const targetTextarea = activeFocusTextarea || (document.getElementById('form-maze-learned') as HTMLTextAreaElement);
-    if (!targetTextarea) return;
-
-    const start = targetTextarea.selectionStart;
-    const end = targetTextarea.selectionEnd;
-    targetTextarea.setRangeText(` ${emoji} `, start, end, 'end');
-    targetTextarea.focus();
-    updateHabitLivePreview();
-  }
-
-  function openHabitModal(dayData: any) {
-    const modal = document.getElementById('habit-edit-modal');
-    const dayBadge = document.getElementById('habit-cover-day-badge');
-    const pillDayText = document.getElementById('habit-pill-day-text');
-    if (!modal) return;
-
-    if (dayBadge) dayBadge.textContent = `⭐ Chặng Học Ngày ${dayData.day} / 21`;
-    if (pillDayText) pillDayText.textContent = `Ngày ${dayData.day} / 21`;
-
-    (document.getElementById('form-day-num') as HTMLInputElement).value = String(dayData.day);
-    (document.getElementById('form-day-title') as HTMLTextAreaElement).value = dayData.title || '';
-    (document.getElementById('form-day-theme') as HTMLInputElement).value = dayData.theme || '';
-    (document.getElementById('form-day-completed') as HTMLInputElement).checked = !!dayData.completed;
-    (document.getElementById('form-day-completed-date') as HTMLInputElement).value = dayData.completedDate || '';
-    (document.getElementById('form-maze-learned') as HTMLTextAreaElement).value = dayData.mazeLearned || '';
-    (document.getElementById('form-ai-learned') as HTMLTextAreaElement).value = dayData.aiLearned || '';
-    (document.getElementById('form-romantic-note') as HTMLTextAreaElement).value = dayData.romanticNote || '';
-
-    // Vocab string
-    const vocabStr = (dayData.keyVocabulary || [])
-      .map((v: any) => `${v.word} - ${v.meaning}${v.example ? ` - ${v.example}` : ''}`)
-      .join('\n');
-    (document.getElementById('form-day-vocab') as HTMLTextAreaElement).value = vocabStr;
-
-    toggleHabitCompletedDateRow(!!dayData.completed);
-    setHabitStudioViewMode('editor');
-    updateHabitLivePreview();
-    modal.classList.add('is-open');
-  }
-
-  function toggleHabitCompletedDateRow(show: boolean) {
-    const row = document.getElementById('group-day-completed-date');
-    if (row) row.style.display = show ? 'inline-flex' : 'none';
   }
 
   function initHabitInteractive() {
-    const modal = document.getElementById('habit-edit-modal');
-    const closeBtn = document.getElementById('habit-modal-close');
-    const cancelBtn = document.getElementById('btn-cancel-habit');
-
-    if (closeBtn && modal) closeBtn.addEventListener('click', () => modal.classList.remove('is-open'));
-    if (cancelBtn && modal) cancelBtn.addEventListener('click', () => modal.classList.remove('is-open'));
-    if (modal) {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) modal.classList.remove('is-open');
-      });
-    }
-
-    // Track active textarea focus
-    const textareas = ['form-maze-learned', 'form-ai-learned', 'form-day-vocab', 'form-romantic-note'];
-    textareas.forEach((id) => {
-      const el = document.getElementById(id) as HTMLTextAreaElement | null;
-      if (el) {
-        el.addEventListener('focus', () => {
-          activeFocusTextarea = el;
-        });
-        el.addEventListener('input', updateHabitLivePreview);
-      }
-    });
-
-    const liveInputs = ['form-day-title', 'form-day-theme', 'form-habit-author', 'form-day-completed-date'];
-    liveInputs.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.addEventListener('input', updateHabitLivePreview);
-        el.addEventListener('change', updateHabitLivePreview);
-      }
-    });
-
-    // Author selector visual focus
-    const authorSelect = document.getElementById('form-habit-author') as HTMLSelectElement | null;
-    const mazePaneWrap = document.getElementById('pane-maze-learned-wrap');
-    const aiPaneWrap = document.getElementById('pane-ai-learned-wrap');
-    if (authorSelect) {
-      authorSelect.addEventListener('change', () => {
-        const val = authorSelect.value;
-        if (mazePaneWrap && aiPaneWrap) {
-          if (val === 'maze') {
-            mazePaneWrap.style.borderColor = '#f43f5e';
-            aiPaneWrap.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-            (document.getElementById('form-maze-learned') as HTMLTextAreaElement)?.focus();
-          } else if (val === 'ai') {
-            aiPaneWrap.style.borderColor = '#38bdf8';
-            mazePaneWrap.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-            (document.getElementById('form-ai-learned') as HTMLTextAreaElement)?.focus();
-          } else {
-            mazePaneWrap.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-            aiPaneWrap.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-          }
-        }
-        updateHabitLivePreview();
-      });
-    }
-
-    // View mode switch
-    const editorBtn = document.getElementById('btn-habit-mode-editor');
-    const previewBtn = document.getElementById('btn-habit-mode-preview');
-    if (editorBtn) editorBtn.addEventListener('click', () => setHabitStudioViewMode('editor'));
-    if (previewBtn) previewBtn.addEventListener('click', () => setHabitStudioViewMode('preview'));
-
-    // Markdown Toolbar actions
-    const toolbarTools = document.querySelectorAll('.zen-tb-btn');
-    toolbarTools.forEach((btn: any) => {
-      btn.addEventListener('click', () => {
-        const action = btn.getAttribute('data-action');
-        switch (action) {
-          case 'bold':
-            insertHabitMarkdown('**', '**', 'từ quan trọng');
-            break;
-          case 'italic':
-            insertHabitMarkdown('*', '*', 'chữ in nghiêng');
-            break;
-          case 'h3':
-            insertHabitMarkdown('\n### ', '\n', 'Điểm ngữ pháp hôm nay');
-            break;
-          case 'quote':
-            insertHabitMarkdown('\n> "', '"\n', 'Câu nói tâm đắc...');
-            break;
-          case 'poem':
-            insertHabitMarkdown('\n> 📜 Khổ thơ:\n> ', '\n', 'Dòng 1...\n> Dòng 2...');
-            break;
-          case 'vocab':
-            insertHabitMarkdown('\n- **', '**: Nghĩa - "Example sentence"\n', 'Vocabulary');
-            break;
-          case 'list':
-            insertHabitMarkdown('\n- ', '\n', 'Nội dung đã học');
-            break;
-        }
-      });
-    });
-
-    // Emoji buttons
-    const emojiBtns = document.querySelectorAll('.zen-emoji-btn');
-    emojiBtns.forEach((btn: any) => {
-      btn.addEventListener('click', () => {
-        const emoji = btn.getAttribute('data-emoji') || '';
-        if (emoji) insertHabitEmoji(emoji);
-      });
-    });
-
-    // Completed Checkbox
-    const completedCheck = document.getElementById('form-day-completed') as HTMLInputElement | null;
-    if (completedCheck) {
-      completedCheck.addEventListener('change', () => {
-        toggleHabitCompletedDateRow(completedCheck.checked);
-        const dateInput = document.getElementById('form-day-completed-date') as HTMLInputElement | null;
-        if (completedCheck.checked && dateInput && !dateInput.value) {
-          dateInput.value = new Date().toISOString().slice(0, 10);
-        }
-        updateHabitLivePreview();
-      });
-    }
-
-    // Form submit
-    const form = document.getElementById('habit-edit-form');
-    if (form) {
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const dayNum = parseInt((document.getElementById('form-day-num') as HTMLInputElement).value, 10);
-        const title = (document.getElementById('form-day-title') as HTMLTextAreaElement).value.trim();
-        const theme = (document.getElementById('form-day-theme') as HTMLInputElement).value.trim();
-        const completed = (document.getElementById('form-day-completed') as HTMLInputElement).checked;
-        const completedDate = (document.getElementById('form-day-completed-date') as HTMLInputElement).value;
-        const mazeLearned = (document.getElementById('form-maze-learned') as HTMLTextAreaElement).value.trim();
-        const aiLearned = (document.getElementById('form-ai-learned') as HTMLTextAreaElement).value.trim();
-        const romanticNote = (document.getElementById('form-romantic-note') as HTMLTextAreaElement).value.trim();
-        const vocabRaw = (document.getElementById('form-day-vocab') as HTMLTextAreaElement).value.trim();
-
-        const keyVocabulary: any[] = [];
-        if (vocabRaw) {
-          vocabRaw.split('\n').forEach((line) => {
-            const parts = line.split('-').map((p) => p.trim());
-            if (parts[0]) {
-              keyVocabulary.push({
-                word: parts[0],
-                meaning: parts[1] || '',
-                example: parts[2] || undefined
-              });
-            }
-          });
-        }
-
-        const list: any[] = getStoredHabits();
-        const idx = list.findIndex((d) => d.day === dayNum);
-        if (idx !== -1) {
-          list[idx] = {
-            ...list[idx],
-            title,
-            theme,
-            completed,
-            completedDate: completed ? completedDate : undefined,
-            mazeLearned,
-            aiLearned,
-            romanticNote,
-            keyVocabulary
-          };
-          saveStoredHabits(list);
-          renderHabitUI();
-          if (modal) modal.classList.remove('is-open');
-        }
-      });
-    }
-
     // Listen for Realtime Cloud Updates from Firebase
     window.addEventListener('couple-cloud-updated', () => {
       renderHabitUI();
