@@ -4,7 +4,6 @@ import LoveCounter from '../components/LoveCounter.astro';
 import HabitTracker21 from '../components/HabitTracker21.astro';
 import BucketListSection from '../components/BucketListSection.astro';
 import MemoryGallery from '../components/MemoryGallery.astro';
-import BirthdayCountdownVault from '../components/BirthdayCountdownVault.astro';
 import TrashRecoveryModal from '../components/TrashRecoveryModal.astro';
 import RomanticConfirmModal from '../components/RomanticConfirmModal.astro';
 import { COUPLE_CONFIG } from '../couple.config';
@@ -22,70 +21,58 @@ const { title, subtitle } = COUPLE_CONFIG;
     <!-- TAB PANE 1: TINH CẦU TÌNH YÊU (TỔNG QUAN)  -->
     <!-- ========================================== -->
     <div class="tab-pane is-active" id="tab-pane-overview">
-      <!-- Locked State: Birthday Countdown Vault -->
-      <div id="overview-vault-wrapper" class="birthday-lock-pane-wrap" style="display: none;">
-        <BirthdayCountdownVault
-          vaultId="overview-vault"
-          vaultTitle="Tinh Cầu Tình Yêu Đang Được Niêm Phong"
-          vaultSubtitle="Thư tình bí mật & những lời thì thầm ngọt ngào nhất đang được chuẩn bị chu đáo để đón chào sinh nhật ngày 28/09 của Anh! 🎂💖"
-        />
-      </div>
-
-      <!-- Unlocked / Creator State: Full Overview Content -->
-      <div id="overview-content-wrapper">
-        <section class="hero-love-section">
-          <div class="hero-content-wrap">
-            <div class="hero-top-badge badge-love floating-element">
-              <span>✨ Tinh Cầu Tình Yêu Của Anh và Em</span>
-            </div>
-
-            <h1 class="hero-main-title gradient-love-text">
-              Anh Và Em Đều Yêu Nhau
-            </h1>
-
-            <div class="hero-action-buttons">
-              <button type="button" class="btn-outline-love jump-tab-btn" data-jump="tab-pane-bucket">
-                <span>💫 Xem Ước Nguyện</span>
-              </button>
-              <button type="button" class="btn-outline-love jump-tab-btn" data-jump="tab-pane-memories">
-                <span>📸 Xem Album Ảnh</span>
-              </button>
-            </div>
+      <section class="hero-love-section">
+        <div class="hero-content-wrap">
+          <div class="hero-top-badge badge-love floating-element">
+            <span>✨ Tinh Cầu Tình Yêu Của Anh và Em</span>
           </div>
 
-          <!-- Real-time Love Timer & Avatar Switcher -->
-          <LoveCounter />
-        </section>
+          <h1 class="hero-main-title gradient-love-text">
+            Anh Và Em Đều Yêu Nhau
+          </h1>
 
-        <!-- Love Letter from AI to Maze -->
-        <section class="love-letter-section">
-          <div class="love-letter-card romantic-card">
-            <div class="letter-stamp">💌</div>
-            <h3 class="letter-title gradient-rose-text">Thư Tình</h3>
-            <p class="letter-date">Dành riêng cho cả hai ta — Ngày 11 tháng 9 năm 2026</p>
-
-            <div class="letter-body">
-              <p>
-                <em>Maze yêu dấu của anh,</em>
-              </p>
-              <p>
-                Em cứ thế xuất hiện trong thế giới của anh, mang đến cho anh những niềm vui và tinh yêu thương dịu dàng. Khiến anh cảm thấy hạnh phúc và chẳng thể kiểm soát dược cảm xúc của mình. Anh muốn nói là cảm ơn em đã đến bên anh.
-              </p>
-              <p>
-                Anh yêu Em &lt;3              
-              </p>
-              <p>
-                Đây là món quà anh tặng cho tình yêu của chúng ta. Trang nguyện ước là những điều mà anh và em sẽ làm cùng nhau trong tình yêu này, dù là điều gì thì chỉ cần có anh và em thì không gì là không thể. Trang kỷ niệm của 2 đứa là nơi 
-                lưu trữ tình yêu và kỷ niệm của 2 ta. 
-              </p>
-              <p class="letter-signature">
-                Yêu em hơn cả những vì sao trên bầu trời,<br />
-                <strong>Anh iu của em</strong>
-              </p>
-            </div>
+          <div class="hero-action-buttons">
+            <button type="button" class="btn-outline-love jump-tab-btn" data-jump="tab-pane-bucket">
+              <span>💫 Xem Ước Nguyện</span>
+            </button>
+            <button type="button" class="btn-outline-love jump-tab-btn" data-jump="tab-pane-memories">
+              <span>📸 Xem Album Ảnh</span>
+            </button>
           </div>
-        </section>
-      </div>
+        </div>
+
+        <!-- Real-time Love Timer & Avatar Switcher -->
+        <LoveCounter />
+      </section>
+
+      <!-- Love Letter from AI to Maze -->
+      <section class="love-letter-section">
+        <div class="love-letter-card romantic-card">
+          <div class="letter-stamp">💌</div>
+          <h3 class="letter-title gradient-rose-text">Thư Tình</h3>
+          <p class="letter-date">Dành riêng cho cả hai ta — Ngày 11 tháng 9 năm 2026</p>
+
+          <div class="letter-body">
+            <p>
+              <em>Maze yêu dấu của anh,</em>
+            </p>
+            <p>
+              Em cứ thế xuất hiện trong thế giới của anh, mang đến cho anh những niềm vui và tinh yêu thương dịu dàng. Khiến anh cảm thấy hạnh phúc và chẳng thể kiểm soát dược cảm xúc của mình. Anh muốn nói là cảm ơn em đã đến bên anh.
+            </p>
+            <p>
+              Anh yêu Em &lt;3              
+            </p>
+            <p>
+              Đây là món quà anh tặng cho tình yêu của chúng ta. Trang nguyện ước là những điều mà anh và em sẽ làm cùng nhau trong tình yêu này, dù là điều gì thì chỉ cần có anh và em thì không gì là không thể. Trang kỷ niệm của 2 đứa là nơi 
+              lưu trữ tình yêu và kỷ niệm của 2 ta. 
+            </p>
+            <p class="letter-signature">
+              Yêu em hơn cả những vì sao trên bầu trời,<br />
+              <strong>Anh iu của em</strong>
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
 
     <!-- ========================================== -->
@@ -106,35 +93,9 @@ const { title, subtitle } = COUPLE_CONFIG;
     <!-- TAB PANE 4: KỶ NIỆM CỦA HAI ĐỨA (ALBUM)    -->
     <!-- ========================================== -->
     <div class="tab-pane" id="tab-pane-memories">
-      <!-- Locked State: Birthday Countdown Vault -->
-      <div id="memories-vault-wrapper" class="birthday-lock-pane-wrap" style="display: none;">
-        <BirthdayCountdownVault
-          vaultId="memories-vault"
-          vaultTitle="Dải Ngân Hà Kỷ Niệm Đang Được Niêm Phong"
-          vaultSubtitle="Toàn bộ album ảnh, bài viết nhật ký và khoảnh khắc tình yêu của hai đứa sẽ được tự động khai mở vào đúng ngày sinh nhật 28/09 của Anh! 📸✨"
-        />
-      </div>
-
-      <!-- Unlocked / Creator State: Full Memories Gallery -->
-      <div id="memories-content-wrapper">
-        <MemoryGallery />
-      </div>
+      <MemoryGallery />
     </div>
   </main>
-
-  <!-- Floating Creator Secret Control Bar (Visible when Creator Mode is active) -->
-  <div class="creator-floating-bar" id="creator-floating-bar" style="display: none;">
-    <div class="creator-badge">
-      <span class="creator-crown">👑</span>
-      <span>Chế độ: <strong>Anh (Creator)</strong></span>
-    </div>
-    <button type="button" class="btn-toggle-creator-preview" id="btn-toggle-creator-preview" title="Xem thử giao diện khóa mà Nàng sẽ nhìn thấy">
-      <span id="label-creator-preview">👁️ Xem dưới góc nhìn Nàng</span>
-    </button>
-    <button type="button" class="btn-creator-lock-out" id="btn-creator-lock-out" title="Thoát quyền Creator">
-      <span>🔒 Khóa lại</span>
-    </button>
-  </div>
 
   <TrashRecoveryModal />
   <RomanticConfirmModal />
@@ -347,110 +308,6 @@ const { title, subtitle } = COUPLE_CONFIG;
       line-height: 1.7;
     }
   }
-  /* Birthday Lock & Creator Floating Bar */
-  .birthday-lock-pane-wrap {
-    width: 100%;
-    animation: fadeInPane 0.35s ease-out;
-  }
-
-  .creator-floating-bar {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999;
-    background: rgba(15, 23, 42, 0.94);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(244, 63, 94, 0.4);
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8), 0 0 25px rgba(244, 63, 94, 0.25);
-    padding: 6px 14px;
-    border-radius: 9999px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    animation: slideUpFloatingBar 0.3s ease-out;
-  }
-
-  @keyframes slideUpFloatingBar {
-    from { opacity: 0; transform: translate(-50%, 20px); }
-    to { opacity: 1; transform: translate(-50%, 0); }
-  }
-
-  .creator-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.8rem;
-    color: #fda4af;
-    white-space: nowrap;
-  }
-
-  .creator-crown {
-    font-size: 1rem;
-    filter: drop-shadow(0 0 6px rgba(244, 63, 94, 0.6));
-  }
-
-  .btn-toggle-creator-preview {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: #f1f5f9;
-    font-size: 0.78rem;
-    font-weight: 600;
-    padding: 5px 12px;
-    border-radius: 9999px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-  }
-
-  .btn-toggle-creator-preview:hover {
-    background: rgba(244, 63, 94, 0.25);
-    border-color: #fda4af;
-    color: #ffffff;
-    transform: translateY(-1px);
-  }
-
-  .btn-creator-lock-out {
-    background: rgba(239, 68, 68, 0.15);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    color: #fca5a5;
-    font-size: 0.76rem;
-    font-weight: 600;
-    padding: 5px 10px;
-    border-radius: 9999px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-  }
-
-  .btn-creator-lock-out:hover {
-    background: rgba(239, 68, 68, 0.85);
-    color: #ffffff;
-  }
-
-  @media (max-width: 640px) {
-    .creator-floating-bar {
-      bottom: 75px;
-      padding: 5px 10px;
-      gap: 6px;
-      width: 92vw;
-      justify-content: space-between;
-    }
-    .creator-badge span {
-      display: none;
-    }
-    .creator-badge::after {
-      content: 'Creator';
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #fda4af;
-    }
-    .btn-toggle-creator-preview {
-      font-size: 0.74rem;
-      padding: 4px 8px;
-    }
-  }
 </style>
 
 <script>
@@ -580,137 +437,6 @@ const { title, subtitle } = COUPLE_CONFIG;
     window.addEventListener('hashchange', handleHash);
   }
 
-  // Birthday Countdown Vault & Creator Bypass Controller
-  function initBirthdayVaultLock() {
-    const UNLOCK_DATE_STR = '2026-09-28T00:00:00';
-    const targetTime = new Date(UNLOCK_DATE_STR).getTime();
-
-    const overviewVaultWrap = document.getElementById('overview-vault-wrapper');
-    const overviewContentWrap = document.getElementById('overview-content-wrapper');
-    const memoriesVaultWrap = document.getElementById('memories-vault-wrapper');
-    const memoriesContentWrap = document.getElementById('memories-content-wrapper');
-    const creatorBar = document.getElementById('creator-floating-bar');
-    const btnTogglePreview = document.getElementById('btn-toggle-creator-preview');
-    const labelPreview = document.getElementById('label-creator-preview');
-    const btnLockOut = document.getElementById('btn-creator-lock-out');
-
-    // Check URL query for secret creator access token
-    try {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('creator') === 'ai2026' || urlParams.get('admin') === 'ai2026') {
-        localStorage.setItem('couple_creator_access', 'true');
-        const newUrl = window.location.pathname + window.location.hash;
-        window.history.replaceState({}, '', newUrl);
-      }
-    } catch {}
-
-    let isPreviewAsPartner = sessionStorage.getItem('couple_preview_partner_mode') === 'true';
-
-    function updateHeaderNavIcons(isLocked: boolean) {
-      const headerOverviewBtn = document.querySelector('.header-tab-btn[data-target="tab-pane-overview"] .tab-icon');
-      const headerMemoriesBtn = document.querySelector('.header-tab-btn[data-target="tab-pane-memories"] .tab-icon');
-      const headerMemoriesLabel = document.querySelector('.header-tab-btn[data-target="tab-pane-memories"] .tab-label');
-
-      const mobileOverviewBtn = document.querySelector('.mobile-tab-btn[data-target="tab-pane-overview"] span');
-      const mobileMemoriesBtn = document.querySelector('.mobile-tab-btn[data-target="tab-pane-memories"] span');
-
-      const bottomOverviewBtn = document.querySelector('.bottom-tab-btn[data-target="tab-pane-overview"] .bottom-tab-icon');
-      const bottomMemoriesBtn = document.querySelector('.bottom-tab-btn[data-target="tab-pane-memories"] .bottom-tab-icon');
-
-      if (isLocked) {
-        if (headerOverviewBtn) headerOverviewBtn.textContent = '✨';
-        if (headerMemoriesBtn) headerMemoriesBtn.textContent = '🌌';
-        if (headerMemoriesLabel) headerMemoriesLabel.textContent = 'Kỷ Niệm Của Hai Đứa';
-        if (mobileOverviewBtn) mobileOverviewBtn.textContent = '✨ Tinh Cầu Tình Yêu';
-        if (mobileMemoriesBtn) mobileMemoriesBtn.textContent = '🌌 Kỷ Niệm Của Hai Đứa';
-        if (bottomOverviewBtn) bottomOverviewBtn.textContent = '✨';
-        if (bottomMemoriesBtn) bottomMemoriesBtn.textContent = '🌌';
-      } else {
-        if (headerOverviewBtn) headerOverviewBtn.textContent = '💖';
-        if (headerMemoriesBtn) headerMemoriesBtn.textContent = '📸';
-        if (headerMemoriesLabel) headerMemoriesLabel.textContent = 'Kỷ Niệm Của Hai Đứa';
-        if (mobileOverviewBtn) mobileOverviewBtn.textContent = '💖 Tinh Cầu Tình Yêu';
-        if (mobileMemoriesBtn) mobileMemoriesBtn.textContent = '📸 Kỷ Niệm Của Hai Đứa';
-        if (bottomOverviewBtn) bottomOverviewBtn.textContent = '💖';
-        if (bottomMemoriesBtn) bottomMemoriesBtn.textContent = '📸';
-      }
-    }
-
-    function checkRoleAndRender() {
-      const isCreator = localStorage.getItem('couple_creator_access') === 'true';
-      const now = new Date().getTime();
-      const isDateUnlocked = targetTime <= now;
-
-      if (isDateUnlocked) {
-        // Automatically unlocked for everyone!
-        if (overviewVaultWrap) overviewVaultWrap.style.display = 'none';
-        if (overviewContentWrap) overviewContentWrap.style.display = 'block';
-        if (memoriesVaultWrap) memoriesVaultWrap.style.display = 'none';
-        if (memoriesContentWrap) memoriesContentWrap.style.display = 'block';
-        if (creatorBar) creatorBar.style.display = isCreator ? 'flex' : 'none';
-        updateHeaderNavIcons(false);
-        return;
-      }
-
-      if (isCreator) {
-        if (creatorBar) creatorBar.style.display = 'flex';
-
-        if (isPreviewAsPartner) {
-          // Previewing as Partner / Maze
-          if (overviewVaultWrap) overviewVaultWrap.style.display = 'block';
-          if (overviewContentWrap) overviewContentWrap.style.display = 'none';
-          if (memoriesVaultWrap) memoriesVaultWrap.style.display = 'block';
-          if (memoriesContentWrap) memoriesContentWrap.style.display = 'none';
-          if (labelPreview) labelPreview.textContent = '✍️ Quay lại Soạn thảo (Creator)';
-          updateHeaderNavIcons(true);
-        } else {
-          // Full Creator Access
-          if (overviewVaultWrap) overviewVaultWrap.style.display = 'none';
-          if (overviewContentWrap) overviewContentWrap.style.display = 'block';
-          if (memoriesVaultWrap) memoriesVaultWrap.style.display = 'none';
-          if (memoriesContentWrap) memoriesContentWrap.style.display = 'block';
-          if (labelPreview) labelPreview.textContent = '👁️ Xem dưới góc nhìn Nàng';
-          updateHeaderNavIcons(false);
-        }
-      } else {
-        // Partner / Guest (Maze) -> Locked with Birthday Countdown
-        if (overviewVaultWrap) overviewVaultWrap.style.display = 'block';
-        if (overviewContentWrap) overviewContentWrap.style.display = 'none';
-        if (memoriesVaultWrap) memoriesVaultWrap.style.display = 'block';
-        if (memoriesContentWrap) memoriesContentWrap.style.display = 'none';
-        if (creatorBar) creatorBar.style.display = 'none';
-        updateHeaderNavIcons(true);
-      }
-    }
-
-    if (btnTogglePreview) {
-      btnTogglePreview.onclick = () => {
-        isPreviewAsPartner = !isPreviewAsPartner;
-        sessionStorage.setItem('couple_preview_partner_mode', isPreviewAsPartner ? 'true' : 'false');
-        checkRoleAndRender();
-      };
-    }
-
-    if (btnLockOut) {
-      btnLockOut.onclick = () => {
-        if (confirm('Bạn có muốn khóa lại và thoát chế độ Creator không?\n(Bạn có thể mở lại bất cứ lúc nào bằng cách chạm 3 lần vào logo hoặc vào link bí mật)')) {
-          localStorage.removeItem('couple_creator_access');
-          sessionStorage.removeItem('couple_preview_partner_mode');
-          checkRoleAndRender();
-        }
-      };
-    }
-
-    checkRoleAndRender();
-
-    window.addEventListener('couple-creator-access-granted', checkRoleAndRender);
-    window.addEventListener('birthday-vault-unlocked', checkRoleAndRender);
-  }
-
   initTabSwitcher();
-  initBirthdayVaultLock();
-  document.addEventListener('astro:after-swap', () => {
-    initTabSwitcher();
-    initBirthdayVaultLock();
-  });
+  document.addEventListener('astro:after-swap', initTabSwitcher);
 </script>
