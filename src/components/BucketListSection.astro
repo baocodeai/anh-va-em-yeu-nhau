@@ -62,8 +62,8 @@ const categories = [
     </div>
 
     <div class="bucket-sort-wrap">
-      <button type="button" class="btn-outline-love btn-create-category-btn" id="btn-quick-add-category" title="Tạo thêm phân loại danh mục mới">
-        <span>+ Danh Mục</span>
+      <button type="button" class="btn-outline-love btn-create-category-btn" id="btn-open-category-manager" title="Quản lý, thêm, sửa & xóa phân loại danh mục">
+        <span>🏷️ Quản Lý Danh Mục</span>
       </button>
       <button type="button" class="btn-sort-toggle" id="btn-toggle-bucket-sort" title="Nhấn để đổi thứ tự: Mới nhất / Cũ nhất">
         <span class="sort-icon" id="bucket-sort-icon">⏳</span>
@@ -76,6 +76,81 @@ const categories = [
   <!-- Dynamic Bucket Checklist Container -->
   <div class="bucket-checklist-container" id="bucket-cards-container">
     <!-- Rendered dynamically as checklist rows by client script from LocalStorage -->
+  </div>
+
+  <!-- Category Management Hub Modal -->
+  <div class="crud-modal-overlay" id="category-manager-modal" aria-hidden="true">
+    <div class="crud-modal-card category-manager-card romantic-card">
+      <div class="compact-modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-title-icon">🏷️</span>
+          <h3 class="modal-title gradient-love-text">Quản Lý Danh Mục Điều Ước</h3>
+        </div>
+        <button type="button" class="modal-close-btn" id="cat-mgr-close" aria-label="Đóng">&times;</button>
+      </div>
+
+      <div class="cat-mgr-body">
+        <p class="cat-mgr-desc">
+          Tạo mới, đổi tên hoặc xóa danh mục. Khi đổi tên, các điều ước cũ sẽ <strong>tự động đổi tên đồng loạt</strong> mà không bị mất.
+        </p>
+
+        <!-- Quick Add Row -->
+        <div class="cat-mgr-add-row">
+          <input
+            type="text"
+            id="cat-mgr-new-input"
+            class="form-input flex-1"
+            placeholder="Nhập tên danh mục mới (VD: 🏡 Tổ ấm, 🐾 Thú cưng...)"
+          />
+          <button type="button" class="btn-love" id="cat-mgr-btn-add">➕ Thêm</button>
+        </div>
+
+        <!-- Category List -->
+        <div class="cat-mgr-list" id="cat-mgr-list-container">
+          <!-- Dynamically rendered categories -->
+        </div>
+
+        <div class="form-actions compact-actions" style="margin-top: 1.4rem;">
+          <button type="button" class="btn-outline-love" id="cat-mgr-btn-done">Đóng Bảng Quản Lý</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Delete & Interactive Migration Modal (Lựa chọn 2) -->
+  <div class="crud-modal-overlay" id="category-migration-modal" aria-hidden="true">
+    <div class="crud-modal-card category-migration-card romantic-card">
+      <div class="compact-modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-title-icon">📦</span>
+          <h3 class="modal-title gradient-rose-text">Dời Điều Ước Trước Khi Xóa</h3>
+        </div>
+        <button type="button" class="modal-close-btn" id="cat-mig-close" aria-label="Đóng">&times;</button>
+      </div>
+
+      <div class="cat-mig-body">
+        <div class="cat-mig-notice-box">
+          <p id="cat-mig-message" class="cat-mig-main-msg">
+            Danh mục đang có <strong>3 điều ước</strong> cùng nhau.
+          </p>
+          <p class="cat-mig-sub-msg">
+            Hãy chọn một danh mục mới để dời tất cả điều ước này sang trước khi xóa danh mục cũ nhé:
+          </p>
+        </div>
+
+        <div class="form-group" style="margin-top: 1.1rem;">
+          <label class="form-label" for="cat-mig-target-select">🌸 Chọn danh mục mới chuyển tới:</label>
+          <select id="cat-mig-target-select" class="form-select"></select>
+        </div>
+
+        <div class="form-actions compact-actions" style="margin-top: 1.4rem;">
+          <button type="button" class="btn-outline-love" id="cat-mig-btn-cancel">Hủy</button>
+          <button type="button" class="btn-love is-danger-action" id="cat-mig-btn-confirm">
+            <span>📦 Chuyển &amp; Xóa Danh Mục</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Quick & Clean Romantic Modal for Adding / Editing Bucket Item -->
@@ -330,31 +405,53 @@ const categories = [
     font-weight: 800;
   }
 
-  .filter-btn {
-    background: rgba(11, 17, 32, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+  :global(.filter-btn) {
+    background: rgba(11, 17, 32, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    border-radius: 9999px !important;
+    padding: 8px 18px !important;
+    font-size: 0.88rem !important;
+    color: #cbd5e1 !important;
+    cursor: pointer !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    user-select: none !important;
+    white-space: nowrap !important;
+    position: relative !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  :global(.filter-btn:hover) {
+    border-color: #fda4af !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 16px rgba(244, 63, 94, 0.4) !important;
+    transform: translateY(-2px) !important;
+  }
+
+  :global(.filter-btn.is-active) {
+    background: linear-gradient(135deg, #e11d48 0%, #f43f5e 50%, #9333ea 100%) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    box-shadow: 0 0 24px rgba(244, 63, 94, 0.85), 0 0 45px rgba(168, 85, 247, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.45) !important;
+    transform: translateY(-2px) scale(1.06) !important;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.7) !important;
+  }
+
+  :global(.filter-btn.is-active::after) {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 3px;
+    background: #fbbf24;
     border-radius: 9999px;
-    padding: 7px 18px;
-    font-size: 0.88rem;
-    color: #cbd5e1;
-    cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    user-select: none;
-  }
-
-  .filter-btn:hover {
-    border-color: #fda4af;
-    color: #ffffff;
-    box-shadow: 0 0 14px rgba(244, 63, 94, 0.25);
-    transform: translateY(-2px);
-  }
-
-  .filter-btn.is-active {
-    background: linear-gradient(135deg, #f43f5e 0%, #a855f7 100%);
-    border-color: rgba(255, 255, 255, 0.25);
-    color: #ffffff;
-    font-weight: 600;
-    box-shadow: 0 0 18px rgba(244, 63, 94, 0.45);
+    box-shadow: 0 0 10px #fbbf24;
   }
 
   /* =========================================================================
@@ -852,6 +949,142 @@ const categories = [
     font-weight: 600;
   }
 
+  /* =========================================================================
+     CATEGORY MANAGER & MIGRATION STYLES
+     ========================================================================= */
+  .category-manager-card,
+  .category-migration-card {
+    max-width: 540px;
+    width: 100%;
+    background: #0f172a;
+    padding: 2.2rem;
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(244, 63, 94, 0.2);
+    border-radius: 24px;
+    animation: fadeInModal 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .cat-mgr-desc {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 1.4rem;
+  }
+
+  .cat-mgr-add-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .cat-mgr-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  :global(.cat-item-row) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 10px 14px;
+    transition: all 0.2s;
+  }
+
+  :global(.cat-item-row:hover) {
+    border-color: rgba(244, 63, 94, 0.35);
+    background: rgba(15, 23, 42, 0.9);
+  }
+
+  :global(.cat-item-left) {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  :global(.cat-item-name) {
+    font-weight: 600;
+    color: #ffffff;
+    font-size: 0.94rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  :global(.cat-item-count-badge) {
+    font-size: 0.76rem;
+    font-family: var(--mono);
+    color: #7dd3fc;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    padding: 2px 8px;
+    border-radius: 9999px;
+    white-space: nowrap;
+  }
+
+  :global(.cat-item-actions) {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  :global(.btn-cat-action) {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: #cbd5e1;
+    transition: all 0.2s;
+  }
+
+  :global(.btn-cat-action:hover) {
+    background: rgba(244, 63, 94, 0.25);
+    border-color: #fda4af;
+    color: #ffffff;
+    transform: translateY(-1px);
+  }
+
+  :global(.btn-cat-del:hover) {
+    background: rgba(239, 68, 68, 0.3);
+    border-color: #f87171;
+  }
+
+  .cat-mig-notice-box {
+    background: rgba(244, 63, 94, 0.1);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    border-radius: 14px;
+    padding: 1.1rem 1.3rem;
+  }
+
+  .cat-mig-main-msg {
+    font-size: 1rem;
+    color: #ffffff;
+    margin: 0 0 6px;
+    line-height: 1.5;
+  }
+
+  .cat-mig-sub-msg {
+    font-size: 0.88rem;
+    color: #fda4af;
+    margin: 0;
+    line-height: 1.5;
+  }
+
   @keyframes fadeInModal {
     from { opacity: 0; transform: scale(0.96); }
     to { opacity: 1; transform: scale(1); }
@@ -953,23 +1186,16 @@ const categories = [
   }
 
   function getStoredCategories(): string[] {
-    let list: string[] = [];
     try {
       const stored = localStorage.getItem(CATEGORIES_KEY);
-      if (stored) list = JSON.parse(stored);
-    } catch {}
-
-    // Ensure defaults and items' categories are included
-    const set = new Set([...DEFAULT_CATEGORIES, ...list]);
-    const items = getStoredBucketList();
-    items.forEach((item) => {
-      if (item.category && typeof item.category === 'string') {
-        set.add(item.category.trim());
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       }
-    });
-
-    const result = Array.from(set).filter(Boolean);
-    return result;
+    } catch {}
+    // First time initialization
+    localStorage.setItem(CATEGORIES_KEY, JSON.stringify(DEFAULT_CATEGORIES));
+    return [...DEFAULT_CATEGORIES];
   }
 
   function saveStoredCategories(cats: string[]) {
@@ -1361,18 +1587,266 @@ const categories = [
       });
     }
 
-    // Quick Add Category from Filter Bar Button
-    if (btnQuickAddCategory) {
-      btnQuickAddCategory.addEventListener('click', () => {
-        const newCat = prompt('Nhập tên phân loại danh mục mới cho điều ước (Ví dụ: 🏡 Xây tổ ấm, 🐾 Nuôi thú cưng, 🎨 Nghệ thuật...):');
-        if (newCat && newCat.trim()) {
-          const created = addCustomCategory(newCat.trim());
-          if (created) {
-            activeFilter = created;
-            renderCategoryFilters();
-            renderBucketChecklist(activeFilter);
+    // =========================================================================
+    // CATEGORY MANAGEMENT HUB (Add, Rename with Cascade, Delete with Migration)
+    // =========================================================================
+    const btnOpenCategoryManager = document.getElementById('btn-open-category-manager');
+    const catMgrModal = document.getElementById('category-manager-modal');
+    const catMgrClose = document.getElementById('cat-mgr-close');
+    const catMgrDone = document.getElementById('cat-mgr-btn-done');
+    const catMgrNewInput = document.getElementById('cat-mgr-new-input') as HTMLInputElement | null;
+    const catMgrBtnAdd = document.getElementById('cat-mgr-btn-add');
+    const catMgrListContainer = document.getElementById('cat-mgr-list-container');
+
+    const catMigModal = document.getElementById('category-migration-modal');
+    const catMigClose = document.getElementById('cat-mig-close');
+    const catMigBtnCancel = document.getElementById('cat-mig-btn-cancel');
+    const catMigBtnConfirm = document.getElementById('cat-mig-btn-confirm');
+    const catMigMessage = document.getElementById('cat-mig-message');
+    const catMigTargetSelect = document.getElementById('cat-mig-target-select') as HTMLSelectElement | null;
+
+    let pendingDeleteCategory = '';
+
+    function renderCategoryManagerList() {
+      if (!catMgrListContainer) return;
+      const cats = getStoredCategories();
+      const items = getStoredBucketList();
+
+      // Count wishes per category
+      const countMap: Record<string, number> = {};
+      items.forEach((item) => {
+        const c = item.category || 'Hẹn hò lãng mạn';
+        countMap[c] = (countMap[c] || 0) + 1;
+      });
+
+      catMgrListContainer.innerHTML = '';
+
+      if (cats.length === 0) {
+        catMgrListContainer.innerHTML = '<p style="color: #64748b; font-size: 0.88rem; text-align: center; padding: 1rem 0;">Chưa có danh mục nào.</p>';
+        return;
+      }
+
+      cats.forEach((cat) => {
+        const count = countMap[cat] || 0;
+        const row = document.createElement('div');
+        row.className = 'cat-item-row';
+        row.setAttribute('data-category', cat);
+
+        // Standard View HTML
+        const renderDefaultRow = () => {
+          row.innerHTML = `
+            <div class="cat-item-left">
+              <span class="cat-item-name">${getCategoryEmoji(cat)}${escapeHtml(cat)}</span>
+              <span class="cat-item-count-badge">${count} điều ước</span>
+            </div>
+            <div class="cat-item-actions">
+              <button type="button" class="btn-cat-action btn-cat-edit" title="Đổi tên danh mục này">✏️</button>
+              <button type="button" class="btn-cat-action btn-cat-del" title="Xóa danh mục này">🗑️</button>
+            </div>
+          `;
+
+          // 1. Inline Rename (No browser prompt)
+          const btnEdit = row.querySelector('.btn-cat-edit');
+          if (btnEdit) {
+            btnEdit.addEventListener('click', () => {
+              row.innerHTML = `
+                <div class="cat-inline-edit-box" style="display: flex; gap: 8px; width: 100%; align-items: center;">
+                  <input type="text" class="form-input flex-1 cat-rename-input" value="${escapeHtml(cat)}" style="min-height: 38px; padding: 6px 12px; font-size: 0.9rem;" />
+                  <button type="button" class="btn-love btn-sm btn-save-cat-rename" style="white-space: nowrap; padding: 6px 14px; min-height: 36px;">💾 Lưu</button>
+                  <button type="button" class="btn-outline-love btn-sm btn-cancel-cat-rename" style="white-space: nowrap; padding: 6px 10px; min-height: 36px;">✖</button>
+                </div>
+              `;
+
+              const input = row.querySelector('.cat-rename-input') as HTMLInputElement;
+              const btnSave = row.querySelector('.btn-save-cat-rename');
+              const btnCancel = row.querySelector('.btn-cancel-cat-rename');
+
+              if (input) {
+                input.focus();
+                input.select();
+              }
+
+              const handleSaveRename = () => {
+                if (!input) return;
+                const trimmedNewName = input.value.trim();
+                if (!trimmedNewName || trimmedNewName === cat) {
+                  renderDefaultRow();
+                  return;
+                }
+
+                // Update categories list
+                let currentCats = getStoredCategories();
+                currentCats = currentCats.map((c) => (c === cat ? trimmedNewName : c));
+                currentCats = Array.from(new Set(currentCats));
+                saveStoredCategories(currentCats);
+
+                // Cascade update in bucket list items
+                const allItems = getStoredBucketList();
+                allItems.forEach((item) => {
+                  if (item.category === cat) {
+                    item.category = trimmedNewName;
+                  }
+                });
+                saveStoredBucketList(allItems);
+
+                if (activeFilter === cat) activeFilter = trimmedNewName;
+
+                renderCategoryManagerList();
+                renderCategoryFilters();
+                renderBucketChecklist(activeFilter);
+              };
+
+              if (btnSave) btnSave.addEventListener('click', handleSaveRename);
+              if (btnCancel) btnCancel.addEventListener('click', renderDefaultRow);
+              if (input) {
+                input.addEventListener('keydown', (e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSaveRename();
+                  } else if (e.key === 'Escape') {
+                    renderDefaultRow();
+                  }
+                });
+              }
+            });
           }
+
+          // 2. Delete Category (Romantic Modal / Migration Dialog)
+          const btnDel = row.querySelector('.btn-cat-del');
+          if (btnDel) {
+            btnDel.addEventListener('click', async () => {
+              if (count === 0) {
+                // Confirm with Romantic Confirm Envelope
+                const confirmed = (window as any).romanticConfirm
+                  ? await (window as any).romanticConfirm({
+                      heading: 'Xóa Danh Mục Này Nhé?',
+                      subject: cat,
+                      subjectIcon: '🏷️',
+                      quote: `Danh mục "${cat}" hiện chưa có điều ước nào. Bạn có muốn xóa khỏi danh sách không?`,
+                      typeBadge: '🏷️ Phân Loại Danh Mục',
+                      sealEmoji: '🗑️',
+                      confirmText: 'Xóa Danh Mục 🗑️',
+                      cancelText: 'Giữ Lại 🌸',
+                      isDanger: true,
+                      notice: 'Danh mục sẽ được gỡ khỏi bộ lọc của hai đứa.'
+                    })
+                  : true;
+
+                if (confirmed) {
+                  const currentCats = getStoredCategories().filter((c) => c !== cat);
+                  saveStoredCategories(currentCats);
+                  if (activeFilter === cat) activeFilter = 'Tất cả';
+                  renderCategoryManagerList();
+                  renderCategoryFilters();
+                  renderBucketChecklist(activeFilter);
+                }
+              } else {
+                // Has wishes -> Open Interactive Migration Modal (Lựa chọn 2)
+                pendingDeleteCategory = cat;
+                if (catMigMessage) {
+                  catMigMessage.innerHTML = `Danh mục <strong>"${escapeHtml(cat)}"</strong> đang có <strong>${count} điều ước</strong> cùng nhau.`;
+                }
+                if (catMigTargetSelect) {
+                  catMigTargetSelect.innerHTML = '';
+                  const otherCats = getStoredCategories().filter((c) => c !== cat);
+                  if (otherCats.length === 0) otherCats.push('Hẹn hò lãng mạn');
+                  otherCats.forEach((oc) => {
+                    const opt = document.createElement('option');
+                    opt.value = oc;
+                    opt.textContent = `${getCategoryEmoji(oc)}${oc}`;
+                    catMigTargetSelect.appendChild(opt);
+                  });
+                }
+                if (catMigModal) catMigModal.classList.add('is-open');
+              }
+            });
+          }
+        };
+
+        renderDefaultRow();
+        catMgrListContainer.appendChild(row);
+      });
+    }
+
+    function openCategoryManagerModal() {
+      if (!catMgrModal) return;
+      if (catMgrNewInput) catMgrNewInput.value = '';
+      renderCategoryManagerList();
+      catMgrModal.classList.add('is-open');
+    }
+
+    function closeCategoryManagerModal() {
+      if (!catMgrModal) return;
+      catMgrModal.classList.remove('is-open');
+    }
+
+    if (btnOpenCategoryManager) btnOpenCategoryManager.addEventListener('click', openCategoryManagerModal);
+    if (catMgrClose) catMgrClose.addEventListener('click', closeCategoryManagerModal);
+    if (catMgrDone) catMgrDone.addEventListener('click', closeCategoryManagerModal);
+    if (catMgrModal) {
+      catMgrModal.addEventListener('click', (e) => {
+        if (e.target === catMgrModal) closeCategoryManagerModal();
+      });
+    }
+
+    // Add new category from Category Manager Modal
+    function handleAddNewCatFromManager() {
+      if (!catMgrNewInput) return;
+      const val = catMgrNewInput.value.trim();
+      if (!val) {
+        catMgrNewInput.focus();
+        return;
+      }
+      const created = addCustomCategory(val);
+      if (created) {
+        catMgrNewInput.value = '';
+        renderCategoryManagerList();
+        renderCategoryFilters();
+        renderBucketChecklist(activeFilter);
+      }
+    }
+
+    if (catMgrBtnAdd) catMgrBtnAdd.addEventListener('click', handleAddNewCatFromManager);
+    if (catMgrNewInput) {
+      catMgrNewInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleAddNewCatFromManager();
         }
+      });
+    }
+
+    // Migration Modal Confirm (Lựa chọn 2)
+    if (catMigClose) catMigClose.addEventListener('click', () => catMigModal?.classList.remove('is-open'));
+    if (catMigBtnCancel) catMigBtnCancel.addEventListener('click', () => catMigModal?.classList.remove('is-open'));
+    if (catMigBtnConfirm) {
+      catMigBtnConfirm.addEventListener('click', () => {
+        if (!pendingDeleteCategory || !catMigTargetSelect) return;
+        const targetCat = catMigTargetSelect.value;
+        const catToDelete = pendingDeleteCategory;
+
+        // 1. Migrate all wishes to target category
+        const allItems = getStoredBucketList();
+        allItems.forEach((item) => {
+          if (item.category === catToDelete) {
+            item.category = targetCat;
+          }
+        });
+        saveStoredBucketList(allItems);
+
+        // 2. Remove category from categories list
+        const currentCats = getStoredCategories().filter((c) => c !== catToDelete);
+        saveStoredCategories(currentCats);
+
+        // 3. Reset active filter if needed
+        if (activeFilter === catToDelete) activeFilter = targetCat;
+
+        // 4. Close migration modal & refresh UI
+        if (catMigModal) catMigModal.classList.remove('is-open');
+        pendingDeleteCategory = '';
+        renderCategoryManagerList();
+        renderCategoryFilters();
+        renderBucketChecklist(activeFilter);
       });
     }
 
