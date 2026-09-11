@@ -615,6 +615,7 @@
         const bucketCategories = JSON.parse(localStorage.getItem('couple_bucket_categories') || '[]');
         const habit21 = JSON.parse(localStorage.getItem('couple_habit_21') || '[]');
         const habitStartDate = localStorage.getItem('couple_habit_start_date') || undefined;
+        const habitStartDateLocked = localStorage.getItem('couple_habit_start_date_locked') === 'true';
         const habitShields = JSON.parse(localStorage.getItem('couple_habit_shields') || '{"ai":2,"maze":2}');
         const habitTargetDays = Number(localStorage.getItem('couple_habit_target_days') || '21');
         const memories = JSON.parse(localStorage.getItem('couple_memories') || '[]');
@@ -627,6 +628,7 @@
           bucketCategories,
           habit21,
           habitStartDate,
+          habitStartDateLocked,
           habitShields,
           habitTargetDays,
           memories,
@@ -682,6 +684,15 @@
           const currentStartDate = localStorage.getItem('couple_habit_start_date');
           if (currentStartDate !== cloudData.habitStartDate) {
             localStorage.setItem('couple_habit_start_date', cloudData.habitStartDate);
+            shouldNotify = true;
+          }
+        }
+
+        if (cloudData.habitStartDateLocked !== undefined && typeof cloudData.habitStartDateLocked === 'boolean') {
+          const currentLocked = localStorage.getItem('couple_habit_start_date_locked');
+          const nextLocked = cloudData.habitStartDateLocked ? 'true' : 'false';
+          if (currentLocked !== nextLocked) {
+            localStorage.setItem('couple_habit_start_date_locked', nextLocked);
             shouldNotify = true;
           }
         }
@@ -747,6 +758,7 @@
           exportDate: new Date().toISOString(),
           habit21: JSON.parse(localStorage.getItem('couple_habit_21') || '[]'),
           habitStartDate: localStorage.getItem('couple_habit_start_date') || null,
+          habitStartDateLocked: localStorage.getItem('couple_habit_start_date_locked') === 'true',
           habitShields: JSON.parse(localStorage.getItem('couple_habit_shields') || '{"ai":2,"maze":2}'),
           habitTargetDays: Number(localStorage.getItem('couple_habit_target_days') || '21'),
           bucketList: JSON.parse(localStorage.getItem('couple_bucket_list') || '[]'),
@@ -775,6 +787,7 @@
             if (data.bucketList) localStorage.setItem('couple_bucket_list', JSON.stringify(data.bucketList));
             if (data.habit21) localStorage.setItem('couple_habit_21', JSON.stringify(data.habit21));
             if (data.habitStartDate) localStorage.setItem('couple_habit_start_date', data.habitStartDate);
+            if (data.habitStartDateLocked !== undefined) localStorage.setItem('couple_habit_start_date_locked', data.habitStartDateLocked ? 'true' : 'false');
             if (data.habitShields) localStorage.setItem('couple_habit_shields', JSON.stringify(data.habitShields));
             if (data.habitTargetDays) localStorage.setItem('couple_habit_target_days', String(data.habitTargetDays));
             if (data.memories) localStorage.setItem('couple_memories', JSON.stringify(data.memories));

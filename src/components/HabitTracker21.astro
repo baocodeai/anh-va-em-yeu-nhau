@@ -66,11 +66,12 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
         </div>
       </div>
       <div class="date-today-badge-wrap">
+        <span class="badge-love badge-locked-schedule" id="habit-start-lock-badge">🔒 Lịch trình đã niêm phong</span>
         <span class="badge-love" id="habit-today-pill">✨ Hôm nay: Đang tính...</span>
       </div>
     </div>
 
-    <div class="date-picker-control-row">
+    <div class="date-picker-control-row" id="date-picker-control-row">
       <div class="date-input-group">
         <label for="habit-start-date-input" class="date-input-label">Chọn ngày bắt đầu (Ngày 1):</label>
         <div class="input-with-button">
@@ -81,12 +82,15 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
             value={defaultStartDate}
           />
           <button type="button" class="btn-love btn-sm" id="btn-save-start-date">
-            <span>💾 Lưu Ngày</span>
+            <span>💾 Lưu &amp; Khóa Ngày</span>
+          </button>
+          <button type="button" class="btn-preset-pill btn-lock-toggle" id="btn-toggle-start-lock">
+            <span>🔓 Mở Khóa Đổi Ngày</span>
           </button>
         </div>
       </div>
 
-      <div class="quick-preset-btns">
+      <div class="quick-preset-btns" id="quick-presets-container">
         <span class="preset-label">Chọn nhanh:</span>
         <button type="button" class="btn-preset-pill" id="btn-preset-today">⚡ Hôm Nay</button>
         <button type="button" class="btn-preset-pill" id="btn-preset-anniversary">💌 Kỷ Niệm (15/08)</button>
@@ -173,6 +177,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       <div class="legend-item"><span class="legend-symbol symbol-ai">👦</span> <span>AI đã tích</span></div>
       <div class="legend-item"><span class="legend-symbol symbol-maze">👧</span> <span>Maze đã tích</span></div>
       <div class="legend-item"><span class="legend-symbol symbol-today">✨</span> <span>Hôm nay</span></div>
+      <div class="legend-item"><span class="legend-symbol symbol-locked">🔒</span> <span>Chưa đến ngày (Khóa)</span></div>
     </div>
 
     <!-- Constellation Track Grid -->
@@ -392,6 +397,24 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
+  .date-picker-control-row.is-locked {
+    background: rgba(15, 23, 42, 0.4);
+    border-style: dashed;
+    border-color: rgba(148, 163, 184, 0.25);
+  }
+
+  .badge-locked-schedule {
+    background: rgba(56, 189, 248, 0.15) !important;
+    border-color: rgba(56, 189, 248, 0.4) !important;
+    color: #7dd3fc !important;
+  }
+
+  .badge-editing-schedule {
+    background: rgba(251, 191, 36, 0.15) !important;
+    border-color: rgba(251, 191, 36, 0.4) !important;
+    color: #fde047 !important;
+  }
+
   .date-input-group {
     display: flex;
     flex-direction: column;
@@ -408,6 +431,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     display: flex;
     align-items: center;
     gap: 0.6rem;
+    flex-wrap: wrap;
   }
 
   .habit-date-input {
@@ -428,10 +452,30 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
   }
 
+  .habit-date-input:disabled {
+    background: rgba(15, 23, 42, 0.85);
+    border-color: rgba(148, 163, 184, 0.3);
+    color: #94a3b8;
+    cursor: not-allowed;
+    opacity: 0.85;
+  }
+
   .btn-sm {
     min-height: 36px;
     padding: 6px 16px;
     font-size: 0.85rem;
+  }
+
+  .btn-lock-toggle {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: rgba(56, 189, 248, 0.4);
+    color: #7dd3fc;
+  }
+
+  .btn-lock-toggle:hover {
+    background: rgba(56, 189, 248, 0.3);
+    border-color: #38bdf8;
+    color: #ffffff;
   }
 
   .quick-preset-btns {
@@ -802,6 +846,28 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     text-shadow: 0 0 8px rgba(251, 191, 36, 0.95);
   }
 
+  /* Locked Day State */
+  :global(.day-node-btn.is-locked) {
+    opacity: 0.5;
+    border-style: dashed !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    background: rgba(15, 23, 42, 0.45) !important;
+  }
+
+  :global(.day-node-btn.is-locked:hover) {
+    opacity: 0.85;
+    border-color: rgba(148, 163, 184, 0.4) !important;
+    box-shadow: 0 0 12px rgba(148, 163, 184, 0.25);
+  }
+
+  :global(.day-lock-badge) {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    font-size: 0.75rem;
+    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.8));
+  }
+
   :global(.day-shield-badge) {
     position: absolute;
     top: -6px;
@@ -1154,6 +1220,31 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     color: #cbd5e1;
   }
 
+  :global(.banner-locked) {
+    background: radial-gradient(circle at 50% 0%, rgba(100, 116, 139, 0.15) 0%, rgba(15, 23, 42, 0.9) 100%);
+    border: 1px dashed rgba(148, 163, 184, 0.35);
+    color: #94a3b8;
+  }
+
+  :global(.banner-locked strong) {
+    color: #f1f5f9;
+  }
+
+  :global(.btn-partner-toggle:disabled),
+  :global(.btn-use-shield-mini:disabled),
+  :global(.btn-action-pill:disabled) {
+    opacity: 0.45 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  :global(.btn-partner-toggle.btn-locked-state) {
+    background: rgba(30, 41, 59, 0.7) !important;
+    border: 1px dashed rgba(148, 163, 184, 0.3) !important;
+    color: #94a3b8 !important;
+  }
+
   /* Rescue Note Quote */
   :global(.rescue-quote-box) {
     background: rgba(15, 23, 42, 0.8);
@@ -1241,6 +1332,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
 
   const HABIT_STORAGE_KEY = 'couple_habit_21';
   const START_DATE_STORAGE_KEY = 'couple_habit_start_date';
+  const START_DATE_LOCKED_KEY = 'couple_habit_start_date_locked';
   const SHIELDS_STORAGE_KEY = 'couple_habit_shields';
   const TARGET_DAYS_STORAGE_KEY = 'couple_habit_target_days';
 
@@ -1277,6 +1369,19 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
   function saveStoredStartDate(dateStr: string) {
     localStorage.setItem(START_DATE_STORAGE_KEY, dateStr);
     pushDataToFirebase({ habitStartDate: dateStr, lastUpdatedBy: 'HabitTracker' }).catch(() => {});
+  }
+
+  function getStoredStartDateLocked(): boolean {
+    const raw = localStorage.getItem(START_DATE_LOCKED_KEY);
+    if (raw === null) {
+      return true; // Mặc định khóa để giữ an toàn lịch trình
+    }
+    return raw === 'true';
+  }
+
+  function saveStoredStartDateLocked(locked: boolean) {
+    localStorage.setItem(START_DATE_LOCKED_KEY, locked ? 'true' : 'false');
+    pushDataToFirebase({ habitStartDateLocked: locked, lastUpdatedBy: 'HabitTracker' }).catch(() => {});
   }
 
   function getStoredTargetDays(): number {
@@ -1336,16 +1441,14 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       }
     }
 
-    return list.map((item, idx) => {
+    return list.map((item: any, idx: number) => {
       const aiCompleted = Boolean(item.aiCompleted);
       const mazeCompleted = Boolean(item.mazeCompleted);
       const aiShieldUsed = Boolean(item.aiShieldUsed);
       const mazeShieldUsed = Boolean(item.mazeShieldUsed);
-      const isRescued = Boolean(item.rescuedBy);
-
       const isAIHandled = aiCompleted || aiShieldUsed;
       const isMazeHandled = mazeCompleted || mazeShieldUsed;
-      const completed = (isAIHandled && isMazeHandled) || isRescued;
+      const completed = (isAIHandled && isMazeHandled) || Boolean(item.rescuedBy);
 
       return {
         day: item.day || idx + 1,
@@ -1411,11 +1514,13 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
   }
 
   let currentSelectedDay = 1;
+  let hasUserManuallySelectedDay = false;
 
   function renderHabitUI() {
     const targetDays = getStoredTargetDays();
     const list: any[] = getStoredHabits(targetDays).slice(0, targetDays);
     const startDate = getStoredStartDate();
+    const isStartDateLocked = getStoredStartDateLocked();
     const shields = getStoredShields();
     const todayIso = getTodayIso();
 
@@ -1438,8 +1543,49 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     }
 
     const inputStartDate = document.getElementById('habit-start-date-input') as HTMLInputElement | null;
-    if (inputStartDate && inputStartDate.value !== startDate) {
-      inputStartDate.value = startDate;
+    const saveStartDateBtn = document.getElementById('btn-save-start-date');
+    const toggleStartLockBtn = document.getElementById('btn-toggle-start-lock');
+    const quickPresetsContainer = document.getElementById('quick-presets-container');
+    const datePickerRow = document.getElementById('date-picker-control-row');
+    const lockBadge = document.getElementById('habit-start-lock-badge');
+
+    if (inputStartDate) {
+      inputStartDate.disabled = isStartDateLocked;
+      if (inputStartDate.value !== startDate) {
+        inputStartDate.value = startDate;
+      }
+    }
+
+    if (datePickerRow) {
+      datePickerRow.classList.toggle('is-locked', isStartDateLocked);
+    }
+
+    if (quickPresetsContainer) {
+      quickPresetsContainer.style.display = isStartDateLocked ? 'none' : 'flex';
+    }
+
+    if (saveStartDateBtn) {
+      saveStartDateBtn.style.display = isStartDateLocked ? 'none' : 'inline-flex';
+    }
+
+    if (lockBadge) {
+      if (isStartDateLocked) {
+        lockBadge.className = 'badge-love badge-locked-schedule';
+        lockBadge.innerHTML = '🔒 Lịch trình đã niêm phong';
+      } else {
+        lockBadge.className = 'badge-love badge-editing-schedule';
+        lockBadge.innerHTML = '✏️ Đang mở chỉnh sửa';
+      }
+    }
+
+    if (toggleStartLockBtn) {
+      if (isStartDateLocked) {
+        toggleStartLockBtn.innerHTML = '<span>🔓 Mở Khóa Đổi Ngày</span>';
+        toggleStartLockBtn.title = 'Bấm để mở khóa ô chọn ngày bắt đầu';
+      } else {
+        toggleStartLockBtn.innerHTML = '<span>🔒 Khóa Cố Định</span>';
+        toggleStartLockBtn.title = 'Bấm để niêm phong cố định ngày bắt đầu';
+      }
     }
 
     const displayStartEl = document.getElementById('display-start-date');
@@ -1459,6 +1605,12 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
         todayDayNum = i;
         break;
       }
+    }
+
+    if (!hasUserManuallySelectedDay && todayDayNum !== null) {
+      currentSelectedDay = todayDayNum;
+    } else if (currentSelectedDay > targetDays) {
+      currentSelectedDay = targetDays;
     }
 
     if (habitTodayPill) {
@@ -1519,11 +1671,15 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       list.forEach((dayItem) => {
         const dInfo = getDayCalendarInfo(startDate, dayItem.day);
         const isToday = dInfo.iso === todayIso;
+        const isLocked = dInfo.iso > todayIso;
 
         let statusClass = 'is-pending';
         let badgeHtml = '';
 
-        if (dayItem.rescuedBy) {
+        if (isLocked) {
+          statusClass = 'is-locked';
+          badgeHtml = '<span class="day-lock-badge" title="Chưa đến ngày - Đang khóa 🔒">🔒</span>';
+        } else if (dayItem.rescuedBy) {
           statusClass = 'is-rescued';
           badgeHtml = '<span class="day-rescue-badge" title="Đã được học bù / gánh thay">💖</span>';
         } else if (dayItem.aiShieldUsed || dayItem.mazeShieldUsed) {
@@ -1544,7 +1700,9 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
         btn.type = 'button';
         btn.className = `day-node-btn ${statusClass} ${dayItem.day === currentSelectedDay ? 'is-active' : ''} ${isToday ? 'is-today-node' : ''}`;
         btn.setAttribute('data-day', String(dayItem.day));
-        btn.title = `Ngày ${dayItem.day} (${dInfo.shortDisplay})`;
+        btn.title = isLocked
+          ? `Ngày ${dayItem.day} (${dInfo.shortDisplay}) — Đang khóa cho đến ngày này 🔒`
+          : `Ngày ${dayItem.day} (${dInfo.shortDisplay})`;
 
         btn.innerHTML = `
           <span class="node-num">${dayItem.day}</span>
@@ -1554,6 +1712,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
         `;
 
         btn.addEventListener('click', () => {
+          hasUserManuallySelectedDay = true;
           currentSelectedDay = dayItem.day;
           renderHabitUI();
         });
@@ -1568,13 +1727,21 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
 
     const currentDayInfo = getDayCalendarInfo(startDate, dayData.day);
     const isCurrentDayToday = currentDayInfo.iso === todayIso;
+    const isCurrentDayLocked = currentDayInfo.iso > todayIso;
     const boysAvatar = getBoysAvatar();
     const girlsAvatar = getGirlsAvatar();
 
     let topBadgeHtml = '';
     let feedbackBannerHtml = '';
 
-    if (dayData.rescuedBy) {
+    if (isCurrentDayLocked) {
+      topBadgeHtml = `<span class="badge-love" style="background: rgba(148, 163, 184, 0.15); border-color: rgba(148, 163, 184, 0.35); color: #94a3b8;">🔒 CHƯA ĐẾN NGÀY — ĐANG KHÓA (MỞ: ${currentDayInfo.shortDisplay})</span>`;
+      feedbackBannerHtml = `
+        <div class="day-status-feedback-banner banner-locked">
+          <span>🔒 <strong>Chưa đến ngày này!</strong> Tinh cầu Ngày ${dayData.day} tương ứng với ngày <strong>${currentDayInfo.headingDate}</strong>.<br/>Hệ thống đang tạm khóa và sẽ tự động mở khi đến đúng ngày này để cả hai cùng tích hoàn thành! ✨</span>
+        </div>
+      `;
+    } else if (dayData.rescuedBy) {
       const rescuerName = dayData.rescuedBy === 'ai' ? 'AI (Anh 🚀)' : 'Maze (Em 🌸)';
       topBadgeHtml = `<span class="badge-love" style="background: rgba(244, 63, 94, 0.25); border-color: #f43f5e; color: #fda4af;">💖 ĐÃ ĐƯỢC HỌC BÙ BỞI ${rescuerName.toUpperCase()}</span>`;
       feedbackBannerHtml = `
@@ -1648,7 +1815,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
         <!-- Dual Partner Checklist 2-Column Grid -->
         <div class="dual-partner-cards-grid">
           <!-- Card 1: AI (Anh) -->
-          <div class="partner-check-card card-ai ${dayData.aiCompleted || dayData.aiShieldUsed || dayData.rescuedBy ? 'is-checked' : ''}">
+          <div class="partner-check-card card-ai ${isCurrentDayLocked ? '' : (dayData.aiCompleted || dayData.aiShieldUsed || dayData.rescuedBy ? 'is-checked' : '')}">
             <div class="card-partner-header">
               <img src="${boysAvatar}" alt="AI" class="partner-avatar-img" />
               <div class="partner-title-wrap">
@@ -1658,17 +1825,18 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
             </div>
 
             <div class="partner-status-row">
-              <span class="partner-status-pill ${dayData.aiCompleted ? 'status-pill-done-ai' : dayData.aiShieldUsed ? 'status-pill-done-ai' : 'status-pill-pending'}">
-                ${dayData.aiShieldUsed ? '🛡️ Đã dùng khiên bảo vệ' : dayData.aiCompleted ? '✓ Đã tích hoàn thành' : '⏳ Chưa tích hoàn thành'}
+              <span class="partner-status-pill ${isCurrentDayLocked ? 'status-pill-pending' : (dayData.aiCompleted ? 'status-pill-done-ai' : dayData.aiShieldUsed ? 'status-pill-done-ai' : 'status-pill-pending')}">
+                ${isCurrentDayLocked ? `🔒 Khóa (Mở: ${currentDayInfo.shortDisplay})` : dayData.aiShieldUsed ? '🛡️ Đã dùng khiên bảo vệ' : dayData.aiCompleted ? '✓ Đã tích hoàn thành' : '⏳ Chưa tích hoàn thành'}
               </span>
             </div>
 
             <button
               type="button"
-              class="btn-partner-toggle btn-ai-toggle ${dayData.aiCompleted ? 'btn-checked' : 'btn-pending'}"
+              class="btn-partner-toggle btn-ai-toggle ${isCurrentDayLocked ? 'btn-locked-state' : dayData.aiCompleted ? 'btn-checked' : 'btn-pending'}"
               id="btn-toggle-ai"
+              ${isCurrentDayLocked ? 'disabled title="Ngày này thuộc về tương lai, đang khóa!"' : ''}
             >
-              ${dayData.aiCompleted ? '✓ AI Đã Xong (Bấm để hủy)' : '👦 AI Tích Đã Xong ✨'}
+              ${isCurrentDayLocked ? `🔒 Khóa cho đến ${currentDayInfo.shortDisplay}` : dayData.aiCompleted ? '✓ AI Đã Xong (Bấm để hủy)' : '👦 AI Tích Đã Xong ✨'}
             </button>
 
             <!-- Shield Button for AI -->
@@ -1676,13 +1844,14 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
               type="button"
               class="btn-use-shield-mini"
               id="btn-shield-ai"
+              ${isCurrentDayLocked ? 'disabled title="Chưa đến ngày này"' : ''}
             >
               ${dayData.aiShieldUsed ? '🛡️ Hủy Dùng Khiên AI' : `🛡️ Dùng Khiên Hộ Mệnh AI (${shields.ai}/2)`}
             </button>
           </div>
 
           <!-- Card 2: Maze (Em) -->
-          <div class="partner-check-card card-maze ${dayData.mazeCompleted || dayData.mazeShieldUsed || dayData.rescuedBy ? 'is-checked' : ''}">
+          <div class="partner-check-card card-maze ${isCurrentDayLocked ? '' : (dayData.mazeCompleted || dayData.mazeShieldUsed || dayData.rescuedBy ? 'is-checked' : '')}">
             <div class="card-partner-header">
               <img src="${girlsAvatar}" alt="Maze" class="partner-avatar-img" />
               <div class="partner-title-wrap">
@@ -1692,17 +1861,18 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
             </div>
 
             <div class="partner-status-row">
-              <span class="partner-status-pill ${dayData.mazeCompleted ? 'status-pill-done-maze' : dayData.mazeShieldUsed ? 'status-pill-done-maze' : 'status-pill-pending'}">
-                ${dayData.mazeShieldUsed ? '🛡️ Đã dùng khiên bảo vệ' : dayData.mazeCompleted ? '✓ Đã tích hoàn thành' : '⏳ Chưa tích hoàn thành'}
+              <span class="partner-status-pill ${isCurrentDayLocked ? 'status-pill-pending' : (dayData.mazeCompleted ? 'status-pill-done-maze' : dayData.mazeShieldUsed ? 'status-pill-done-maze' : 'status-pill-pending')}">
+                ${isCurrentDayLocked ? `🔒 Khóa (Mở: ${currentDayInfo.shortDisplay})` : dayData.mazeShieldUsed ? '🛡️ Đã dùng khiên bảo vệ' : dayData.mazeCompleted ? '✓ Đã tích hoàn thành' : '⏳ Chưa tích hoàn thành'}
               </span>
             </div>
 
             <button
               type="button"
-              class="btn-partner-toggle btn-maze-toggle ${dayData.mazeCompleted ? 'btn-checked' : 'btn-pending'}"
+              class="btn-partner-toggle btn-maze-toggle ${isCurrentDayLocked ? 'btn-locked-state' : dayData.mazeCompleted ? 'btn-checked' : 'btn-pending'}"
               id="btn-toggle-maze"
+              ${isCurrentDayLocked ? 'disabled title="Ngày này thuộc về tương lai, đang khóa!"' : ''}
             >
-              ${dayData.mazeCompleted ? '✓ Maze Đã Xong (Bấm để hủy)' : '👧 Maze Tích Đã Xong 💖'}
+              ${isCurrentDayLocked ? `🔒 Khóa cho đến ${currentDayInfo.shortDisplay}` : dayData.mazeCompleted ? '✓ Maze Đã Xong (Bấm để hủy)' : '👧 Maze Tích Đã Xong 💖'}
             </button>
 
             <!-- Shield Button for Maze -->
@@ -1710,6 +1880,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
               type="button"
               class="btn-use-shield-mini"
               id="btn-shield-maze"
+              ${isCurrentDayLocked ? 'disabled title="Chưa đến ngày này"' : ''}
             >
               ${dayData.mazeShieldUsed ? '🛡️ Hủy Dùng Khiên Maze' : `🛡️ Dùng Khiên Hộ Mệnh Maze (${shields.maze}/2)`}
             </button>
@@ -1721,10 +1892,10 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
 
         <!-- Bottom Action Row: Love Rescue & Joint Toggle -->
         <div class="panel-bottom-actions-row">
-          <button type="button" class="btn-action-pill btn-action-rescue" id="btn-love-rescue">
+          <button type="button" class="btn-action-pill btn-action-rescue" id="btn-love-rescue" ${isCurrentDayLocked ? 'disabled title="Ngày này đang khóa"' : ''}>
             ${dayData.rescuedBy ? '🔄 Bỏ Chế Độ Tích Bù' : '💖 Tích Bù Yêu Thương (Gánh Thay)'}
           </button>
-          <button type="button" class="btn-action-pill" id="btn-quick-joint-toggle">
+          <button type="button" class="btn-action-pill" id="btn-quick-joint-toggle" ${isCurrentDayLocked ? 'disabled title="Ngày này đang khóa"' : ''}>
             ${dayData.completed ? '🔄 Bỏ tích cả hai người' : '⚡ Cả hai cùng tích hoàn thành (Phím tắt)'}
           </button>
         </div>
@@ -1834,6 +2005,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     if (prevBtn) {
       prevBtn.addEventListener('click', () => {
         if (currentSelectedDay > 1) {
+          hasUserManuallySelectedDay = true;
           currentSelectedDay -= 1;
           renderHabitUI();
         }
@@ -1844,6 +2016,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     if (nextBtn) {
       nextBtn.addEventListener('click', () => {
         if (currentSelectedDay < targetDays) {
+          hasUserManuallySelectedDay = true;
           currentSelectedDay += 1;
           renderHabitUI();
         }
@@ -1889,6 +2062,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     }
 
     const saveStartDateBtn = document.getElementById('btn-save-start-date');
+    const toggleStartLockBtn = document.getElementById('btn-toggle-start-lock');
     const startDateInput = document.getElementById('habit-start-date-input') as HTMLInputElement | null;
 
     if (saveStartDateBtn && startDateInput) {
@@ -1896,8 +2070,10 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
         const val = startDateInput.value;
         if (val && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
           saveStoredStartDate(val);
+          saveStoredStartDateLocked(true);
+          hasUserManuallySelectedDay = false;
           renderHabitUI();
-          alert(`✅ Đã lưu ngày bắt đầu: ${val.split('-').reverse().join('/')}! Lịch trình đã được phân bổ lại.`);
+          alert(`🔒 Đã lưu & niêm phong ngày bắt đầu: ${val.split('-').reverse().join('/')}! Lịch trình đã được khóa cố định.`);
         } else {
           alert('Vui lòng chọn ngày hợp lệ!');
         }
@@ -1908,6 +2084,23 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
         if (val && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
           saveStoredStartDate(val);
           renderHabitUI();
+        }
+      });
+    }
+
+    if (toggleStartLockBtn) {
+      toggleStartLockBtn.addEventListener('click', () => {
+        const currentlyLocked = getStoredStartDateLocked();
+        if (currentlyLocked) {
+          const ok = confirm('🔓 Bạn có muốn mở khóa để thay đổi ngày bắt đầu lịch trình không?');
+          if (ok) {
+            saveStoredStartDateLocked(false);
+            renderHabitUI();
+          }
+        } else {
+          saveStoredStartDateLocked(true);
+          renderHabitUI();
+          alert('🔒 Lịch trình ngày bắt đầu đã được niêm phong cố định!');
         }
       });
     }

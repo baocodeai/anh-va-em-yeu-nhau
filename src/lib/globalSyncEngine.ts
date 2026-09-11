@@ -74,6 +74,16 @@ export function initGlobalSyncEngine(): void {
       }
     }
 
+    // 4.1.1. Start Date Locked State / Trạng thái khóa ngày bắt đầu
+    if (cloudData.habitStartDateLocked !== undefined && typeof cloudData.habitStartDateLocked === 'boolean') {
+      const current = localStorage.getItem('couple_habit_start_date_locked');
+      const next = cloudData.habitStartDateLocked ? 'true' : 'false';
+      if (current !== next) {
+        localStorage.setItem('couple_habit_start_date_locked', next);
+        hasChanges = true;
+      }
+    }
+
     // 4.2. Habit Shields / Khiên bảo vệ
     if (cloudData.habitShields !== undefined && typeof cloudData.habitShields === 'object') {
       const current = localStorage.getItem('couple_habit_shields');
