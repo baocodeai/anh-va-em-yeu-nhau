@@ -244,9 +244,26 @@ const categories = [
           ></textarea>
         </div>
 
+        <!-- Sub-tasks / Milestones Checklist Builder -->
+        <div class="form-group subtasks-builder-group">
+          <div class="subtasks-builder-header">
+            <label class="form-label" style="margin-bottom: 0;">📍 Các chặng mục tiêu con (Checklist đa tầng)</label>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn-add-subtask-row" id="btn-add-form-group">+ Thêm Nhóm / Chặng</button>
+              <button type="button" class="btn-add-subtask-row" id="btn-add-form-subtask" style="background: rgba(244, 63, 94, 0.15); border-color: rgba(244, 63, 94, 0.35); color: #fda4af;">+ Thêm Mục Đơn</button>
+            </div>
+          </div>
+          <p class="subtasks-builder-sub">
+            Tạo các nhóm chặng lớn (VD: Miền Bắc, Đông Nam Á...) và thêm các địa điểm nhỏ bên trong. Hoàn thành tất cả các mục nhỏ sẽ tự động hoàn thành nhóm và điều ước lớn!
+          </p>
+          <div class="subtasks-input-list" id="form-subtasks-container">
+            <!-- Dynamically rendered subtask input rows & groups -->
+          </div>
+        </div>
+
         <div class="form-actions compact-actions">
           <button type="button" class="btn-outline-love" id="btn-cancel-bucket">Hủy Bỏ</button>
-          <button type="submit" class="btn-love" id="btn-save-bucket">💖 Lưu Điều Ước</button>
+          <button type="button" class="btn-love" id="btn-save-bucket">💖 Lưu Điều Ước</button>
         </div>
       </form>
     </div>
@@ -729,6 +746,477 @@ const categories = [
     background: rgba(239, 68, 68, 0.3);
     border-color: #f87171;
     box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
+  }
+
+  /* =========================================================================
+     SUB-TASKS / MILESTONES CHECKLIST STYLES
+     ========================================================================= */
+  :global(.subtasks-section-wrap) {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    width: 100%;
+    transition: all 0.25s ease;
+  }
+
+  :global(.subtasks-header-bar) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    cursor: pointer;
+    user-select: none;
+    padding: 6px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
+  }
+
+  :global(.subtasks-header-bar:hover) {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(56, 189, 248, 0.3);
+  }
+
+  :global(.subtasks-header-left) {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  :global(.btn-toggle-subtasks-view) {
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    color: #7dd3fc;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+  }
+
+  :global(.btn-toggle-subtasks-view:hover) {
+    background: rgba(56, 189, 248, 0.25);
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+  }
+
+  :global(.toggle-subtasks-chevron) {
+    font-size: 0.78rem;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-block;
+  }
+
+  :global(.subtasks-section-wrap.is-collapsed .toggle-subtasks-chevron) {
+    transform: rotate(-90deg);
+  }
+
+  :global(.subtasks-section-wrap.is-collapsed .subtasks-list) {
+    display: none;
+  }
+
+  :global(.subtasks-progress-badge) {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 3px 12px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  :global(.subtasks-progress-badge.is-all-done) {
+    color: #86efac;
+    background: rgba(34, 197, 94, 0.15);
+    border-color: rgba(34, 197, 94, 0.4);
+  }
+
+  :global(.subtasks-mini-track) {
+    flex: 1;
+    min-width: 120px;
+    max-width: 220px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+
+  :global(.subtasks-mini-fill) {
+    height: 100%;
+    background: linear-gradient(90deg, #f43f5e, #c084fc, #38bdf8);
+    border-radius: 9999px;
+    transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  :global(.subtasks-list) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-top: 0.2rem;
+  }
+
+  :global(.subtask-item) {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 6px 12px;
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: all 0.2s ease;
+  }
+
+  :global(.subtask-item:hover) {
+    background: rgba(15, 23, 42, 0.85);
+    border-color: rgba(244, 63, 94, 0.3);
+  }
+
+  :global(.subtask-item.is-completed) {
+    background: rgba(34, 197, 94, 0.08);
+    border-color: rgba(34, 197, 94, 0.25);
+  }
+
+  :global(.subtask-checkbox-btn) {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    min-height: 22px;
+    border-radius: 6px;
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: #ffffff;
+    font-weight: 800;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0;
+  }
+
+  :global(.subtask-checkbox-btn:hover) {
+    border-color: #fda4af;
+    transform: scale(1.12);
+  }
+
+  :global(.subtask-checkbox-btn.is-checked) {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-color: #34d399;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+  }
+
+  :global(.subtask-label) {
+    font-size: 0.92rem;
+    color: #e2e8f0;
+    flex: 1;
+    transition: all 0.2s;
+    line-height: 1.4;
+  }
+
+  :global(.subtask-label.is-checked) {
+    color: #94a3b8;
+    text-decoration: line-through;
+  }
+
+  :global(.subtask-date-tag) {
+    font-size: 0.74rem;
+    font-family: var(--mono);
+    color: #86efac;
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  /* Subtask builder inside Modal */
+  .subtasks-builder-group {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .subtasks-builder-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.3rem;
+  }
+
+  .subtasks-builder-sub {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    margin: 0 0 0.8rem;
+    line-height: 1.45;
+  }
+
+  .btn-add-subtask-row {
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    color: #38bdf8;
+    font-size: 0.84rem;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-add-subtask-row:hover {
+    background: rgba(56, 189, 248, 0.25);
+    border-color: #7dd3fc;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+  }
+
+  .subtasks-input-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  :global(.subtask-input-row) {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  :global(.subtask-input-num) {
+    font-size: 0.88rem;
+    font-family: var(--mono);
+    color: #fda4af;
+    font-weight: 700;
+    width: 22px;
+    text-align: center;
+  }
+
+  :global(.subtask-input-field) {
+    min-height: 40px !important;
+    padding: 6px 12px !important;
+    font-size: 0.9rem !important;
+    flex: 1;
+  }
+
+  :global(.btn-remove-subtask) {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+  }
+
+  :global(.btn-remove-subtask:hover) {
+    background: rgba(239, 68, 68, 0.3);
+    border-color: #f87171;
+    color: #ffffff;
+  }
+
+  /* Multi-level Tree Accordion & Nested Sub-tasks */
+  :global(.subtask-group-card) {
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.25s ease;
+  }
+
+  :global(.subtask-group-card.is-completed) {
+    border-color: rgba(34, 197, 94, 0.35);
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.06) 0%, rgba(15, 23, 42, 0.75) 100%);
+  }
+
+  :global(.subtask-group-header) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+  }
+
+  :global(.subtask-group-header:hover) {
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  :global(.subtask-group-left) {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  :global(.subtask-group-chevron) {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    transition: transform 0.2s ease;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  :global(.subtask-group-card.is-collapsed .subtask-group-chevron) {
+    transform: rotate(-90deg);
+  }
+
+  :global(.subtask-group-title) {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #f1f5f9;
+  }
+
+  :global(.subtask-group-right) {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  :global(.subtask-group-badge) {
+    font-size: 0.74rem;
+    font-family: var(--mono);
+    color: #7dd3fc;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    padding: 2px 8px;
+    border-radius: 9999px;
+  }
+
+  :global(.subtask-group-badge.is-done) {
+    color: #86efac;
+    background: rgba(34, 197, 94, 0.15);
+    border-color: rgba(34, 197, 94, 0.35);
+  }
+
+  :global(.subtask-group-children) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 6px 12px 10px 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    position: relative;
+  }
+
+  :global(.subtask-group-children::before) {
+    content: '';
+    position: absolute;
+    top: 6px;
+    bottom: 12px;
+    left: 18px;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 9999px;
+  }
+
+  :global(.subtask-group-card.is-collapsed .subtask-group-children) {
+    display: none;
+  }
+
+  /* Modal Builder for Tree Subtasks */
+  :global(.modal-group-block) {
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  :global(.modal-group-head-row) {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  :global(.modal-group-title-input) {
+    color: #7dd3fc !important;
+    font-weight: 700 !important;
+    border-color: rgba(56, 189, 248, 0.4) !important;
+  }
+
+  :global(.modal-group-children-list) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-left: 1.4rem;
+    border-left: 2px dashed rgba(56, 189, 248, 0.3);
+    margin-left: 0.6rem;
+    margin-top: 0.2rem;
+  }
+
+  :global(.btn-add-child-subtask) {
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px dashed rgba(56, 189, 248, 0.45);
+    color: #7dd3fc;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    align-self: flex-start;
+    margin-top: 4px;
+    margin-left: 0.6rem;
+    transition: all 0.2s ease;
+  }
+
+  :global(.btn-add-child-subtask:hover) {
+    background: rgba(56, 189, 248, 0.25);
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+  }
+
+  :global(.btn-convert-to-group) {
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    color: #38bdf8;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  :global(.btn-convert-to-group:hover) {
+    background: rgba(56, 189, 248, 0.28);
+    border-color: #7dd3fc;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    transform: translateY(-1px);
   }
 
   /* =========================================================================
@@ -1431,6 +1919,149 @@ const categories = [
     });
   }
 
+  // =========================================================================
+  // RECURSIVE MULTI-LEVEL TREE SUBTASK HELPERS
+  // =========================================================================
+  function countLeaves(node: any): { total: number; completed: number } {
+    if (node.children && Array.isArray(node.children) && node.children.length > 0) {
+      let t = 0;
+      let c = 0;
+      node.children.forEach((child: any) => {
+        const res = countLeaves(child);
+        t += res.total;
+        c += res.completed;
+      });
+      return { total: t, completed: c };
+    }
+    return { total: 1, completed: node.completed ? 1 : 0 };
+  }
+
+  function countItemProgress(item: any): { total: number; completed: number; pct: number } {
+    if (!item.subTasks || !Array.isArray(item.subTasks) || item.subTasks.length === 0) {
+      return {
+        total: 1,
+        completed: item.completed ? 1 : 0,
+        pct: item.completed ? 100 : 0
+      };
+    }
+    let t = 0;
+    let c = 0;
+    item.subTasks.forEach((st: any) => {
+      const res = countLeaves(st);
+      t += res.total;
+      c += res.completed;
+    });
+    return {
+      total: t,
+      completed: c,
+      pct: t > 0 ? Math.round((c / t) * 100) : (item.completed ? 100 : 0)
+    };
+  }
+
+  function setNodeCompletionRecursive(node: any, completed: boolean, dateStr?: string) {
+    const d = dateStr || new Date().toISOString().slice(0, 10);
+    node.completed = completed;
+    node.completedDate = completed ? d : undefined;
+    if (node.children && Array.isArray(node.children)) {
+      node.children.forEach((child: any) => {
+        setNodeCompletionRecursive(child, completed, d);
+      });
+    }
+  }
+
+  function recalculateNodeCompletion(node: any): boolean {
+    if (node.children && Array.isArray(node.children) && node.children.length > 0) {
+      node.children.forEach((child: any) => recalculateNodeCompletion(child));
+      const allChildrenDone = node.children.every((child: any) => child.completed);
+      node.completed = allChildrenDone;
+      if (allChildrenDone) {
+        if (!node.completedDate) node.completedDate = new Date().toISOString().slice(0, 10);
+      } else {
+        node.completedDate = undefined;
+      }
+      return node.completed;
+    }
+    return !!node.completed;
+  }
+
+  function recalculateItem(item: any) {
+    if (item.subTasks && Array.isArray(item.subTasks) && item.subTasks.length > 0) {
+      item.subTasks.forEach((st: any) => recalculateNodeCompletion(st));
+      const allDone = item.subTasks.every((st: any) => st.completed);
+      item.completed = allDone;
+      if (allDone) {
+        if (!item.completedDate) item.completedDate = new Date().toISOString().slice(0, 10);
+      } else {
+        item.completedDate = undefined;
+      }
+    }
+  }
+
+  function findAndToggleNode(nodes: any[], targetId: string): boolean {
+    for (const node of nodes) {
+      if (node.id === targetId) {
+        const willBeDone = !node.completed;
+        setNodeCompletionRecursive(node, willBeDone);
+        return true;
+      }
+      if (node.children && Array.isArray(node.children) && node.children.length > 0) {
+        const found = findAndToggleNode(node.children, targetId);
+        if (found) {
+          const allDone = node.children.every((c: any) => c.completed);
+          node.completed = allDone;
+          if (allDone) {
+            if (!node.completedDate) node.completedDate = new Date().toISOString().slice(0, 10);
+          } else {
+            node.completedDate = undefined;
+          }
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  function renderNodeHtml(node: any, itemId: string, depth = 0): string {
+    const hasChildren = node.children && Array.isArray(node.children) && node.children.length > 0;
+    if (hasChildren) {
+      const stats = countLeaves(node);
+      const isGroupDone = stats.total > 0 && stats.completed === stats.total;
+      const groupPct = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
+      const childrenHtml = node.children.map((c: any) => renderNodeHtml(c, itemId, depth + 1)).join('');
+
+      return `
+        <div class="subtask-group-card ${isGroupDone ? 'is-completed' : ''}" data-node-id="${escapeHtml(node.id)}">
+          <div class="subtask-group-header">
+            <div class="subtask-group-left">
+              <span class="subtask-group-chevron">▾</span>
+              <button type="button" class="subtask-checkbox-btn ${isGroupDone ? 'is-checked' : ''}" data-item-id="${escapeHtml(itemId)}" data-node-id="${escapeHtml(node.id)}" title="${isGroupDone ? 'Bỏ đánh dấu cả nhóm này' : 'Đánh dấu hoàn thành toàn bộ nhóm này'}">
+                <span>${isGroupDone ? '✓' : ''}</span>
+              </button>
+              <span class="subtask-group-title">${escapeHtml(node.title)}</span>
+            </div>
+            <div class="subtask-group-right">
+              <span class="subtask-group-badge ${isGroupDone ? 'is-done' : ''}">${stats.completed}/${stats.total} (${groupPct}%)</span>
+            </div>
+          </div>
+          <div class="subtask-group-children">
+            ${childrenHtml}
+          </div>
+        </div>
+      `;
+    } else {
+      const formattedSubDate = node.completedDate ? node.completedDate.split('-').reverse().join('/') : '';
+      return `
+        <div class="subtask-item ${node.completed ? 'is-completed' : 'is-pending'}" data-node-id="${escapeHtml(node.id)}">
+          <button type="button" class="subtask-checkbox-btn ${node.completed ? 'is-checked' : ''}" data-item-id="${escapeHtml(itemId)}" data-node-id="${escapeHtml(node.id)}" title="${node.completed ? 'Bỏ đánh dấu mục này' : 'Đánh dấu hoàn thành mục này'}">
+            <span>${node.completed ? '✓' : ''}</span>
+          </button>
+          <span class="subtask-label ${node.completed ? 'is-checked' : ''}">${escapeHtml(node.title)}</span>
+          ${node.completed && formattedSubDate ? `<span class="subtask-date-tag">✓ ${formattedSubDate}</span>` : ''}
+        </div>
+      `;
+    }
+  }
+
   function renderBucketChecklist(currentFilter = 'Tất cả') {
     const container = document.getElementById('bucket-cards-container');
     const counterText = document.getElementById('bucket-counter-text');
@@ -1467,6 +2098,7 @@ const categories = [
 
       if (!isVisible) return;
 
+      const catClass = getCategoryClass(item.category || '');
       const row = document.createElement('div');
       row.className = `bucket-check-row romantic-card ${item.completed ? 'is-completed' : 'is-pending'}`;
       row.setAttribute('data-id', item.id);
@@ -1479,7 +2111,34 @@ const categories = [
         ? item.createdAt.split('-').reverse().join('/')
         : '';
 
-      const catClass = getCategoryClass(item.category);
+      let subtasksHtml = '';
+      if (item.subTasks && item.subTasks.length > 0) {
+        const itemStats = countItemProgress(item);
+        const allDone = itemStats.total > 0 && itemStats.completed === itemStats.total;
+        const subItemsHtml = item.subTasks.map((st: any) => renderNodeHtml(st, item.id)).join('');
+
+        subtasksHtml = `
+          <div class="subtasks-section-wrap" data-item-id="${item.id}">
+            <div class="subtasks-header-bar" title="Nhấn để mở / đóng danh sách chặng">
+              <div class="subtasks-header-left">
+                <span class="subtasks-progress-badge ${allDone ? 'is-all-done' : ''}">
+                  ${allDone ? '🎉 Đã hoàn tất tất cả chặng!' : `🎯 Tiến độ chặng: ${itemStats.completed}/${itemStats.total} (${itemStats.pct}%)`}
+                </span>
+                <div class="subtasks-mini-track">
+                  <div class="subtasks-mini-fill" style="width: ${itemStats.pct}%;"></div>
+                </div>
+              </div>
+              <button type="button" class="btn-toggle-subtasks-view">
+                <span class="toggle-subtasks-label">Danh sách chặng</span>
+                <span class="toggle-subtasks-chevron">▾</span>
+              </button>
+            </div>
+            <div class="subtasks-list">
+              ${subItemsHtml}
+            </div>
+          </div>
+        `;
+      }
 
       row.innerHTML = `
         <div class="check-left-col">
@@ -1499,6 +2158,8 @@ const categories = [
               ${item.description ? `<span class="check-note-tag">${escapeHtml(item.description)}</span>` : ''}
               ${!item.description && item.memoryNote ? `<span class="check-note-tag">💭 ${escapeHtml(item.memoryNote)}</span>` : ''}
             </div>
+
+            ${subtasksHtml}
           </div>
         </div>
 
@@ -1508,32 +2169,99 @@ const categories = [
         </div>
       `;
 
-      // 1. Toggle completed state
+      // 1. Toggle entire item completion
       const toggleBtn = row.querySelector('.check-toggle-btn');
       if (toggleBtn) {
         toggleBtn.addEventListener('click', () => {
-          item.completed = !item.completed;
-          if (item.completed && !item.completedDate) {
-            item.completedDate = new Date().toISOString().slice(0, 10);
+          const willComplete = !item.completed;
+          item.completed = willComplete;
+          if (willComplete) {
+            if (!item.completedDate) item.completedDate = new Date().toISOString().slice(0, 10);
+            if (item.subTasks && item.subTasks.length > 0) {
+              item.subTasks.forEach((st: any) => {
+                setNodeCompletionRecursive(st, true, item.completedDate);
+              });
+            }
+          } else {
+            item.completedDate = undefined;
+            if (item.subTasks && item.subTasks.length > 0) {
+              item.subTasks.forEach((st: any) => {
+                setNodeCompletionRecursive(st, false);
+              });
+            }
           }
-          // Update in main list
+
           const target = list.find((i) => i.id === item.id);
           if (target) {
             target.completed = item.completed;
             target.completedDate = item.completedDate;
+            target.subTasks = item.subTasks;
           }
           saveStoredBucketList(list);
           renderBucketChecklist(currentFilter);
         });
       }
 
-      // 2. Edit button
+      // 2. Subtasks section collapse / expand toggle (header or button click)
+      const subtaskHeaderBar = row.querySelector('.subtasks-header-bar');
+      if (subtaskHeaderBar) {
+        subtaskHeaderBar.addEventListener('click', () => {
+          const wrap = row.querySelector('.subtasks-section-wrap');
+          if (wrap) {
+            wrap.classList.toggle('is-collapsed');
+            const label = wrap.querySelector('.toggle-subtasks-label');
+            const isCollapsed = wrap.classList.contains('is-collapsed');
+            if (label) {
+              label.textContent = isCollapsed ? 'Mở xem chặng' : 'Thu gọn chặng';
+            }
+          }
+        });
+      }
+
+      // 3. Subtask node checkboxes event listeners (both group and leaf checkboxes)
+      const subtaskBtns = row.querySelectorAll('.subtask-checkbox-btn');
+      subtaskBtns.forEach((sBtn) => {
+        sBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const nodeId = sBtn.getAttribute('data-node-id');
+          if (!nodeId || !item.subTasks) return;
+
+          const updated = findAndToggleNode(item.subTasks, nodeId);
+          if (updated) {
+            recalculateItem(item);
+
+            const target = list.find((i) => i.id === item.id);
+            if (target) {
+              target.completed = item.completed;
+              target.completedDate = item.completedDate;
+              target.subTasks = item.subTasks;
+            }
+            saveStoredBucketList(list);
+            renderBucketChecklist(currentFilter);
+          }
+        });
+      });
+
+      // 4. Subtask group accordion collapse/expand toggler
+      const groupHeaders = row.querySelectorAll('.subtask-group-header');
+      groupHeaders.forEach((gHeader) => {
+        gHeader.addEventListener('click', (e) => {
+          const targetEl = e.target as HTMLElement;
+          if (targetEl.closest('.subtask-checkbox-btn')) return;
+          const groupCard = gHeader.closest('.subtask-group-card');
+          if (groupCard) {
+            groupCard.classList.toggle('is-collapsed');
+          }
+        });
+      });
+
+      // 4. Edit button
       const editBtn = row.querySelector('.btn-item-edit');
       if (editBtn) {
         editBtn.addEventListener('click', () => openEditModal(item));
       }
 
-      // 3. Delete button
+      // 5. Delete button
       const deleteBtn = row.querySelector('.btn-item-delete');
       if (deleteBtn) {
         deleteBtn.addEventListener('click', async () => {
@@ -1600,12 +2328,170 @@ const categories = [
     const btnApplyNewCat = document.getElementById('btn-apply-new-cat');
     const btnCancelNewCat = document.getElementById('btn-cancel-new-cat');
 
-    // Quick Add Category from Filter Bar
-    const btnQuickAddCategory = document.getElementById('btn-quick-add-category');
-
     const sortToggleBtn = document.getElementById('btn-toggle-bucket-sort');
     const sortLabel = document.getElementById('bucket-sort-label');
     const sortArrow = document.getElementById('bucket-sort-arrow');
+
+    // Subtask Tree Builder inside Modal
+    const formSubtasksContainer = document.getElementById('form-subtasks-container');
+    const btnAddFormGroup = document.getElementById('btn-add-form-group');
+    const btnAddFormSubtask = document.getElementById('btn-add-form-subtask');
+
+    function renderModalGroupBlock(groupTitle = '', children: any[] = [], groupId = '', insertBeforeEl: HTMLElement | null = null) {
+      if (!formSubtasksContainer) return null;
+      const gId = groupId || `st-g-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+      const groupBlock = document.createElement('div');
+      groupBlock.className = 'modal-group-block';
+      groupBlock.setAttribute('data-group-id', gId);
+
+      groupBlock.innerHTML = `
+        <div class="modal-group-head-row">
+          <span style="font-size: 1.05rem;">🏷️</span>
+          <input
+            type="text"
+            class="form-input modal-group-title-input"
+            placeholder="Tên nhóm / chặng lớn (VD: Miền Nam, Miền Bắc...)"
+            value="${escapeHtml(groupTitle)}"
+            style="flex: 1; font-weight: 700; color: #7dd3fc;"
+          />
+          <button type="button" class="btn-remove-subtask btn-remove-group" title="Xóa cả nhóm này">🗑️</button>
+        </div>
+        <div class="modal-group-children-list">
+          <!-- Child subtasks rendered here -->
+        </div>
+        <button type="button" class="btn-add-child-subtask">+ Thêm địa điểm / mục nhỏ vào nhóm này</button>
+      `;
+
+      const childrenContainer = groupBlock.querySelector('.modal-group-children-list') as HTMLElement;
+      const btnAddChild = groupBlock.querySelector('.btn-add-child-subtask');
+      const btnRemoveGroup = groupBlock.querySelector('.btn-remove-group');
+
+      if (btnAddChild && childrenContainer) {
+        btnAddChild.addEventListener('click', () => {
+          renderModalChildRow(childrenContainer);
+        });
+      }
+
+      if (btnRemoveGroup) {
+        btnRemoveGroup.addEventListener('click', () => {
+          groupBlock.remove();
+        });
+      }
+
+      if (children && children.length > 0 && childrenContainer) {
+        children.forEach((c) => {
+          renderModalChildRow(childrenContainer, c.title, c.completed, c.id);
+        });
+      } else if (childrenContainer) {
+        renderModalChildRow(childrenContainer);
+      }
+
+      if (insertBeforeEl && insertBeforeEl.parentNode === formSubtasksContainer) {
+        formSubtasksContainer.insertBefore(groupBlock, insertBeforeEl);
+      } else {
+        formSubtasksContainer.appendChild(groupBlock);
+      }
+
+      const input = groupBlock.querySelector('.modal-group-title-input') as HTMLInputElement;
+      if (input && !groupTitle) input.focus();
+      return groupBlock;
+    }
+
+    function renderModalChildRow(container: HTMLElement, title = '', completed = false, id = '') {
+      const cId = id || `st-c-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+      const row = document.createElement('div');
+      row.className = 'subtask-input-row is-child-row';
+      row.setAttribute('data-subtask-id', cId);
+
+      row.innerHTML = `
+        <span style="color: #38bdf8; font-size: 0.9rem; font-weight: bold;">↳</span>
+        <input 
+          type="text" 
+          class="form-input subtask-input-field" 
+          placeholder="Địa điểm / mục nhỏ (VD: Sài Gòn, Vũng Tàu...)"
+          value="${escapeHtml(title)}"
+          style="min-height: 38px; padding: 6px 12px; font-size: 0.88rem;"
+        />
+        <label class="checkbox-toggle-pill" style="min-width: auto; padding: 4px 8px; font-size: 0.78rem;" title="Đánh dấu đã hoàn thành mục này">
+          <input type="checkbox" class="subtask-input-completed" ${completed ? 'checked' : ''} />
+          <span>✓ Xong</span>
+        </label>
+        <button type="button" class="btn-remove-subtask" style="width: 34px; height: 34px; min-width: 34px;" title="Xóa mục nhỏ này">🗑️</button>
+      `;
+
+      const btnRemove = row.querySelector('.btn-remove-subtask');
+      if (btnRemove) {
+        btnRemove.addEventListener('click', () => {
+          row.remove();
+        });
+      }
+
+      container.appendChild(row);
+      const input = row.querySelector('.subtask-input-field') as HTMLInputElement;
+      if (input && !title) input.focus();
+      return row;
+    }
+
+    function renderModalStandaloneSubtaskRow(title = '', completed = false, id = '', insertBeforeEl: HTMLElement | null = null) {
+      if (!formSubtasksContainer) return null;
+      const rowId = id || `st-s-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+      const subRow = document.createElement('div');
+      subRow.className = 'subtask-input-row is-standalone';
+      subRow.setAttribute('data-subtask-id', rowId);
+
+      subRow.innerHTML = `
+        <span class="subtask-input-num">📍</span>
+        <input 
+          type="text" 
+          class="form-input subtask-input-field" 
+          placeholder="Nhập chặng / mục tiêu (VD: Miền Nam, Miền Bắc...)"
+          value="${escapeHtml(title)}"
+        />
+        <button type="button" class="btn-convert-to-group" title="Tạo các địa điểm / mục nhỏ hơn bên trong chặng này">
+          + Mục con ↳
+        </button>
+        <label class="checkbox-toggle-pill" style="min-width: auto; padding: 4px 8px; font-size: 0.78rem;" title="Đánh dấu đã hoàn thành">
+          <input type="checkbox" class="subtask-input-completed" ${completed ? 'checked' : ''} />
+          <span>✓ Xong</span>
+        </label>
+        <button type="button" class="btn-remove-subtask" title="Xóa mục này">🗑️</button>
+      `;
+
+      // Convert to Group with sub-items when clicking "+ Mục con ↳"
+      const btnConvertToGroup = subRow.querySelector('.btn-convert-to-group');
+      if (btnConvertToGroup) {
+        btnConvertToGroup.addEventListener('click', () => {
+          const inputField = subRow.querySelector('.subtask-input-field') as HTMLInputElement | null;
+          const currentVal = inputField ? inputField.value.trim() : '';
+          renderModalGroupBlock(currentVal || title, [], rowId, subRow);
+          subRow.remove();
+        });
+      }
+
+      const btnRemove = subRow.querySelector('.btn-remove-subtask');
+      if (btnRemove) {
+        btnRemove.addEventListener('click', () => {
+          subRow.remove();
+        });
+      }
+
+      if (insertBeforeEl && insertBeforeEl.parentNode === formSubtasksContainer) {
+        formSubtasksContainer.insertBefore(subRow, insertBeforeEl);
+      } else {
+        formSubtasksContainer.appendChild(subRow);
+      }
+
+      const input = subRow.querySelector('.subtask-input-field') as HTMLInputElement;
+      if (input && !title) input.focus();
+      return subRow;
+    }
+
+    if (btnAddFormGroup) {
+      btnAddFormGroup.addEventListener('click', () => renderModalGroupBlock());
+    }
+    if (btnAddFormSubtask) {
+      btnAddFormSubtask.addEventListener('click', () => renderModalStandaloneSubtaskRow());
+    }
 
     function openAddModal() {
       if (!modal) return;
@@ -1621,6 +2507,7 @@ const categories = [
       if (formCompletedDate) formCompletedDate.value = '';
       if (groupCompletedDate) groupCompletedDate.style.display = 'none';
       if (labelCompletedText) labelCompletedText.textContent = '🤍 Đang ấp ủ làm';
+      if (formSubtasksContainer) formSubtasksContainer.innerHTML = '';
 
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
@@ -1645,6 +2532,19 @@ const categories = [
       }
       if (labelCompletedText) {
         labelCompletedText.textContent = item.completed ? '❤️ Đã hoàn thành' : '🤍 Đang ấp ủ làm';
+      }
+
+      if (formSubtasksContainer) {
+        formSubtasksContainer.innerHTML = '';
+        if (item.subTasks && item.subTasks.length > 0) {
+          item.subTasks.forEach((st: any) => {
+            if (st.children && st.children.length > 0) {
+              renderModalGroupBlock(st.title, st.children, st.id);
+            } else {
+              renderModalStandaloneSubtaskRow(st.title, st.completed, st.id);
+            }
+          });
+        }
       }
 
       modal.classList.add('is-open');
@@ -1738,7 +2638,6 @@ const categories = [
       const cats = getStoredCategories();
       const items = getStoredBucketList();
 
-      // Count wishes per category
       const countMap: Record<string, number> = {};
       items.forEach((item) => {
         const c = item.category || 'Hẹn hò lãng mạn';
@@ -1758,7 +2657,6 @@ const categories = [
         row.className = 'cat-item-row';
         row.setAttribute('data-category', cat);
 
-        // Standard View HTML
         const renderDefaultRow = () => {
           row.innerHTML = `
             <div class="cat-item-left">
@@ -1771,7 +2669,6 @@ const categories = [
             </div>
           `;
 
-          // 1. Inline Rename (No browser prompt)
           const btnEdit = row.querySelector('.btn-cat-edit');
           if (btnEdit) {
             btnEdit.addEventListener('click', () => {
@@ -1800,13 +2697,11 @@ const categories = [
                   return;
                 }
 
-                // Update categories list
                 let currentCats = getStoredCategories();
                 currentCats = currentCats.map((c) => (c === cat ? trimmedNewName : c));
                 currentCats = Array.from(new Set(currentCats));
                 saveStoredCategories(currentCats);
 
-                // Cascade update in bucket list items
                 const allItems = getStoredBucketList();
                 allItems.forEach((item) => {
                   if (item.category === cat) {
@@ -1837,12 +2732,10 @@ const categories = [
             });
           }
 
-          // 2. Delete Category (Romantic Modal / Migration Dialog)
           const btnDel = row.querySelector('.btn-cat-del');
           if (btnDel) {
             btnDel.addEventListener('click', async () => {
               if (count === 0) {
-                // Confirm with Romantic Confirm Envelope
                 const confirmed = (window as any).romanticConfirm
                   ? await (window as any).romanticConfirm({
                       heading: 'Xóa Danh Mục Này Nhé?',
@@ -1867,7 +2760,6 @@ const categories = [
                   renderBucketChecklist(activeFilter);
                 }
               } else {
-                // Has wishes -> Open Interactive Migration Modal (Lựa chọn 2)
                 pendingDeleteCategory = cat;
                 if (catMigMessage) {
                   catMigMessage.innerHTML = `Danh mục <strong>"${escapeHtml(cat)}"</strong> đang có <strong>${count} điều ước</strong> cùng nhau.`;
@@ -1915,7 +2807,6 @@ const categories = [
       });
     }
 
-    // Add new category from Category Manager Modal
     function handleAddNewCatFromManager() {
       if (!catMgrNewInput) return;
       const val = catMgrNewInput.value.trim();
@@ -1942,7 +2833,6 @@ const categories = [
       });
     }
 
-    // Migration Modal Confirm (Lựa chọn 2)
     if (catMigClose) catMigClose.addEventListener('click', () => catMigModal?.classList.remove('is-open'));
     if (catMigBtnCancel) catMigBtnCancel.addEventListener('click', () => catMigModal?.classList.remove('is-open'));
     if (catMigBtnConfirm) {
@@ -1951,7 +2841,6 @@ const categories = [
         const targetCat = catMigTargetSelect.value;
         const catToDelete = pendingDeleteCategory;
 
-        // 1. Migrate all wishes to target category
         const allItems = getStoredBucketList();
         allItems.forEach((item) => {
           if (item.category === catToDelete) {
@@ -1960,14 +2849,11 @@ const categories = [
         });
         saveStoredBucketList(allItems);
 
-        // 2. Remove category from categories list
         const currentCats = getStoredCategories().filter((c) => c !== catToDelete);
         saveStoredCategories(currentCats);
 
-        // 3. Reset active filter if needed
         if (activeFilter === catToDelete) activeFilter = targetCat;
 
-        // 4. Close migration modal & refresh UI
         if (catMigModal) catMigModal.classList.remove('is-open');
         pendingDeleteCategory = '';
         renderCategoryManagerList();
@@ -1995,55 +2881,174 @@ const categories = [
       });
     }
 
-    if (form) {
-      form.addEventListener('submit', (e) => {
+    const btnSaveBucket = document.getElementById('btn-save-bucket');
+
+    function handleSaveBucket(e?: Event) {
+      if (e) {
         e.preventDefault();
-        const list = getStoredBucketList();
-        const id = formId ? formId.value.trim() : '';
-        const title = formTitle ? formTitle.value.trim() : '';
-        let category = formCategory ? formCategory.value : 'Hẹn hò lãng mạn';
-        if (category === '__create_new__') {
-          category = 'Hẹn hò lãng mạn';
+      }
+
+      const list = getStoredBucketList();
+      const formIdEl = document.getElementById('form-item-id') as HTMLInputElement | null;
+      const formTitleEl = document.getElementById('form-title') as HTMLInputElement | null;
+      const formCatEl = document.getElementById('form-category') as HTMLSelectElement | null;
+      const formCreatedDateEl = document.getElementById('form-created-date') as HTMLInputElement | null;
+      const formDescEl = document.getElementById('form-desc') as HTMLTextAreaElement | null;
+      const formCompletedEl = document.getElementById('form-completed') as HTMLInputElement | null;
+      const formCompletedDateEl = document.getElementById('form-completed-date') as HTMLInputElement | null;
+
+      const id = formIdEl ? formIdEl.value.trim() : '';
+      const title = formTitleEl ? formTitleEl.value.trim() : '';
+      let category = formCatEl ? formCatEl.value : 'Hẹn hò lãng mạn';
+      if (category === '__create_new__') {
+        category = 'Hẹn hò lãng mạn';
+      }
+      const createdAt = formCreatedDateEl?.value || new Date().toISOString().slice(0, 10);
+      const description = formDescEl ? formDescEl.value.trim() : '';
+
+      if (!title) {
+        if (formTitleEl) {
+          formTitleEl.focus();
+          formTitleEl.style.borderColor = '#f43f5e';
+          formTitleEl.style.boxShadow = '0 0 16px rgba(244, 63, 94, 0.6)';
+          setTimeout(() => {
+            if (formTitleEl) {
+              formTitleEl.style.borderColor = '';
+              formTitleEl.style.boxShadow = '';
+            }
+          }, 2500);
         }
-        const createdAt = formCreatedDate ? (formCreatedDate.value || new Date().toISOString().slice(0, 10)) : new Date().toISOString().slice(0, 10);
-        const description = formDesc ? formDesc.value.trim() : '';
-        const completed = formCompleted ? formCompleted.checked : false;
-        const completedDate = completed ? (formCompletedDate.value || new Date().toISOString().slice(0, 10)) : '';
+        alert('🌸 Vui lòng nhập tên điều ước trước khi lưu nhé!');
+        return;
+      }
 
-        if (!title) return;
+      // Collect multi-level subtasks from builder
+      const subTasks: any[] = [];
+      const subContainer = document.getElementById('form-subtasks-container');
+      if (subContainer) {
+        Array.from(subContainer.children).forEach((childEl) => {
+          if (childEl.classList.contains('modal-group-block')) {
+            const gId = childEl.getAttribute('data-group-id') || `st-g-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+            const gTitleInput = childEl.querySelector('.modal-group-title-input') as HTMLInputElement | null;
+            const gTitle = gTitleInput ? gTitleInput.value.trim() : '';
+            if (!gTitle) return;
 
-        if (id) {
-          // Edit existing
-          const idx = list.findIndex((i: any) => i.id === id);
-          if (idx !== -1) {
-            list[idx] = {
-              ...list[idx],
-              title,
-              category,
-              createdAt,
-              description,
-              completed,
-              completedDate
-            };
+            const childrenNodes: any[] = [];
+            const childRows = childEl.querySelectorAll('.modal-group-children-list .subtask-input-row');
+            childRows.forEach((cRow) => {
+              const cId = cRow.getAttribute('data-subtask-id') || `st-c-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+              const cInput = cRow.querySelector('.subtask-input-field') as HTMLInputElement | null;
+              const cCheck = cRow.querySelector('.subtask-input-completed') as HTMLInputElement | null;
+              const cTitle = cInput ? cInput.value.trim() : '';
+              const cDone = cCheck ? cCheck.checked : false;
+              if (cTitle) {
+                childrenNodes.push({
+                  id: cId,
+                  title: cTitle,
+                  completed: cDone,
+                  completedDate: cDone ? new Date().toISOString().slice(0, 10) : undefined
+                });
+              }
+            });
+
+            const allChildDone = childrenNodes.length > 0 && childrenNodes.every((c) => c.completed);
+            subTasks.push({
+              id: gId,
+              title: gTitle,
+              completed: allChildDone,
+              completedDate: allChildDone ? new Date().toISOString().slice(0, 10) : undefined,
+              children: childrenNodes.length > 0 ? childrenNodes : undefined
+            });
+          } else if (childEl.classList.contains('subtask-input-row')) {
+            const sId = childEl.getAttribute('data-subtask-id') || `st-s-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+            const sInput = childEl.querySelector('.subtask-input-field') as HTMLInputElement | null;
+            const sCheck = childEl.querySelector('.subtask-input-completed') as HTMLInputElement | null;
+            const sTitle = sInput ? sInput.value.trim() : '';
+            const sDone = sCheck ? sCheck.checked : false;
+            if (sTitle) {
+              subTasks.push({
+                id: sId,
+                title: sTitle,
+                completed: sDone,
+                completedDate: sDone ? new Date().toISOString().slice(0, 10) : undefined
+              });
+            }
           }
-        } else {
-          // Add new item
-          const newItem = {
-            id: `bl-${Date.now()}`,
+        });
+      }
+
+      let completed = formCompletedEl ? formCompletedEl.checked : false;
+      if (subTasks.length > 0) {
+        let totalLeaves = 0;
+        let completedLeaves = 0;
+        subTasks.forEach((st) => {
+          const res = countLeaves(st);
+          totalLeaves += res.total;
+          completedLeaves += res.completed;
+        });
+        completed = totalLeaves > 0 && completedLeaves === totalLeaves;
+      }
+      const completedDate = completed
+        ? (formCompletedDateEl?.value || new Date().toISOString().slice(0, 10))
+        : '';
+
+      if (id) {
+        // Edit existing
+        const idx = list.findIndex((i: any) => String(i.id) === String(id));
+        if (idx !== -1) {
+          list[idx] = {
+            ...list[idx],
             title,
             category,
             createdAt,
             description,
             completed,
-            completedDate
+            completedDate: completed ? completedDate : undefined,
+            subTasks: subTasks.length > 0 ? subTasks : undefined
           };
-          list.unshift(newItem);
+        } else {
+          list.unshift({
+            id,
+            title,
+            category,
+            createdAt,
+            description,
+            completed,
+            completedDate: completed ? completedDate : undefined,
+            subTasks: subTasks.length > 0 ? subTasks : undefined
+          });
         }
+      } else {
+        // Add new item
+        const newItem = {
+          id: `bl-${Date.now()}`,
+          title,
+          category,
+          createdAt,
+          description,
+          completed,
+          completedDate: completed ? completedDate : undefined,
+          subTasks: subTasks.length > 0 ? subTasks : undefined
+        };
+        list.unshift(newItem);
+      }
 
-        saveStoredBucketList(list);
-        renderCategoryFilters();
-        renderBucketChecklist(activeFilter);
-        closeModal();
+      saveStoredBucketList(list);
+      renderCategoryFilters();
+      renderBucketChecklist(activeFilter);
+      closeModal();
+    }
+
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        handleSaveBucket(e);
+      });
+    }
+    if (btnSaveBucket) {
+      btnSaveBucket.addEventListener('click', (e) => {
+        e.preventDefault();
+        handleSaveBucket(e);
       });
     }
 
