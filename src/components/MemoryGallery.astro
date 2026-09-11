@@ -163,8 +163,22 @@ const defaultMemoriesJSON = JSON.stringify(PHOTO_MEMORIES).replace(/</g, '\\u003
       <div class="zen-modal-top-bar">
         <div class="zen-modal-header-info">
           <span class="zen-header-badge">✨ Zen Love Studio</span>
-          <h3 class="zen-header-title">Trang Soạn Thảo Kỷ Niệm & Cảm Xúc</h3>
+          <h3 class="zen-header-title">Trang Soạn Thảo Kỷ Niệm &amp; Cảm Xúc</h3>
         </div>
+
+        <!-- Mobile Sub-Navigation Tabs (Only active on Mobile) -->
+        <div class="zen-mobile-nav-bar" id="zen-mobile-nav-bar" role="tablist">
+          <button type="button" class="zen-mobile-tab-btn is-active" data-pane="left" id="btn-tab-pane-left" role="tab" aria-selected="true">
+            <span>📸 1. Ảnh &amp; Bìa</span>
+          </button>
+          <button type="button" class="zen-mobile-tab-btn" data-pane="right" id="btn-tab-pane-right" role="tab" aria-selected="false">
+            <span>✍️ 2. Viết Bài</span>
+          </button>
+          <button type="button" class="zen-mobile-tab-btn" data-pane="preview" id="btn-tab-pane-preview" role="tab" aria-selected="false">
+            <span>👁️ 3. Xem Trước</span>
+          </button>
+        </div>
+
         <button type="button" class="zen-modal-close-btn" id="memory-modal-close" aria-label="Đóng">&times;</button>
       </div>
 
@@ -355,6 +369,17 @@ const defaultMemoriesJSON = JSON.stringify(PHOTO_MEMORIES).replace(/</g, '\\u003
                   rows="2"
                   placeholder="Lời đề tựa ngắn trên thẻ Polaroid (hoặc câu thơ thì thầm ngọt ngào nhất)..."
                 ></textarea>
+              </div>
+
+              <!-- Love Prompt Suggestions (Gợi ý câu lãng mạn) -->
+              <div class="zen-love-prompts-bar">
+                <span class="zen-prompts-label">💌 Gợi ý:</span>
+                <div class="zen-prompts-scroll">
+                  <button type="button" class="zen-prompt-btn" data-prompt="Hôm nay hai đứa mình cùng nhau ">🌸 Hôm nay cùng nhau...</button>
+                  <button type="button" class="zen-prompt-btn" data-prompt="Khoảnh khắc làm anh nhớ nhất là khi ">✨ Khoảnh khắc nhớ nhất...</button>
+                  <button type="button" class="zen-prompt-btn" data-prompt="Nụ cười của em hôm ấy làm anh ">🥰 Nụ cười của em...</button>
+                  <button type="button" class="zen-prompt-btn" data-prompt="> &quot;Có những ngày bình yên chỉ cần bên nhau là đủ.&quot;\n\n">📜 Khổ thơ thì thầm</button>
+                </div>
               </div>
 
               <!-- Sticky Format & View Toolbar -->
@@ -1220,6 +1245,68 @@ Hai đứa mình dạo bước bên nhau..."
     font-weight: 700;
     color: #ffffff;
     margin: 0;
+  }
+
+  /* Hidden on Desktop, enabled via mobile media queries */
+  .zen-mobile-nav-bar {
+    display: none;
+  }
+
+  .zen-love-prompts-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0.8rem;
+    padding: 6px 10px;
+    background: rgba(244, 63, 94, 0.08);
+    border: 1px dashed rgba(244, 63, 94, 0.3);
+    border-radius: 12px;
+    width: 100%;
+  }
+
+  .zen-prompts-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #fda4af;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .zen-prompts-scroll {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    white-space: nowrap;
+    width: 100%;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .zen-prompts-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .zen-prompt-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #fce7f3;
+    font-size: 0.76rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .zen-prompt-btn:hover {
+    background: rgba(244, 63, 94, 0.25);
+    border-color: #fda4af;
+    color: #ffffff;
+    transform: translateY(-1px);
   }
 
   .zen-modal-close-btn {
@@ -2719,11 +2806,114 @@ Hai đứa mình dạo bước bên nhau..."
     }
 
     .zen-modal-top-bar {
-      padding: 0.75rem 1rem;
+      padding: 0.65rem 0.9rem;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 6px;
+    }
+
+    .zen-modal-top-bar .zen-modal-close-btn {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      font-size: 1.2rem;
     }
 
     .zen-header-title {
-      font-size: 0.92rem;
+      font-size: 0.9rem;
+    }
+
+    /* Mobile Sub-Navigation Tabs Bar */
+    .zen-mobile-nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.45);
+      padding: 3px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      width: 100%;
+      margin-top: 2px;
+    }
+
+    .zen-mobile-tab-btn {
+      flex: 1;
+      padding: 6px 4px;
+      border-radius: 9999px;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      white-space: nowrap;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .zen-mobile-tab-btn.is-active {
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.95), rgba(147, 51, 234, 0.95));
+      color: #ffffff;
+      font-weight: 700;
+      box-shadow: 0 2px 12px rgba(244, 63, 94, 0.45);
+    }
+
+    /* Mobile Tab Switching Pane visibility */
+    .zen-journal-card.mobile-pane-left .zen-left-pane {
+      display: flex !important;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .zen-journal-card.mobile-pane-left .zen-right-pane {
+      display: none !important;
+    }
+
+    .zen-journal-card.mobile-pane-right .zen-left-pane {
+      display: none !important;
+    }
+    .zen-journal-card.mobile-pane-right .zen-right-pane {
+      display: flex !important;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .zen-journal-card.mobile-pane-right .zen-title-container,
+    .zen-journal-card.mobile-pane-right .zen-meta-row,
+    .zen-journal-card.mobile-pane-right .zen-lead-quote-wrap,
+    .zen-journal-card.mobile-pane-right .zen-love-prompts-bar,
+    .zen-journal-card.mobile-pane-right .zen-sticky-toolbar {
+      display: flex !important;
+    }
+    .zen-journal-card.mobile-pane-right #workspace-editor-col {
+      display: block !important;
+    }
+    .zen-journal-card.mobile-pane-right #workspace-preview-col {
+      display: none !important;
+    }
+
+    .zen-journal-card.mobile-pane-preview .zen-left-pane {
+      display: none !important;
+    }
+    .zen-journal-card.mobile-pane-preview .zen-right-pane {
+      display: flex !important;
+      flex: 1;
+      overflow-y: auto;
+    }
+    /* HIDE ALL INPUT FIELDS AND TOOLBAR IN PREVIEW TAB SO IT LOOKS LIKE A TRUE FINISHED ARTICLE */
+    .zen-journal-card.mobile-pane-preview .zen-title-container,
+    .zen-journal-card.mobile-pane-preview .zen-meta-row,
+    .zen-journal-card.mobile-pane-preview .zen-lead-quote-wrap,
+    .zen-journal-card.mobile-pane-preview .zen-love-prompts-bar,
+    .zen-journal-card.mobile-pane-preview .zen-sticky-toolbar {
+      display: none !important;
+    }
+    .zen-journal-card.mobile-pane-preview #workspace-editor-col {
+      display: none !important;
+    }
+    .zen-journal-card.mobile-pane-preview #workspace-preview-col {
+      display: block !important;
     }
 
     .zen-left-pane {
@@ -3547,29 +3737,82 @@ Hai đứa mình dạo bước bên nhau..."
     }
 
     let authorBadge = '✍️ AI & Maze';
-    if (author === 'ai') authorBadge = '✍️ AI 🚀';
-    else if (author === 'maze') authorBadge = '✍️ Maze 🌸';
+    let coupleSignature = 'AI 🚀 & Maze 🌸';
+    if (author === 'ai') {
+      authorBadge = '✍️ Chắp bút bởi AI 🚀';
+      coupleSignature = 'Thương gửi Maze từ AI 🚀';
+    } else if (author === 'maze') {
+      authorBadge = '✍️ Chắp bút bởi Maze 🌸';
+      coupleSignature = 'Thương gửi AI từ Maze 🌸';
+    }
+
+    const coverPhotoUrl = currentUploadedMemPhoto || (document.getElementById('form-mem-url') as HTMLInputElement)?.value.trim() || '';
+
+    let coverPhotoHtml = '';
+    if (coverPhotoUrl) {
+      coverPhotoHtml = `
+        <div class="journal-cover-wrap" style="height: 240px; border-radius: 16px; margin-bottom: 1.4rem; overflow: hidden; position: relative;">
+          <img src="${coverPhotoUrl}" alt="${escapeHtml(title)}" class="journal-cover-img" style="width: 100%; height: 100%; object-fit: cover;" />
+          <div class="journal-cover-gradient"></div>
+          <div class="journal-cover-meta-badge" style="position: absolute; bottom: 12px; right: 16px;">${authorBadge}</div>
+        </div>
+      `;
+    }
+
+    let galleryHtml = '';
+    if (currentAttachedGallery && currentAttachedGallery.length > 0) {
+      galleryHtml = `
+        <div class="journal-gallery-section" style="margin: 2rem 0; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08);">
+          <div class="journal-gallery-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 1rem;">
+            <span class="gallery-title-icon" style="font-size: 1.2rem;">📸</span>
+            <h4 class="gallery-section-title" style="font-size: 1.1rem; font-weight: 700; color: #fda4af; margin: 0;">Khoảnh Khắc Cùng Ngày (${currentAttachedGallery.length} ảnh)</h4>
+          </div>
+          <div class="journal-gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem;">
+            ${currentAttachedGallery.map((img, idx) => `
+              <div class="gallery-photo-card journal-inline-img-wrap" data-src="${img.url}" data-caption="${escapeHtml(img.caption || `Ảnh ${idx + 1}`)}" style="border-radius: 12px; overflow: hidden; background: #020617; border: 1px solid rgba(244, 63, 94, 0.28);">
+                <img src="${img.url}" alt="${escapeHtml(img.caption || `Ảnh ${idx + 1}`)}" class="gallery-photo-img" style="height: 140px; width: 100%; object-fit: cover; display: block;" />
+                ${img.caption ? `<p class="gallery-photo-caption" style="padding: 6px 10px; font-size: 0.78rem; text-align: center; color: #cbd5e1; margin: 0; background: rgba(15, 23, 42, 0.95); font-style: italic;">${escapeHtml(img.caption)}</p>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
 
     const renderedStory = renderMarkdownToHtml(content, title, currentAttachedGallery) || `
       <p class="journal-paragraph" style="color: #64748b; font-style: italic;">
-        Nội dung bài viết sẽ hiển thị trực tiếp tại đây khi bạn gõ bên trái...
+        Nội dung câu chuyện chưa được nhập... Bạn có thể gõ thêm câu chuyện lãng mạn ở tab "Viết Bài".
       </p>
     `;
 
     previewBox.innerHTML = `
-      <div style="border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.8rem; margin-bottom: 1.2rem;">
-        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 0.6rem;">
-          <span class="journal-pill" style="font-size: 0.75rem; padding: 2px 10px;">🗓️ ${escapeHtml(date)}</span>
-          <span class="journal-pill" style="font-size: 0.75rem; padding: 2px 10px;">📍 ${escapeHtml(loc)}</span>
-          <span class="journal-pill" style="font-size: 0.75rem; padding: 2px 10px; border-color: rgba(244,63,94,0.4); color: #fda4af;">${authorBadge}</span>
-          ${mood ? `<span class="journal-pill journal-pill-mood" style="font-size: 0.75rem; padding: 2px 10px;">${escapeHtml(mood)}</span>` : ''}
-          ${weather ? `<span class="journal-pill journal-pill-weather" style="font-size: 0.75rem; padding: 2px 10px;">${escapeHtml(weather)}</span>` : ''}
+      <div class="journal-article-preview-card" style="background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(244, 63, 94, 0.25); border-radius: 18px; padding: 1.2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        ${coverPhotoHtml}
+
+        <div style="border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.8rem; margin-bottom: 1.2rem;">
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 0.8rem;">
+            <span class="journal-pill" style="font-size: 0.76rem; padding: 3px 12px;">🗓️ ${escapeHtml(date)}</span>
+            <span class="journal-pill" style="font-size: 0.76rem; padding: 3px 12px;">📍 ${escapeHtml(loc)}</span>
+            <span class="journal-pill" style="font-size: 0.76rem; padding: 3px 12px; border-color: rgba(244,63,94,0.4); color: #fda4af;">${authorBadge}</span>
+            ${mood ? `<span class="journal-pill journal-pill-mood" style="font-size: 0.76rem; padding: 3px 12px;">🥰 ${escapeHtml(mood)}</span>` : ''}
+            ${weather ? `<span class="journal-pill journal-pill-weather" style="font-size: 0.76rem; padding: 3px 12px;">🌤️ ${escapeHtml(weather)}</span>` : ''}
+          </div>
+          <h1 style="font-size: 1.75rem; font-weight: 800; color: #ffffff; margin: 0 0 0.8rem; line-height: 1.3;" class="gradient-love-text">${escapeHtml(title)}</h1>
+          ${caption ? `<div class="journal-lead-quote" style="padding: 0.8rem 1.2rem; margin-bottom: 0; border-left: 3px solid #f43f5e; background: rgba(244, 63, 94, 0.08); border-radius: 0 12px 12px 0;"><p class="journal-quote-text" style="font-size: 0.95rem; font-style: italic; color: #fbcfe8; margin: 0;">"${escapeHtml(caption)}"</p></div>` : ''}
         </div>
-        <h2 style="font-size: 1.6rem; font-weight: 800; color: #ffffff; margin: 0 0 0.5rem;" class="gradient-love-text">${escapeHtml(title)}</h2>
-        ${caption ? `<div class="journal-lead-quote" style="padding: 0.6rem 1rem; margin-bottom: 0;"><p class="journal-quote-text" style="font-size: 0.92rem;">"${escapeHtml(caption)}"</p></div>` : ''}
-      </div>
-      <div class="studio-preview-content">
-        ${renderedStory}
+
+        <div class="studio-preview-content journal-story-text" style="font-size: 1.02rem; line-height: 1.85; color: #e2e8f0; margin-bottom: 1.5rem;">
+          ${renderedStory}
+        </div>
+
+        ${galleryHtml}
+
+        <!-- Romantic Love Sign-off -->
+        <div class="journal-signoff-card" style="text-align: center; padding: 1.6rem 1.2rem; background: radial-gradient(circle at 50% 50%, rgba(244, 63, 94, 0.12) 0%, rgba(15, 23, 42, 0.6) 80%); border-radius: 14px; border: 1px dashed rgba(244, 63, 94, 0.35); margin-top: 1.8rem;">
+          <span class="signoff-heart" style="font-size: 1.6rem; display: block; margin-bottom: 0.4rem;">💖</span>
+          <p class="signoff-text" style="font-size: 0.9rem; color: #cbd5e1; font-style: italic; margin: 0 0 0.3rem;">Trang nhật ký được lưu giữ vĩnh cửu giữa muôn vì sao</p>
+          <span class="signoff-couple" style="font-size: 1.05rem; font-weight: 700; color: #fda4af;">${coupleSignature}</span>
+        </div>
       </div>
     `;
 
@@ -3817,6 +4060,7 @@ Hai đứa mình dạo bước bên nhau..."
     updateMemPhotoPreview('');
     renderAttachedGalleryEditor();
     setStudioViewMode('editor');
+    setMobilePane('left');
     updateLivePreview();
     modal.classList.add('is-open');
   }
@@ -3847,9 +4091,34 @@ Hai đứa mình dạo bước bên nhau..."
     currentAttachedGallery = (photo.galleryImages || []).map((img) => ({ ...img }));
     renderAttachedGalleryEditor();
     setStudioViewMode('editor');
+    setMobilePane('left');
     updateLivePreview();
 
     modal.classList.add('is-open');
+  }
+
+  function setMobilePane(pane: 'left' | 'right' | 'preview') {
+    const studioCard = document.querySelector('.zen-journal-card.zen-split-studio');
+    const tabMobileLeft = document.getElementById('btn-tab-pane-left');
+    const tabMobileRight = document.getElementById('btn-tab-pane-right');
+    const tabMobilePreview = document.getElementById('btn-tab-pane-preview');
+    const mobileTabBtns = [tabMobileLeft, tabMobileRight, tabMobilePreview];
+
+    if (studioCard) {
+      studioCard.classList.remove('mobile-pane-left', 'mobile-pane-right', 'mobile-pane-preview');
+      studioCard.classList.add(`mobile-pane-${pane}`);
+    }
+
+    mobileTabBtns.forEach((btn) => {
+      if (!btn) return;
+      const isSelected = btn.getAttribute('data-pane') === pane;
+      btn.classList.toggle('is-active', isSelected);
+      btn.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+    });
+
+    if (pane === 'preview') {
+      updateLivePreview();
+    }
   }
 
   function updateMemPhotoPreview(url: string) {
@@ -3884,6 +4153,26 @@ Hai đứa mình dạo bước bên nhau..."
   // =========================================================================
   function initMemoryInteractive() {
     renderMemories();
+
+    // Mobile Navigation Pane Switcher
+    const tabMobileLeft = document.getElementById('btn-tab-pane-left');
+    const tabMobileRight = document.getElementById('btn-tab-pane-right');
+    const tabMobilePreview = document.getElementById('btn-tab-pane-preview');
+
+    tabMobileLeft?.addEventListener('click', () => setMobilePane('left'));
+    tabMobileRight?.addEventListener('click', () => setMobilePane('right'));
+    tabMobilePreview?.addEventListener('click', () => setMobilePane('preview'));
+
+    // Love Prompt Suggestion Clicks
+    const promptBtns = document.querySelectorAll('.zen-prompt-btn');
+    promptBtns.forEach((btn: any) => {
+      btn.addEventListener('click', () => {
+        const promptText = btn.getAttribute('data-prompt') || '';
+        if (promptText) {
+          insertAtCursor(promptText);
+        }
+      });
+    });
 
     // View Switcher (Stories Polaroid vs All Uploaded Photos)
     const btnViewStories = document.getElementById('btn-view-stories');
