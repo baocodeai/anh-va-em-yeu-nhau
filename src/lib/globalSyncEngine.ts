@@ -85,6 +85,15 @@ export function initGlobalSyncEngine(): void {
       }
     }
 
+    // 7. Custom Passcode / Mật mã tình yêu
+    if (cloudData.passcode !== undefined && typeof cloudData.passcode === 'string') {
+      const current = localStorage.getItem('couple_custom_passcode');
+      if (current !== cloudData.passcode) {
+        localStorage.setItem('couple_custom_passcode', cloudData.passcode);
+        hasChanges = true;
+      }
+    }
+
     if (hasChanges) {
       window.dispatchEvent(new CustomEvent('couple-cloud-updated', { detail: cloudData }));
     }

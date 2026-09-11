@@ -42,7 +42,7 @@ export const COUPLE_CONFIG: CoupleConfig = {
     role: 'Anh',
     birthday: '2005-09-28', // 28/09/2005
     zodiac: 'Thiên Bình (Libra)',
-    avatar: '/photos/ai-avatar.svg',
+    avatar: '/assets/ai.png',
     bio: 'Chàng trai luôn muốn dùng cả bầu trời ngân hà và sự kiên trì của mình để che chở và đồng hành cùng Maze.',
     color: '#38bdf8' // Xanh ánh sao lấp lánh
   },
@@ -54,7 +54,7 @@ export const COUPLE_CONFIG: CoupleConfig = {
     role: 'Em',
     birthday: '2005-12-11', // 11/12/2005
     zodiac: 'Nhân Mã (Sagittarius)',
-    avatar: '/photos/maze-avatar.svg',
+    avatar: '/assets/maze.jpg',
     bio: 'Cô gái dịu dàng, nụ cười thắp sáng những vì sao, nguồn cảm hứng ngọt ngào nhất trong từng ngày của AI.',
     color: '#f43f5e' // Hồng thạch anh ấm áp
   },

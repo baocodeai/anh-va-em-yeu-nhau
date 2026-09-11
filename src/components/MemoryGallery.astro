@@ -3084,7 +3084,7 @@ Hai đứa mình dạo bước bên nhau..."
       if (deleteBtn) {
         deleteBtn.addEventListener('click', async (e) => {
           e.stopPropagation();
-          const excerpt = photo.quote || photo.caption || (photo.story ? photo.story.replace(/<[^>]*>?/gm, '').slice(0, 110) + '...' : 'Một khoảnh khắc tuyệt đẹp giữa dải ngân hà của hai đứa...');
+          const excerpt = (photo as any).quote || (photo as any).caption || ((photo as any).story ? (photo as any).story.replace(/<[^>]*>?/gm, '').slice(0, 110) + '...' : 'Một khoảnh khắc tuyệt đẹp giữa dải ngân hà của hai đứa...');
           const confirmed = (window as any).romanticConfirm
             ? await (window as any).romanticConfirm({
                 heading: 'Tạm Cất Trang Nhật Ký Này Nhé?',

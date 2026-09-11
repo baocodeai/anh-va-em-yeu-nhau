@@ -2,7 +2,7 @@
 // LoveLockScreen.astro - Màn hình khóa tình yêu bảo mật không gian của AI & Maze
 import { COUPLE_CONFIG } from '../couple.config';
 
-const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
+const { boysInfo, girlsInfo } = COUPLE_CONFIG;
 ---
 
 <!-- Anti-FOUC Inline Lock Check Script -->
@@ -53,17 +53,13 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
         </div>
         <h2 class="lock-main-title gradient-love-text">Tinh Cầu Của Hai Đứa</h2>
         <p class="lock-sub-desc">
-          Vui lòng nhập mật mã tình yêu để bước vào dải ngân hà của AI &amp; Maze
+          Vui lòng nhập mật mã 4 số để bước vào dải ngân hà của AI &amp; Maze
         </p>
       </div>
 
-      <!-- PIN / Passcode Input Display -->
+      <!-- PIN / Passcode 4-Dots Display -->
       <div class="passcode-display-wrap">
         <div class="passcode-dots-row" id="passcode-dots-row">
-          <span class="passcode-dot"></span>
-          <span class="passcode-dot"></span>
-          <span class="passcode-dot"></span>
-          <span class="passcode-dot"></span>
           <span class="passcode-dot"></span>
           <span class="passcode-dot"></span>
           <span class="passcode-dot"></span>
@@ -71,7 +67,7 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
         </div>
 
         <div class="passcode-status-msg" id="passcode-status-msg">
-          Nhấn các phím số hoặc gõ bàn phím
+          Nhập mã PIN 4 số của hai đứa
         </div>
       </div>
 
@@ -115,9 +111,9 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
           <span class="key-letters">WXYZ</span>
         </button>
 
-        <button type="button" class="keypad-btn key-action-btn" id="btn-lock-hint" title="Xem gợi ý mật khẩu">
-          <span class="key-icon">💡</span>
-          <span class="key-sub-text">Gợi ý</span>
+        <button type="button" class="keypad-btn key-action-btn" id="btn-clear-code" title="Xóa tất cả số đã nhập">
+          <span class="key-icon">↺</span>
+          <span class="key-sub-text">Xóa hết</span>
         </button>
         <button type="button" class="keypad-btn" data-key="0">
           <span class="key-digit">0</span>
@@ -137,24 +133,95 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
         </label>
       </div>
 
-      <!-- Hint Modal / Tooltip Box -->
-      <div class="lock-hint-box" id="lock-hint-box" style="display: none;">
-        <div class="hint-icon">💌</div>
-        <div class="hint-content">
-          <strong>Gợi ý mật mã:</strong>
-          <p>
-            Mật mã là ngày kỷ niệm tình yêu của hai bạn (<code>15082026</code> hoặc <code>1508</code>) 💕
-          </p>
-        </div>
-        <button type="button" class="hint-close-btn" id="btn-close-hint" aria-label="Đóng gợi ý">&times;</button>
+      <!-- Footer Quick Action: Change Passcode -->
+      <div class="lock-footer-links">
+        <button type="button" class="btn-trigger-change-pin" id="btn-open-change-pin-lockscreen">
+          <span>⚙️ Đổi mã PIN mật khẩu</span>
+        </button>
       </div>
     </div>
   </div>
 </div>
 
+<!-- ========================================== -->
+<!-- MODAL ĐỔI MÃ PIN TÌNH YÊU (POPUP LÃNG MẠN) -->
+<!-- ========================================== -->
+<div class="change-pin-modal-overlay" id="change-pin-modal" style="display: none;">
+  <div class="change-pin-card romantic-card">
+    <div class="change-pin-header">
+      <div class="change-pin-title-row">
+        <span class="pin-modal-icon">🔐</span>
+        <div>
+          <h3 class="gradient-love-text" style="margin:0; font-size: 1.25rem;">Đổi Mật Mã PIN Tình Yêu</h3>
+          <p style="margin:2px 0 0; font-size: 0.82rem; color: #94a3b8;">Cập nhật mã PIN 4 số bảo mật của hai bạn</p>
+        </div>
+      </div>
+      <button type="button" class="pin-modal-close" id="btn-close-change-pin" aria-label="Đóng">&times;</button>
+    </div>
+
+    <form id="form-change-pin" class="change-pin-form">
+      <div class="form-group mb-3">
+        <label for="input-old-pin" class="form-label" style="font-size: 0.85rem; color: #cbd5e1; display: block; margin-bottom: 6px;">Mật mã PIN hiện tại (4 số):</label>
+        <input
+          type="password"
+          id="input-old-pin"
+          maxlength="4"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          placeholder="••••"
+          required
+          class="form-input text-center font-mono"
+          style="font-size: 1.4rem; letter-spacing: 0.35em; text-align: center;"
+        />
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="input-new-pin" class="form-label" style="font-size: 0.85rem; color: #cbd5e1; display: block; margin-bottom: 6px;">Mật mã PIN mới (4 số):</label>
+        <input
+          type="password"
+          id="input-new-pin"
+          maxlength="4"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          placeholder="••••"
+          required
+          class="form-input text-center font-mono"
+          style="font-size: 1.4rem; letter-spacing: 0.35em; text-align: center;"
+        />
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="input-confirm-pin" class="form-label" style="font-size: 0.85rem; color: #cbd5e1; display: block; margin-bottom: 6px;">Xác nhận lại mã PIN mới:</label>
+        <input
+          type="password"
+          id="input-confirm-pin"
+          maxlength="4"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          placeholder="••••"
+          required
+          class="form-input text-center font-mono"
+          style="font-size: 1.4rem; letter-spacing: 0.35em; text-align: center;"
+        />
+      </div>
+
+      <div class="change-pin-msg" id="change-pin-msg"></div>
+
+      <div class="change-pin-actions">
+        <button type="button" class="btn-outline-love" id="btn-cancel-change-pin">
+          <span>Hủy Bỏ</span>
+        </button>
+        <button type="submit" class="btn-love" id="btn-submit-change-pin">
+          <span>💾 Lưu Mật Mã Mới</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <style>
   /* Base locked state for page body */
-  :global(html.couple-is-locked body > *:not(#love-lockscreen-overlay)) {
+  :global(html.couple-is-locked body > *:not(#love-lockscreen-overlay):not(#change-pin-modal)) {
     filter: blur(20px) brightness(0.2);
     pointer-events: none !important;
     user-select: none !important;
@@ -252,12 +319,12 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
     position: relative;
     z-index: 10;
     width: 100%;
-    max-width: 440px;
+    max-width: 420px;
     margin: auto;
   }
 
   .lockscreen-card {
-    background: rgba(15, 23, 42, 0.72);
+    background: rgba(15, 23, 42, 0.75);
     border: 1px solid rgba(244, 63, 94, 0.35);
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(244, 63, 94, 0.2);
     border-radius: 28px;
@@ -374,7 +441,7 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
     line-height: 1.4;
   }
 
-  /* Passcode Dots Display */
+  /* Passcode 4-Dots Display */
   .passcode-display-wrap {
     margin-bottom: 1.4rem;
     position: relative;
@@ -384,16 +451,16 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    margin-bottom: 0.6rem;
-    min-height: 24px;
+    gap: 18px;
+    margin-bottom: 0.7rem;
+    min-height: 26px;
   }
 
   .passcode-dot {
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
-    border: 2px solid rgba(244, 63, 94, 0.4);
+    border: 2px solid rgba(244, 63, 94, 0.45);
     background: transparent;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -401,8 +468,8 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
   .passcode-dot.is-filled {
     background: linear-gradient(135deg, #e11d48, #f43f5e, #fbbf24);
     border-color: #fbbf24;
-    box-shadow: 0 0 12px rgba(244, 63, 94, 0.8), 0 0 20px rgba(251, 191, 36, 0.6);
-    transform: scale(1.15);
+    box-shadow: 0 0 14px rgba(244, 63, 94, 0.85), 0 0 22px rgba(251, 191, 36, 0.7);
+    transform: scale(1.2);
   }
 
   .passcode-dot.is-success {
@@ -411,16 +478,8 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
     box-shadow: 0 0 16px #22c55e !important;
   }
 
-  .passcode-hidden-input {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-    width: 1px;
-    height: 1px;
-  }
-
   .passcode-status-msg {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     color: #94a3b8;
     min-height: 1.2rem;
     transition: color 0.2s ease;
@@ -440,8 +499,8 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
   .lock-keypad-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    max-width: 290px;
+    gap: 12px;
+    max-width: 280px;
     margin: 0 auto 1.2rem;
   }
 
@@ -511,7 +570,7 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
     margin-top: 2px;
   }
 
-  /* Remember checkbox */
+  /* Remember checkbox & footer */
   .lock-options-row {
     display: flex;
     align-items: center;
@@ -536,58 +595,109 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
     cursor: pointer;
   }
 
-  /* Hint Box */
-  .lock-hint-box {
-    margin-top: 0.8rem;
-    background: rgba(244, 63, 94, 0.12);
-    border: 1px solid rgba(244, 63, 94, 0.3);
-    border-radius: 14px;
-    padding: 10px 14px;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    text-align: left;
-    position: relative;
-    animation: fadeInHint 0.2s ease-out;
+  .lock-footer-links {
+    margin-top: 0.4rem;
   }
 
-  @keyframes fadeInHint {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .hint-icon {
-    font-size: 1.4rem;
-    flex-shrink: 0;
-  }
-
-  .hint-content {
-    font-size: 0.78rem;
-    color: #fce7f3;
-    line-height: 1.4;
-  }
-
-  .hint-content p {
-    margin: 2px 0 0;
-  }
-
-  .hint-content code {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 2px 6px;
-    border-radius: 6px;
-    color: #fbbf24;
-    font-weight: 700;
-  }
-
-  .hint-close-btn {
+  .btn-trigger-change-pin {
     background: none;
     border: none;
     color: #fda4af;
-    font-size: 1.2rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-decoration: underline;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+  }
+
+  .btn-trigger-change-pin:hover {
+    opacity: 1;
+    color: #ffffff;
+  }
+
+  /* Change PIN Modal */
+  .change-pin-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000000;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.2rem;
+  }
+
+  .change-pin-card {
+    background: #0f172a;
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(244, 63, 94, 0.25);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 400px;
+    padding: 1.8rem;
+    animation: fadeInModal 0.25s ease-out;
+  }
+
+  @keyframes fadeInModal {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .change-pin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.8rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .change-pin-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .pin-modal-icon {
+    font-size: 1.8rem;
+  }
+
+  .pin-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: #94a3b8;
     cursor: pointer;
     line-height: 1;
-    padding: 0;
-    margin-left: auto;
+  }
+
+  .pin-modal-close:hover {
+    color: #ffffff;
+  }
+
+  .change-pin-msg {
+    min-height: 1.2rem;
+    font-size: 0.82rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .change-pin-msg.msg-error {
+    color: #f87171;
+    font-weight: 600;
+  }
+
+  .change-pin-msg.msg-success {
+    color: #4ade80;
+    font-weight: 700;
+  }
+
+  .change-pin-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
   }
 
   @media (max-width: 480px) {
@@ -612,25 +722,42 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
 </style>
 
 <script>
+  import { pushDataToFirebase } from '../lib/firebaseClient';
+
   const AUTH_STORAGE_KEY = 'couple_auth_unlocked';
-  
-  // Valid Passcodes:
-  // 1. 15082026 (Ngày chính thức yêu nhau đầy đủ)
-  // 2. 1508 (Mã PIN rút gọn 4 số)
-  // 3. aimaze / ai&maze / ai maze
-  // 4. Sinh nhật hai bạn: 2809, 1112
-  const VALID_PASSCODES = [
-    '15082026',
-    '1508',
-    'aimaze',
-    'ai&maze',
-    'ai maze',
-    '2809',
-    '1112'
-  ];
+  const CUSTOM_PASSCODE_KEY = 'couple_custom_passcode';
+  const SALT = 'ai_maze_star_galaxy_2026';
+  // Salted SHA-256 hash for initial security (Zero plaintext passcodes in repository)
+  const INITIAL_HASH = 'c647bdff3340446b0984b6b5cfa3a6139da8d9c6b7b2883d18fa04e2f6262790';
 
   let currentEnteredCode = '';
-  const MAX_CODE_LENGTH = 8;
+  const MAX_CODE_LENGTH = 4;
+
+  async function sha256(str: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(str + '_' + SALT);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hashBuffer))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+
+  async function verifyPasscode(enteredPin: string): Promise<boolean> {
+    const clean = enteredPin.trim();
+    if (!clean) return false;
+
+    // 1. Kiểm tra mã PIN tùy chỉnh đồng bộ từ Firebase Realtime Database
+    const customPin = localStorage.getItem(CUSTOM_PASSCODE_KEY);
+    if (customPin && customPin.trim()) {
+      if (clean === customPin.trim()) {
+        return true;
+      }
+    }
+
+    // 2. Kiểm tra mã khởi tạo qua bảng mã băm SHA-256 bảo mật
+    const enteredHash = await sha256(clean);
+    return enteredHash === INITIAL_HASH;
+  }
 
   function fireRomanticHeartBurst() {
     const emojis = ['💖', '✨', '🌸', '💫', '💕', '⭐', '🚀', '🎉'];
@@ -671,18 +798,27 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
     const overlay = document.getElementById('love-lockscreen-overlay');
     if (!overlay) return;
 
-    const dots = document.querySelectorAll('.passcode-dot');
+    const dots = document.querySelectorAll('#passcode-dots-row .passcode-dot');
     const statusMsg = document.getElementById('passcode-status-msg');
     const keypad = document.getElementById('lock-keypad');
     const card = overlay.querySelector('.lockscreen-card');
-    const hintBox = document.getElementById('lock-hint-box');
-    const btnHint = document.getElementById('btn-lock-hint');
-    const btnCloseHint = document.getElementById('btn-close-hint');
+    const btnClearCode = document.getElementById('btn-clear-code');
     const btnBackspace = document.getElementById('btn-lock-backspace');
     const cbRemember = document.getElementById('cb-remember-device') as HTMLInputElement | null;
     const heartIcon = document.getElementById('lock-heart-icon');
     const lockIcon = document.getElementById('lock-badge-icon');
     const lockStatusText = document.getElementById('lock-status-text');
+
+    // Change PIN Modal Elements
+    const changePinModal = document.getElementById('change-pin-modal');
+    const btnOpenChangePinLock = document.getElementById('btn-open-change-pin-lockscreen');
+    const btnCloseChangePin = document.getElementById('btn-close-change-pin');
+    const btnCancelChangePin = document.getElementById('btn-cancel-change-pin');
+    const formChangePin = document.getElementById('form-change-pin') as HTMLFormElement | null;
+    const inputOldPin = document.getElementById('input-old-pin') as HTMLInputElement | null;
+    const inputNewPin = document.getElementById('input-new-pin') as HTMLInputElement | null;
+    const inputConfirmPin = document.getElementById('input-confirm-pin') as HTMLInputElement | null;
+    const changePinMsg = document.getElementById('change-pin-msg');
 
     // Check if already unlocked
     const isUnlocked = localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
@@ -748,16 +884,13 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
       }, 650);
     }
 
-    function checkPasscode() {
-      const clean = currentEnteredCode.trim().toLowerCase();
-      const isValid = VALID_PASSCODES.some((p) => p.toLowerCase() === clean);
+    async function checkPasscode() {
+      const isValid = await verifyPasscode(currentEnteredCode);
 
       if (isValid) {
         unlockSuccessfully();
       } else {
-        if (clean.length >= 4) {
-          resetInput(true);
-        }
+        resetInput(true);
       }
     }
 
@@ -768,20 +901,11 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
 
       if (statusMsg) {
         statusMsg.className = 'passcode-status-msg';
-        statusMsg.textContent = 'Đang nhập mật mã...';
+        statusMsg.textContent = 'Đang nhập mật mã 4 số...';
       }
 
-      // Check after 4 or 8 characters
-      if (currentEnteredCode.length === 4) {
-        const clean = currentEnteredCode.trim().toLowerCase();
-        if (VALID_PASSCODES.includes(clean)) {
-          unlockSuccessfully();
-          return;
-        }
-      }
-
-      if (currentEnteredCode.length === 8) {
-        checkPasscode();
+      if (currentEnteredCode.length === MAX_CODE_LENGTH) {
+        setTimeout(checkPasscode, 120);
       }
     }
 
@@ -791,7 +915,7 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
         updateDotsUI();
         if (statusMsg) {
           statusMsg.className = 'passcode-status-msg';
-          statusMsg.textContent = 'Nhấn các phím số hoặc gõ bàn phím';
+          statusMsg.textContent = 'Nhập mã PIN 4 số của hai đứa';
         }
       }
     }
@@ -824,25 +948,105 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
         });
       }
 
-      // Hint button
-      if (btnHint && hintBox) {
-        btnHint.addEventListener('click', (e) => {
+      // Clear all code button
+      if (btnClearCode) {
+        btnClearCode.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
-          hintBox.style.display = hintBox.style.display === 'none' ? 'flex' : 'none';
+          resetInput(false);
+          if (statusMsg) {
+            statusMsg.className = 'passcode-status-msg';
+            statusMsg.textContent = 'Nhập mã PIN 4 số của hai đứa';
+          }
         });
       }
 
-      if (btnCloseHint && hintBox) {
-        btnCloseHint.addEventListener('click', (e) => {
+      // Open Change PIN Modal
+      const openChangePin = () => {
+        if (!changePinModal) return;
+        changePinModal.style.display = 'flex';
+        if (changePinMsg) changePinMsg.textContent = '';
+        if (formChangePin) formChangePin.reset();
+        if (inputOldPin) inputOldPin.focus();
+      };
+
+      if (btnOpenChangePinLock) {
+        btnOpenChangePinLock.addEventListener('click', openChangePin);
+      }
+
+      // Expose globally for Header button
+      (window as any).openChangePinModal = openChangePin;
+
+      const closeChangePin = () => {
+        if (changePinModal) changePinModal.style.display = 'none';
+      };
+
+      if (btnCloseChangePin) btnCloseChangePin.addEventListener('click', closeChangePin);
+      if (btnCancelChangePin) btnCancelChangePin.addEventListener('click', closeChangePin);
+      if (changePinModal) {
+        changePinModal.addEventListener('click', (e) => {
+          if (e.target === changePinModal) closeChangePin();
+        });
+      }
+
+      // Handle Change PIN Form Submit
+      if (formChangePin) {
+        formChangePin.addEventListener('submit', async (e) => {
           e.preventDefault();
-          e.stopPropagation();
-          hintBox.style.display = 'none';
+          const oldVal = inputOldPin?.value.trim() || '';
+          const newVal = inputNewPin?.value.trim() || '';
+          const confirmVal = inputConfirmPin?.value.trim() || '';
+
+          if (!changePinMsg) return;
+
+          // Validate old pin
+          const isOldValid = await verifyPasscode(oldVal);
+          if (!isOldValid) {
+            changePinMsg.className = 'change-pin-msg msg-error';
+            changePinMsg.textContent = '❌ Mật mã cũ không chính xác!';
+            inputOldPin?.focus();
+            return;
+          }
+
+          // Validate new pin length
+          if (newVal.length !== 4 || !/^\d{4}$/.test(newVal)) {
+            changePinMsg.className = 'change-pin-msg msg-error';
+            changePinMsg.textContent = '❌ Mật mã mới phải gồm đúng 4 chữ số!';
+            inputNewPin?.focus();
+            return;
+          }
+
+          // Validate confirmation
+          if (newVal !== confirmVal) {
+            changePinMsg.className = 'change-pin-msg msg-error';
+            changePinMsg.textContent = '❌ Mật mã mới nhập lại không khớp!';
+            inputConfirmPin?.focus();
+            return;
+          }
+
+          // Save new PIN
+          localStorage.setItem(CUSTOM_PASSCODE_KEY, newVal);
+          
+          // Push to Firebase Realtime Database
+          await pushDataToFirebase({ passcode: newVal, lastUpdatedBy: 'PasscodeUpdate' });
+
+          changePinMsg.className = 'change-pin-msg msg-success';
+          changePinMsg.textContent = '✨ Đổi mã PIN thành công! Đang lưu lên Cloud...';
+
+          setTimeout(() => {
+            closeChangePin();
+            if (statusMsg) {
+              statusMsg.className = 'passcode-status-msg msg-success';
+              statusMsg.textContent = `✨ Mã PIN mới đã được cập nhật: [ ${newVal} ]`;
+            }
+          }, 1200);
         });
       }
 
       // Physical Keyboard Single Global Listener
       window.addEventListener('keydown', (e: KeyboardEvent) => {
+        // If change pin modal is open, let inputs handle typing
+        if (changePinModal && changePinModal.style.display === 'flex') return;
         if (!overlay.classList.contains('is-active')) return;
 
         // Ignore modifier keys
@@ -857,9 +1061,6 @@ const { boysInfo, girlsInfo, anniversaryDate } = COUPLE_CONFIG;
         } else if (e.key === 'Enter') {
           e.preventDefault();
           checkPasscode();
-        } else if (e.key.length === 1 && /[a-zA-Z&]/.test(e.key)) {
-          e.preventDefault();
-          appendDigit(e.key);
         }
       });
     }

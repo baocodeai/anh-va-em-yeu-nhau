@@ -400,13 +400,14 @@ const { title, subtitle } = COUPLE_CONFIG;
       });
     });
 
-    // Wire sync button in header to open sync modal
-    if (syncHeaderBtn) {
-      syncHeaderBtn.addEventListener('click', () => {
+    // Wire sync button in footer/header to open sync modal
+    const syncTriggers = document.querySelectorAll('.btn-open-sync-trigger');
+    syncTriggers.forEach((btn) => {
+      btn.addEventListener('click', () => {
         const syncModal = document.getElementById('sync-hub-modal');
         if (syncModal) syncModal.classList.add('is-open');
       });
-    }
+    });
 
     // Hash routing
     function handleHash() {

@@ -4,7 +4,7 @@
  * =========================================================================
  */
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getDatabase, ref, set, update, onValue, type Database, type Unsubscribe } from 'firebase/database';
+import { getDatabase, ref, set, onValue, type Database, type Unsubscribe } from 'firebase/database';
 import { DEFAULT_FIREBASE_CONFIG, type FirebaseConfig } from '../firebase.config';
 
 const STORAGE_FIREBASE_KEY = 'ai_maze_firebase_config';
@@ -68,6 +68,7 @@ export interface CoupleCloudPayload {
   bucketCategories?: string[];
   memories?: any[];
   trashBin?: any[];
+  passcode?: string;
   avatars?: {
     ai?: string;
     maze?: string;
@@ -95,6 +96,7 @@ export function normalizeCoupleCloudPayload(raw: any): CoupleCloudPayload {
     habit21: raw.habit21 !== undefined ? normalizeArray(raw.habit21) : undefined,
     memories: raw.memories !== undefined ? normalizeArray(raw.memories) : undefined,
     trashBin: raw.trashBin !== undefined ? normalizeArray(raw.trashBin) : undefined,
+    passcode: typeof raw.passcode === 'string' ? raw.passcode : undefined,
     avatars: raw.avatars && typeof raw.avatars === 'object' ? raw.avatars : undefined,
     lastUpdatedBy: typeof raw.lastUpdatedBy === 'string' ? raw.lastUpdatedBy : undefined,
     updatedAt: typeof raw.updatedAt === 'string' ? raw.updatedAt : undefined
@@ -150,6 +152,7 @@ export async function pushDataToFirebase(payload: CoupleCloudPayload): Promise<b
       'bucketCategories',
       'habit21',
       'trashBin',
+      'passcode',
       'avatars'
     ];
 
