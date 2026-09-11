@@ -76,6 +76,31 @@ export interface CoupleCloudPayload {
   updatedAt?: string;
 }
 
+export function normalizeArray(val: any): any[] {
+  if (!val) return [];
+  if (Array.isArray(val)) {
+    return val.filter((item) => item !== null && item !== undefined);
+  }
+  if (typeof val === 'object') {
+    return Object.values(val).filter((item) => item !== null && item !== undefined);
+  }
+  return [];
+}
+
+export function normalizeCoupleCloudPayload(raw: any): CoupleCloudPayload {
+  if (!raw || typeof raw !== 'object') return {};
+  return {
+    bucketList: raw.bucketList !== undefined ? normalizeArray(raw.bucketList) : undefined,
+    bucketCategories: raw.bucketCategories !== undefined ? normalizeArray(raw.bucketCategories) : undefined,
+    habit21: raw.habit21 !== undefined ? normalizeArray(raw.habit21) : undefined,
+    memories: raw.memories !== undefined ? normalizeArray(raw.memories) : undefined,
+    trashBin: raw.trashBin !== undefined ? normalizeArray(raw.trashBin) : undefined,
+    avatars: raw.avatars && typeof raw.avatars === 'object' ? raw.avatars : undefined,
+    lastUpdatedBy: typeof raw.lastUpdatedBy === 'string' ? raw.lastUpdatedBy : undefined,
+    updatedAt: typeof raw.updatedAt === 'string' ? raw.updatedAt : undefined
+  };
+}
+
 /**
  * Lắng nghe thay đổi dữ liệu từ Firebase theo thời gian thực (Real-time).
  * Khi Maze hoặc AI cập nhật bất kỳ thông tin nào, callback sẽ được gọi ngay lập tức!
@@ -90,8 +115,9 @@ export function subscribeToRealtimeSync(callback: (payload: CoupleCloudPayload) 
       dataRef,
       (snapshot) => {
         if (snapshot.exists()) {
-          const val = snapshot.val() as CoupleCloudPayload;
-          callback(val);
+          const raw = snapshot.val();
+          const normalized = normalizeCoupleCloudPayload(raw);
+          callback(normalized);
         }
       },
       (error) => {
@@ -106,19 +132,41 @@ export function subscribeToRealtimeSync(callback: (payload: CoupleCloudPayload) 
 }
 
 /**
- * Đẩy dữ liệu mới nhất lên Firebase Realtime Database
+ * Đẩy dữ liệu mới nhất lên Firebase Realtime Database.
+ * Sử dụng set() trực tiếp trên từng nhánh con để đảm bảo việc xoá / cập nhật danh sách
+ * được ghi đè hoàn toàn mà không bị sót phần tử cũ (ghost items / trailing array indices).
  */
 export async function pushDataToFirebase(payload: CoupleCloudPayload): Promise<boolean> {
   const db = initFirebaseClient();
   if (!db) return false;
 
   try {
-    const dataRef = ref(db, DB_NODE_PATH);
-    const dataToSave = {
-      ...payload,
-      updatedAt: new Date().toISOString()
-    };
-    await update(dataRef, dataToSave);
+    const updatedAt = new Date().toISOString();
+    const promises: Promise<any>[] = [];
+
+    const keys: (keyof CoupleCloudPayload)[] = [
+      'memories',
+      'bucketList',
+      'bucketCategories',
+      'habit21',
+      'trashBin',
+      'avatars'
+    ];
+
+    for (const key of keys) {
+      if (payload[key] !== undefined) {
+        const childRef = ref(db, `${DB_NODE_PATH}/${key}`);
+        const val = payload[key];
+        promises.push(set(childRef, val === undefined ? null : val));
+      }
+    }
+
+    promises.push(set(ref(db, `${DB_NODE_PATH}/updatedAt`), updatedAt));
+    if (payload.lastUpdatedBy) {
+      promises.push(set(ref(db, `${DB_NODE_PATH}/lastUpdatedBy`), payload.lastUpdatedBy));
+    }
+
+    await Promise.all(promises);
     return true;
   } catch (err) {
     console.error('[Firebase] Lỗi đẩy dữ liệu:', err);

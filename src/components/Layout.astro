@@ -406,5 +406,11 @@ const ogImageUrl = new URL('/assets/og.png', site).toString();
 
       document.addEventListener('astro:page-load', initSearch);
     </script>
+    <script>
+      import { initGlobalSyncEngine } from '../lib/globalSyncEngine';
+      initGlobalSyncEngine();
+      document.addEventListener('astro:page-load', initGlobalSyncEngine);
+      document.addEventListener('astro:after-swap', initGlobalSyncEngine);
+    </script>
   </body>
 </html>
