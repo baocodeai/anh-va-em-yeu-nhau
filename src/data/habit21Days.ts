@@ -33,17 +33,17 @@ export const HABIT_MILESTONES: HabitMilestone[] = [
     days: 21,
     title: 'Tinh Cầu Khởi Nguyên',
     badge: 'Chặng 1',
-    subtitle: '21 Ngày Xây Dựng Thói Quen',
+    subtitle: '21 Ngày Xây Dựng Mối Liên Kết',
     icon: '🌱',
-    description: 'Phá vỡ sức ỳ ban đầu và hình thành liên kết thói quen đầu tiên giữa AI & Maze.'
+    description: 'Phá vỡ sự lừi biếng và hình thành mối liên kết giữa AI và Maze.'
   },
   {
     days: 66,
     title: 'Thiên Hà Tự Động Hóa',
-    badge: 'Chặng 2 · Khoa Học Não Bộ',
+    badge: 'Chặng 2 · Tinh Cầu Nổ Lực',
     subtitle: '66 Ngày Tự Động Hóa Tiềm Thức',
     icon: '🧠',
-    description: 'Theo nghiên cứu của TS. Phillippa Lally (UCL), 66 ngày là mốc vàng để thói quen ăn sâu thành phản xạ tự nhiên.'
+    description: '66 ngày để điều từng cố gắng trở thành điều tự nhiên — như cách anh nhớ em mỗi sáng.'
   },
   {
     days: 100,

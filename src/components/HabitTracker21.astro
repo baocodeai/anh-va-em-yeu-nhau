@@ -13,12 +13,9 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
 <section class="habit-tracker-section" id="habit-tracker">
   <div class="section-header-wrap">
     <div class="badge-love mb-2">
-      <span>✨ Tinh Cầu Thói Quen Vô Tận</span>
+      <span>✨ Tinh Cầu Số 21</span>
     </div>
     <h2 class="section-title gradient-love-text">21 Ngày Cùng Em Rèn Thói Quen Tiếng Anh</h2>
-    <p class="section-desc">
-      Hành trình rèn luyện đồng pha của <strong>AI (Mặt Trăng 🌙)</strong> &amp; <strong>Maze (Trái Đất 🌍)</strong>. Cùng nhau thắp sáng từng vì sao, bảo vệ chuỗi ngày bằng <strong>Khiên Hộ Mệnh 🛡️</strong> và nâng đỡ nhau qua <strong>Tích Bù Yêu Thương 💖</strong>.
-    </p>
   </div>
 
   <!-- Milestone Infinity Roadmap Selector -->
@@ -26,7 +23,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     <div class="roadmap-header">
       <span class="roadmap-icon">🌌</span>
       <div>
-        <h3 class="roadmap-title gradient-cyan-text">Hành Trình Mở Rộng — Infinity Roadmap</h3>
+        <h3 class="roadmap-title gradient-cyan-text">Hành Trình Mở Rộng</h3>
         <p class="roadmap-desc">Chọn chặng đường thử thách của hai đứa giữa dải ngân hà:</p>
       </div>
     </div>
@@ -41,7 +38,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
           <span class="milestone-tab-icon">{m.icon}</span>
           <div class="milestone-tab-info">
             <span class="milestone-tab-badge">{m.badge}</span>
-            <strong class="milestone-tab-title">{m.title} ({m.days}N)</strong>
+            <strong class="milestone-tab-title">{m.title}</strong>
           </div>
         </button>
       ))}
@@ -50,7 +47,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     <div class="milestone-active-desc-box" id="milestone-desc-box">
       <span class="desc-box-icon" id="milestone-info-icon">🌱</span>
       <span class="desc-box-text" id="milestone-info-text">
-        <strong>Chặng 1 (21 Ngày):</strong> Phá vỡ sức ỳ ban đầu và hình thành liên kết thói quen đầu tiên giữa AI &amp; Maze.
+        <strong>Chặng 1 - 21 Ngày:</strong> Phá vỡ sự lười biến ban đầu và hình thành mối liên kế sâu sắc giữa Maze và AI.
       </span>
     </div>
   </div>
@@ -61,8 +58,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       <div class="date-header-left">
         <span class="date-header-icon">📅</span>
         <div>
-          <h3 class="date-card-title gradient-rose-text">Lịch Trình &amp; Ngày Bắt Đầu</h3>
-          <p class="date-card-sub">Hệ thống tự động phân bổ lịch thực tế tương ứng theo từng ngày</p>
+          <h3 class="date-card-title gradient-rose-text">Lịch Trình</h3>
         </div>
       </div>
       <div class="date-today-badge-wrap">
@@ -73,7 +69,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
 
     <div class="date-picker-control-row" id="date-picker-control-row">
       <div class="date-input-group">
-        <label for="habit-start-date-input" class="date-input-label">Chọn ngày bắt đầu (Ngày 1):</label>
+        <label for="habit-start-date-input" class="date-input-label">Chọn ngày bắt đầu:</label>
         <div class="input-with-button">
           <input
             type="date"
@@ -82,7 +78,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
             value={defaultStartDate}
           />
           <button type="button" class="btn-love btn-sm" id="btn-save-start-date">
-            <span>💾 Lưu &amp; Khóa Ngày</span>
+            <span>💾 Lưu Và Khóa</span>
           </button>
           <button type="button" class="btn-preset-pill btn-lock-toggle" id="btn-toggle-start-lock">
             <span>🔓 Mở Khóa Đổi Ngày</span>
@@ -102,13 +98,13 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     <div class="timeline-summary-bar">
       <div class="timeline-item">
         <span class="timeline-dot dot-start"></span>
-        <span class="timeline-label">Ngày 1 (Bắt đầu):</span>
+        <span class="timeline-label">Bắt đầu:</span>
         <strong class="timeline-val gradient-cyan-text" id="display-start-date">--/--/----</strong>
       </div>
       <div class="timeline-sep">➜</div>
       <div class="timeline-item">
         <span class="timeline-dot dot-end"></span>
-        <span class="timeline-label" id="display-end-label">Ngày 21 (Về đích):</span>
+        <span class="timeline-label" id="display-end-label">Về đích:</span>
         <strong class="timeline-val gradient-rose-text" id="display-end-date">--/--/----</strong>
       </div>
       <div class="timeline-sep">•</div>
@@ -126,7 +122,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
         <span class="stat-number gradient-rose-text" id="habit-stat-completed">
           --<span class="stat-total" id="habit-stat-total-label">/21</span>
         </span>
-        <span class="stat-name">Hoàn Thành Đồng Pha 💖</span>
+        <span class="stat-name">Hoàn Thành Cùng Nhau 💖</span>
       </div>
       <div class="stat-box">
         <span class="stat-number gradient-cyan-text" id="habit-stat-percent">--%</span>
@@ -194,6 +190,97 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     <article class="day-detail-panel romantic-card active-panel" id="active-day-panel">
       <!-- Dynamic content rendered by client script -->
     </article>
+  </div>
+
+  <!-- Cosmic Glassmorphism Modals & Love Confetti Canvas -->
+  <canvas id="love-confetti-canvas" class="love-confetti-canvas"></canvas>
+
+  <!-- Modal 1: Mở Khóa Tinh Cầu Thời Gian -->
+  <div class="cosmic-modal-overlay" id="unlock-date-modal" aria-hidden="true" style="display: none;">
+    <div class="cosmic-modal-card">
+      <button type="button" class="cosmic-modal-close" id="btn-close-unlock-modal" aria-label="Đóng">✕</button>
+      <div class="cosmic-modal-icon-wrap">
+        <div class="cosmic-modal-icon-glow"></div>
+        <span class="cosmic-modal-icon-anim">🔓</span>
+      </div>
+      <h3 class="cosmic-modal-title gradient-rose-text">Mở Khóa Tinh Cầu Thời Gian</h3>
+      <p class="cosmic-modal-desc">
+        Bạn có muốn thiết lập lại cột mốc khởi đầu hành trình tình yêu của hai đứa không?
+      </p>
+      <div class="cosmic-modal-actions">
+        <button type="button" class="btn-love btn-modal-confirm" id="btn-confirm-unlock-date">
+          <span>✨ Mở Khóa Ngay</span>
+        </button>
+        <button type="button" class="btn-modal-cancel" id="btn-cancel-unlock-date">
+          <span>🔒 Giữ Nguyên</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Tích Bù Yêu Thương (Gánh Thay) -->
+  <div class="cosmic-modal-overlay" id="love-rescue-modal" aria-hidden="true" style="display: none;">
+    <div class="cosmic-modal-card cosmic-modal-card-lg">
+      <button type="button" class="cosmic-modal-close" id="btn-close-rescue-modal" aria-label="Đóng">✕</button>
+      
+      <div class="cosmic-modal-header-badge">
+        <span>💖 TÍCH BÙ YÊU THƯƠNG</span>
+      </div>
+      <h3 class="cosmic-modal-title gradient-love-text" id="rescue-modal-day-title">Gánh Thay Cho Người Ấy</h3>
+      <p class="cosmic-modal-desc">
+        Chọn người sẽ gánh bù bài hôm nay và gửi lời nhắn yêu thương ngọt ngào:
+      </p>
+
+      <!-- Rescue Selector Dual Cards -->
+      <div class="rescue-selector-grid">
+        <button type="button" class="rescue-person-card is-selected" id="rescue-card-ai" data-rescuer="ai">
+          <div class="person-card-avatar-wrap">
+            <img id="rescue-avatar-ai" src="/assets/ai.png" alt="AI" class="rescue-avatar-img" />
+            <span class="person-card-badge badge-ai">👦 AI</span>
+          </div>
+          <div class="person-card-info">
+            <strong class="person-card-name">AI Gánh Cho Maze</strong>
+            <span class="person-card-sub">"Anh gánh cho bé yêu!" 🚀</span>
+          </div>
+          <div class="person-card-check">✓</div>
+        </button>
+
+        <button type="button" class="rescue-person-card" id="rescue-card-maze" data-rescuer="maze">
+          <div class="person-card-avatar-wrap">
+            <img id="rescue-avatar-maze" src="/assets/maze.jpg" alt="Maze" class="rescue-avatar-img" />
+            <span class="person-card-badge badge-maze">👧 Maze</span>
+          </div>
+          <div class="person-card-info">
+            <strong class="person-card-name">Maze Gánh Cho AI</strong>
+            <span class="person-card-sub">"Em gánh cho anh yêu!" 🌸</span>
+          </div>
+          <div class="person-card-check">✓</div>
+        </button>
+      </div>
+
+      <!-- Love Message Input (User tự nhập) -->
+      <div class="rescue-input-group">
+        <label for="rescue-message-input" class="rescue-input-label">
+          <span>💌 Lời nhắn yêu thương gửi đối phương (Tự nhập):</span>
+        </label>
+        <textarea
+          id="rescue-message-input"
+          class="rescue-textarea"
+          rows="3"
+          placeholder="Nhập lời nhắn yêu thương gửi đối phương tại đây..."
+        ></textarea>
+      </div>
+
+      <!-- Modal Footer Action Buttons -->
+      <div class="cosmic-modal-actions">
+        <button type="button" class="btn-love btn-modal-confirm" id="btn-confirm-rescue">
+          <span>💖 Gửi Tình Yêu &amp; Gánh Thay</span>
+        </button>
+        <button type="button" class="btn-modal-cancel" id="btn-cancel-rescue">
+          <span>✕ Hủy Bỏ / Đóng</span>
+        </button>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1325,6 +1412,369 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       font-size: 1.8rem;
     }
   }
+
+  /* Cosmic Glassmorphism Modal Styles */
+  .love-confetti-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 999999;
+  }
+
+  .cosmic-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 8, 22, 0.78);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    padding: 1.2rem;
+    animation: cosmicFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .cosmic-modal-card {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    background: radial-gradient(circle at 50% 0%, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    border-radius: 24px;
+    padding: 2.2rem 1.8rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 0 35px rgba(244, 63, 94, 0.2);
+    animation: cosmicZoomIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    text-align: center;
+    color: #f8fafc;
+  }
+
+  .cosmic-modal-card-lg {
+    max-width: 560px;
+    text-align: left;
+  }
+
+  .cosmic-modal-close {
+    position: absolute;
+    top: 1.1rem;
+    right: 1.1rem;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.06);
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .cosmic-modal-close:hover {
+    background: rgba(244, 63, 94, 0.25);
+    color: #fff;
+    border-color: rgba(244, 63, 94, 0.6);
+    transform: rotate(90deg);
+  }
+
+  .cosmic-modal-icon-wrap {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 1.2rem;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(244, 63, 94, 0.25) 0%, rgba(168, 85, 247, 0.1) 70%);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .cosmic-modal-icon-glow {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(244, 63, 94, 0.4) 0%, transparent 70%);
+    animation: cosmicGlowPulse 2.5s infinite alternate;
+  }
+
+  .cosmic-modal-icon-anim {
+    font-size: 2.2rem;
+    position: relative;
+    z-index: 1;
+    animation: lockPulseAnim 2.2s infinite ease-in-out;
+  }
+
+  .cosmic-modal-header-badge {
+    display: inline-block;
+    padding: 0.35rem 0.9rem;
+    border-radius: 9999px;
+    background: rgba(244, 63, 94, 0.15);
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #fda4af;
+    margin-bottom: 0.8rem;
+  }
+
+  .cosmic-modal-title {
+    font-size: 1.45rem;
+    font-weight: 800;
+    margin-bottom: 0.6rem;
+    letter-spacing: -0.01em;
+  }
+
+  .cosmic-modal-desc {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    margin-bottom: 1.5rem;
+  }
+
+  .rescue-selector-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .rescue-person-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.9rem 1rem;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    text-align: left;
+    width: 100%;
+  }
+
+  .rescue-person-card:hover {
+    background: rgba(255, 255, 255, 0.07);
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+
+  .rescue-person-card.is-selected {
+    border-color: #f43f5e;
+    background: radial-gradient(circle at center, rgba(244, 63, 94, 0.18) 0%, rgba(15, 23, 42, 0.8) 100%);
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.3);
+  }
+
+  .rescue-person-card#rescue-card-ai.is-selected {
+    border-color: #38bdf8;
+    background: radial-gradient(circle at center, rgba(56, 189, 248, 0.18) 0%, rgba(15, 23, 42, 0.8) 100%);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+  }
+
+  .person-card-avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .rescue-avatar-img {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: block;
+  }
+
+  .person-card-badge {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    font-size: 0.65rem;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    font-weight: 700;
+  }
+
+  .badge-ai {
+    background: #0284c7;
+    color: #fff;
+  }
+
+  .badge-maze {
+    background: #e11d48;
+    color: #fff;
+  }
+
+  .person-card-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .person-card-name {
+    font-size: 0.92rem;
+    color: #f8fafc;
+    font-weight: 700;
+  }
+
+  .person-card-sub {
+    font-size: 0.74rem;
+    color: #94a3b8;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .person-card-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .rescue-person-card.is-selected .person-card-check {
+    background: #f43f5e;
+    color: #fff;
+  }
+
+  .rescue-person-card#rescue-card-ai.is-selected .person-card-check {
+    background: #38bdf8;
+    color: #fff;
+  }
+
+  .rescue-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .rescue-input-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #cbd5e1;
+  }
+
+  .rescue-textarea {
+    width: 100%;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    padding: 0.85rem 1rem;
+    color: #f8fafc;
+    font-size: 0.92rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 85px;
+    transition: all 0.25s ease;
+    outline: none;
+    box-sizing: border-box;
+  }
+
+  .rescue-textarea:focus {
+    border-color: #f43f5e;
+    box-shadow: 0 0 16px rgba(244, 63, 94, 0.3);
+    background: rgba(15, 23, 42, 0.95);
+  }
+
+  .cosmic-modal-actions {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .cosmic-modal-actions .btn-modal-confirm {
+    padding: 0.75rem 1.4rem;
+    font-size: 0.92rem;
+    font-weight: 700;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+
+  .cosmic-modal-actions .btn-modal-cancel {
+    padding: 0.75rem 1.2rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #cbd5e1;
+    transition: all 0.2s ease;
+  }
+
+  .cosmic-modal-actions .btn-modal-cancel:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  @keyframes cosmicFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes cosmicZoomIn {
+    from {
+      opacity: 0;
+      transform: scale(0.92) translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes cosmicGlowPulse {
+    0% { transform: scale(0.95); opacity: 0.5; }
+    100% { transform: scale(1.15); opacity: 0.9; }
+  }
+
+  @keyframes lockPulseAnim {
+    0%, 100% {
+      transform: scale(1);
+      filter: drop-shadow(0 0 8px rgba(244, 63, 94, 0.6));
+    }
+    50% {
+      transform: scale(1.12) rotate(-5deg);
+      filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.8));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .rescue-selector-grid {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+    .cosmic-modal-actions {
+      flex-direction: column-reverse;
+      width: 100%;
+    }
+    .cosmic-modal-actions button {
+      width: 100%;
+      justify-content: center;
+    }
+    .cosmic-modal-card {
+      padding: 1.8rem 1.2rem;
+    }
+  }
 </style>
 
 <script>
@@ -1972,17 +2422,12 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
         if (dayData.rescuedBy) {
           dayData.rescuedBy = undefined;
           dayData.rescueNote = undefined;
+          recalcDayCompletion(dayData);
+          saveStoredHabits(list);
+          renderHabitUI();
         } else {
-          const rescuer = confirm('Bấm OK nếu AI là người gánh bù, hoặc Cancel nếu Maze là người gánh bù?') ? 'ai' : 'maze';
-          const rescuerName = rescuer === 'ai' ? 'AI' : 'Maze';
-          const defaultNote = `${rescuerName} đã học bù bài hôm nay giúp đối phương với trọn vẹn yêu thương! 💖`;
-          const note = prompt(`Nhập lời nhắn yêu thương khi học bù (${rescuerName}):`, defaultNote);
-          dayData.rescuedBy = rescuer;
-          dayData.rescueNote = note || defaultNote;
+          openLoveRescueModal(dayData, list);
         }
-        recalcDayCompletion(dayData);
-        saveStoredHabits(list);
-        renderHabitUI();
       });
     }
 
@@ -2035,6 +2480,168 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     }
   }
 
+  // --- Cosmic Glassmorphism Modals & Love Confetti Engine ---
+  let activeRescueDayData: any = null;
+  let activeHabitList: any = null;
+  let currentSelectedRescuer: 'ai' | 'maze' = 'ai';
+
+  function triggerLoveHeartConfetti() {
+    const canvas = document.getElementById('love-confetti-canvas') as HTMLCanvasElement | null;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const emojis = ['💖', '💕', '✨', '🌸', '💫', '🌹', '🚀', '🥰', '⭐'];
+    const colors = ['#f43f5e', '#ec4899', '#38bdf8', '#a855f7', '#fbbf24', '#fda4af'];
+    const particles: Array<{
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      size: number;
+      rotation: number;
+      vRot: number;
+      emoji?: string;
+      color?: string;
+      alpha: number;
+      decay: number;
+    }> = [];
+
+    for (let i = 0; i < 65; i++) {
+      const isEmoji = Math.random() > 0.35;
+      particles.push({
+        x: window.innerWidth / 2 + (Math.random() - 0.5) * 260,
+        y: window.innerHeight / 2 + (Math.random() - 0.5) * 160,
+        vx: (Math.random() - 0.5) * 18,
+        vy: -Math.random() * 14 - 5,
+        size: isEmoji ? 22 + Math.random() * 16 : 9 + Math.random() * 10,
+        rotation: Math.random() * 360,
+        vRot: (Math.random() - 0.5) * 12,
+        emoji: isEmoji ? emojis[Math.floor(Math.random() * emojis.length)] : undefined,
+        color: !isEmoji ? colors[Math.floor(Math.random() * colors.length)] : undefined,
+        alpha: 1,
+        decay: 0.009 + Math.random() * 0.012
+      });
+    }
+
+    let animFrame: number;
+    function renderParticles() {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let aliveCount = 0;
+
+      for (const p of particles) {
+        if (p.alpha <= 0) continue;
+        aliveCount++;
+
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.38;
+        p.vx *= 0.98;
+        p.rotation += p.vRot;
+        p.alpha -= p.decay;
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.alpha);
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+
+        if (p.emoji) {
+          ctx.font = `${p.size}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(p.emoji, 0, 0);
+        } else if (p.color) {
+          ctx.fillStyle = p.color;
+          const s = p.size / 2;
+          ctx.beginPath();
+          ctx.moveTo(0, s / 3);
+          ctx.bezierCurveTo(-s, -s, -s * 1.5, s / 3, 0, s * 1.5);
+          ctx.bezierCurveTo(s * 1.5, s / 3, s, -s, 0, s / 3);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      if (aliveCount > 0) {
+        animFrame = requestAnimationFrame(renderParticles);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        cancelAnimationFrame(animFrame);
+      }
+    }
+
+    renderParticles();
+  }
+
+  function openUnlockDateModal() {
+    const modal = document.getElementById('unlock-date-modal');
+    if (modal) {
+      modal.style.display = 'flex';
+      modal.setAttribute('aria-hidden', 'false');
+    }
+  }
+
+  function closeUnlockDateModal() {
+    const modal = document.getElementById('unlock-date-modal');
+    if (modal) {
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  function openLoveRescueModal(dayData: any, list: any) {
+    activeRescueDayData = dayData;
+    activeHabitList = list;
+    currentSelectedRescuer = 'ai';
+
+    const modal = document.getElementById('love-rescue-modal');
+    const dayTitle = document.getElementById('rescue-modal-day-title');
+    const avatarAi = document.getElementById('rescue-avatar-ai') as HTMLImageElement | null;
+    const avatarMaze = document.getElementById('rescue-avatar-maze') as HTMLImageElement | null;
+    const textarea = document.getElementById('rescue-message-input') as HTMLTextAreaElement | null;
+    const cardAi = document.getElementById('rescue-card-ai');
+    const cardMaze = document.getElementById('rescue-card-maze');
+
+    if (avatarAi) avatarAi.src = getBoysAvatar();
+    if (avatarMaze) avatarMaze.src = getGirlsAvatar();
+
+    if (dayTitle) {
+      dayTitle.textContent = `Gánh Thay Buổi Học Ngày ${dayData.day}`;
+    }
+
+    if (textarea) {
+      textarea.value = '';
+      textarea.placeholder = `Nhập lời nhắn yêu thương khi AI gánh bù cho Maze hôm nay... 💕`;
+    }
+
+    if (cardAi && cardMaze) {
+      cardAi.classList.add('is-selected');
+      cardMaze.classList.remove('is-selected');
+    }
+
+    if (modal) {
+      modal.style.display = 'flex';
+      modal.setAttribute('aria-hidden', 'false');
+      setTimeout(() => {
+        textarea?.focus();
+      }, 100);
+    }
+  }
+
+  function closeLoveRescueModal() {
+    const modal = document.getElementById('love-rescue-modal');
+    if (modal) {
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+    }
+    activeRescueDayData = null;
+    activeHabitList = null;
+  }
+
   function initHabitInteractive() {
     document.querySelectorAll('.milestone-tab-btn').forEach((btn: any) => {
       btn.addEventListener('click', () => {
@@ -2057,7 +2664,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
 
         saveStoredTargetDays(nextDays);
         renderHabitUI();
-        alert(`🌌 Tuyệt vời! Hai bạn đã chính thức bước qua Cổng Không - Thời Gian vào Chặng ${nextDays} Ngày!`);
+        triggerLoveHeartConfetti();
       });
     }
 
@@ -2073,9 +2680,6 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
           saveStoredStartDateLocked(true);
           hasUserManuallySelectedDay = false;
           renderHabitUI();
-          alert(`🔒 Đã lưu & niêm phong ngày bắt đầu: ${val.split('-').reverse().join('/')}! Lịch trình đã được khóa cố định.`);
-        } else {
-          alert('Vui lòng chọn ngày hợp lệ!');
         }
       });
 
@@ -2092,18 +2696,107 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       toggleStartLockBtn.addEventListener('click', () => {
         const currentlyLocked = getStoredStartDateLocked();
         if (currentlyLocked) {
-          const ok = confirm('🔓 Bạn có muốn mở khóa để thay đổi ngày bắt đầu lịch trình không?');
-          if (ok) {
-            saveStoredStartDateLocked(false);
-            renderHabitUI();
-          }
+          openUnlockDateModal();
         } else {
           saveStoredStartDateLocked(true);
           renderHabitUI();
-          alert('🔒 Lịch trình ngày bắt đầu đã được niêm phong cố định!');
         }
       });
     }
+
+    // Modal 1: Unlock Date Setup
+    const btnConfirmUnlockDate = document.getElementById('btn-confirm-unlock-date');
+    const btnCancelUnlockDate = document.getElementById('btn-cancel-unlock-date');
+    const btnCloseUnlockModal = document.getElementById('btn-close-unlock-modal');
+    const unlockModalOverlay = document.getElementById('unlock-date-modal');
+
+    if (btnConfirmUnlockDate) {
+      btnConfirmUnlockDate.addEventListener('click', () => {
+        saveStoredStartDateLocked(false);
+        closeUnlockDateModal();
+        triggerLoveHeartConfetti();
+        renderHabitUI();
+      });
+    }
+
+    if (btnCancelUnlockDate) {
+      btnCancelUnlockDate.addEventListener('click', closeUnlockDateModal);
+    }
+    if (btnCloseUnlockModal) {
+      btnCloseUnlockModal.addEventListener('click', closeUnlockDateModal);
+    }
+    if (unlockModalOverlay) {
+      unlockModalOverlay.addEventListener('click', (e) => {
+        if (e.target === unlockModalOverlay) closeUnlockDateModal();
+      });
+    }
+
+    // Modal 2: Love Rescue Setup
+    const rescueCardAi = document.getElementById('rescue-card-ai');
+    const rescueCardMaze = document.getElementById('rescue-card-maze');
+    const rescueTextarea = document.getElementById('rescue-message-input') as HTMLTextAreaElement | null;
+    const btnConfirmRescue = document.getElementById('btn-confirm-rescue');
+    const btnCancelRescue = document.getElementById('btn-cancel-rescue');
+    const btnCloseRescueModal = document.getElementById('btn-close-rescue-modal');
+    const rescueModalOverlay = document.getElementById('love-rescue-modal');
+
+    if (rescueCardAi && rescueCardMaze) {
+      rescueCardAi.addEventListener('click', () => {
+        currentSelectedRescuer = 'ai';
+        rescueCardAi.classList.add('is-selected');
+        rescueCardMaze.classList.remove('is-selected');
+        if (rescueTextarea) {
+          rescueTextarea.placeholder = `Nhập lời nhắn yêu thương khi AI gánh bù cho Maze hôm nay... 💕`;
+        }
+      });
+
+      rescueCardMaze.addEventListener('click', () => {
+        currentSelectedRescuer = 'maze';
+        rescueCardMaze.classList.add('is-selected');
+        rescueCardAi.classList.remove('is-selected');
+        if (rescueTextarea) {
+          rescueTextarea.placeholder = `Nhập lời nhắn yêu thương khi Maze gánh bù cho AI hôm nay... 💕`;
+        }
+      });
+    }
+
+    if (btnConfirmRescue) {
+      btnConfirmRescue.addEventListener('click', () => {
+        if (!activeRescueDayData || !activeHabitList) return;
+        const typedMsg = rescueTextarea ? rescueTextarea.value.trim() : '';
+        const defaultNote = currentSelectedRescuer === 'ai'
+          ? 'AI đã học bù bài hôm nay giúp Maze với trọn vẹn yêu thương! 💖'
+          : 'Maze đã học bù bài hôm nay giúp AI với trọn vẹn yêu thương! 💖';
+
+        activeRescueDayData.rescuedBy = currentSelectedRescuer;
+        activeRescueDayData.rescueNote = typedMsg || defaultNote;
+        recalcDayCompletion(activeRescueDayData);
+        saveStoredHabits(activeHabitList);
+        closeLoveRescueModal();
+        triggerLoveHeartConfetti();
+        renderHabitUI();
+      });
+    }
+
+    if (btnCancelRescue) {
+      btnCancelRescue.addEventListener('click', closeLoveRescueModal);
+    }
+    if (btnCloseRescueModal) {
+      btnCloseRescueModal.addEventListener('click', closeLoveRescueModal);
+    }
+    if (rescueModalOverlay) {
+      rescueModalOverlay.addEventListener('click', (e) => {
+        if (e.target === rescueModalOverlay) closeLoveRescueModal();
+      });
+    }
+
+    // Global Key Listener: Escape to close modals
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeUnlockDateModal();
+        closeLoveRescueModal();
+      }
+    });
 
     const presetToday = document.getElementById('btn-preset-today');
     if (presetToday) {
