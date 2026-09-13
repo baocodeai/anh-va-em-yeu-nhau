@@ -14,7 +14,12 @@ export function getSavedFirebaseConfig(): FirebaseConfig | null {
   if (typeof window === 'undefined') return null;
   try {
     const raw = localStorage.getItem(STORAGE_FIREBASE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && (parsed.databaseURL || (parsed.apiKey && parsed.projectId))) {
+        return parsed;
+      }
+    }
   } catch {}
   if (DEFAULT_FIREBASE_CONFIG.databaseURL || DEFAULT_FIREBASE_CONFIG.apiKey) {
     return DEFAULT_FIREBASE_CONFIG;
@@ -80,6 +85,12 @@ export interface SurpriseLetterPayload {
   signatureName?: string;
   btnReadText?: string;
   btnFoldText?: string;
+  showBadge?: boolean;
+  showDate?: boolean;
+  showSalutation?: boolean;
+  showQuote?: boolean;
+  showSignature?: boolean;
+  showFoldBtn?: boolean;
 }
 
 export interface CoupleCloudPayload {
@@ -250,7 +261,7 @@ export function normalizeCoupleCloudPayload(raw: any): CoupleCloudPayload {
       sender: raw.surpriseLetter.sender || 'ai',
       recipient: raw.surpriseLetter.recipient || 'maze',
       waxColor: raw.surpriseLetter.waxColor || 'ruby',
-      showOnce: Boolean(raw.surpriseLetter.showOnce),
+      showOnce: raw.surpriseLetter.showOnce !== undefined ? Boolean(raw.surpriseLetter.showOnce) : true,
       readAt: typeof raw.surpriseLetter.readAt === 'string' ? raw.surpriseLetter.readAt : undefined,
       readBy: typeof raw.surpriseLetter.readBy === 'string' ? raw.surpriseLetter.readBy : undefined,
       updatedAt: typeof raw.surpriseLetter.updatedAt === 'string' ? raw.surpriseLetter.updatedAt : undefined,
@@ -260,7 +271,13 @@ export function normalizeCoupleCloudPayload(raw: any): CoupleCloudPayload {
       signatureSignoff: typeof raw.surpriseLetter.signatureSignoff === 'string' ? raw.surpriseLetter.signatureSignoff : undefined,
       signatureName: typeof raw.surpriseLetter.signatureName === 'string' ? raw.surpriseLetter.signatureName : undefined,
       btnReadText: typeof raw.surpriseLetter.btnReadText === 'string' ? raw.surpriseLetter.btnReadText : undefined,
-      btnFoldText: typeof raw.surpriseLetter.btnFoldText === 'string' ? raw.surpriseLetter.btnFoldText : undefined
+      btnFoldText: typeof raw.surpriseLetter.btnFoldText === 'string' ? raw.surpriseLetter.btnFoldText : undefined,
+      showBadge: raw.surpriseLetter.showBadge !== undefined ? Boolean(raw.surpriseLetter.showBadge) : true,
+      showDate: raw.surpriseLetter.showDate !== undefined ? Boolean(raw.surpriseLetter.showDate) : true,
+      showSalutation: raw.surpriseLetter.showSalutation !== undefined ? Boolean(raw.surpriseLetter.showSalutation) : true,
+      showQuote: raw.surpriseLetter.showQuote !== undefined ? Boolean(raw.surpriseLetter.showQuote) : true,
+      showSignature: raw.surpriseLetter.showSignature !== undefined ? Boolean(raw.surpriseLetter.showSignature) : true,
+      showFoldBtn: raw.surpriseLetter.showFoldBtn !== undefined ? Boolean(raw.surpriseLetter.showFoldBtn) : true
     } : undefined,
     lastUpdatedBy: typeof raw.lastUpdatedBy === 'string' ? raw.lastUpdatedBy : undefined,
     updatedAt: typeof raw.updatedAt === 'string' ? raw.updatedAt : undefined

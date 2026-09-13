@@ -81,6 +81,11 @@ const { title } = COUPLE_CONFIG;
           <div class="receipt-badge-pill" id="receipt-badge-pill">
             <span>Đang chờ nàng mở...</span>
           </div>
+          <div class="receipt-action-row" id="receipt-action-row" style="display: none; margin-top: 10px;">
+            <button type="button" class="btn-micro-resend" id="btn-resend-letter" title="Làm mới trạng thái để phong thư lại bung ra khi nàng mở web">
+              <span>🔄 Gửi Lại Thư Này Cho Bé</span>
+            </button>
+          </div>
         </div>
 
         <!-- Card 3: Cloud RTDB Connection -->
@@ -209,53 +214,90 @@ const { title } = COUPLE_CONFIG;
               </div>
 
               <div class="custom-fields-grid mt-3">
-                <!-- Salutation & Badge -->
+                <!-- Salutation & Badge with Toggles -->
                 <div class="form-group">
-                  <label for="adm-letter-salutation" class="admin-label">
-                    <span>👋 Lời Chào Mở Đầu (Salutation):</span>
-                  </label>
+                  <div class="label-toggle-row">
+                    <label for="adm-letter-salutation" class="admin-label" style="margin: 0;">
+                      <span>👋 Lời Chào Mở Đầu (Salutation):</span>
+                    </label>
+                    <label class="switch-pill-label" title="Bật hoặc Tắt lời chào mở đầu">
+                      <input type="checkbox" id="adm-toggle-salutation" checked class="mini-toggle-checkbox" />
+                      <span class="mini-toggle-text" id="toggle-salutation-txt">HIỆN</span>
+                    </label>
+                  </div>
                   <input
                     type="text"
                     id="adm-letter-salutation"
-                    class="admin-input"
+                    class="admin-input mt-1"
                     placeholder="Mặc định: Em yêu dấu thương mến, (hoặc Bé iu của anh ơi, Gửi công chúa nhỏ...)"
                   />
                 </div>
 
                 <div class="form-group">
-                  <label for="adm-letter-badge" class="admin-label">
-                    <span>🏷️ Huy Hiệu Nhỏ Góc Trên (Badge):</span>
-                  </label>
+                  <div class="label-toggle-row">
+                    <label for="adm-letter-badge" class="admin-label" style="margin: 0;">
+                      <span>🏷️ Huy Hiệu Nhỏ Góc Trên (Badge):</span>
+                    </label>
+                    <label class="switch-pill-label" title="Bật hoặc Tắt huy hiệu nhỏ trên cùng">
+                      <input type="checkbox" id="adm-toggle-badge" checked class="mini-toggle-checkbox" />
+                      <span class="mini-toggle-text" id="toggle-badge-txt">HIỆN</span>
+                    </label>
+                  </div>
                   <input
                     type="text"
                     id="adm-letter-badge"
-                    class="admin-input"
+                    class="admin-input mt-1"
                     placeholder="Mặc định: 💌 Bức Thư Tình Yêu (hoặc 💐 Điều Bất Ngờ Cho Em)"
                   />
                 </div>
 
-                <!-- Bottom Quote / Lời dặn -->
-                <div class="form-group span-full">
-                  <label for="adm-letter-quote" class="admin-label">
-                    <span>💬 Lời Dặn Dò / Câu Châm Ngôn Cuối Thư (Bottom Quote):</span>
-                  </label>
+                <!-- Date & Bottom Quote with Toggles -->
+                <div class="form-group">
+                  <div class="label-toggle-row">
+                    <label class="admin-label" style="margin: 0;">
+                      <span>📅 Dòng Ngày Tháng Thư:</span>
+                    </label>
+                    <label class="switch-pill-label" title="Bật hoặc Tắt dòng ngày tháng">
+                      <input type="checkbox" id="adm-toggle-date" checked class="mini-toggle-checkbox" />
+                      <span class="mini-toggle-text" id="toggle-date-txt">HIỆN</span>
+                    </label>
+                  </div>
+                  <small class="field-hint" style="margin-top: 6px;">Tự động hiển thị ngày hiện tại (VD: 13 Tháng 9, 2026).</small>
+                </div>
+
+                <div class="form-group">
+                  <div class="label-toggle-row">
+                    <label for="adm-letter-quote" class="admin-label" style="margin: 0;">
+                      <span>💬 Lời Dặn Dò / Châm Ngôn Cuối Thư:</span>
+                    </label>
+                    <label class="switch-pill-label" title="Bật hoặc Tắt câu quote cuối thư">
+                      <input type="checkbox" id="adm-toggle-quote" checked class="mini-toggle-checkbox" />
+                      <span class="mini-toggle-text" id="toggle-quote-txt">HIỆN</span>
+                    </label>
+                  </div>
                   <input
                     type="text"
                     id="adm-letter-quote"
-                    class="admin-input"
+                    class="admin-input mt-1"
                     placeholder='Mặc định: "Mãi luôn thương và đồng hành cùng em qua muôn ngàn vì sao."'
                   />
                 </div>
 
-                <!-- Signoff & Signature Name -->
+                <!-- Signoff & Signature Name with Toggles -->
                 <div class="form-group">
-                  <label for="adm-letter-sig-from" class="admin-label">
-                    <span>✒️ Lời Đề Từ Trước Chữ Ký:</span>
-                  </label>
+                  <div class="label-toggle-row">
+                    <label for="adm-letter-sig-from" class="admin-label" style="margin: 0;">
+                      <span>✒️ Lời Đề Từ Trước Chữ Ký:</span>
+                    </label>
+                    <label class="switch-pill-label" title="Bật hoặc Tắt toàn bộ phần chữ ký">
+                      <input type="checkbox" id="adm-toggle-signature" checked class="mini-toggle-checkbox" />
+                      <span class="mini-toggle-text" id="toggle-sig-txt">HIỆN</span>
+                    </label>
+                  </div>
                   <input
                     type="text"
                     id="adm-letter-sig-from"
-                    class="admin-input"
+                    class="admin-input mt-1"
                     placeholder="Mặc định: Thương gửi từ, (hoặc Yêu em ngàn lần, Mãi bên em...)"
                   />
                 </div>
@@ -272,7 +314,7 @@ const { title } = COUPLE_CONFIG;
                   />
                 </div>
 
-                <!-- Action Buttons Customization -->
+                <!-- Action Buttons Customization with Toggles -->
                 <div class="form-group">
                   <label for="adm-letter-btn-read" class="admin-label">
                     <span>💖 Chữ Trên Nút Xác Nhận Đọc:</span>
@@ -286,13 +328,19 @@ const { title } = COUPLE_CONFIG;
                 </div>
 
                 <div class="form-group">
-                  <label for="adm-letter-btn-fold" class="admin-label">
-                    <span>🌸 Chữ Trên Nút Gấp Thư:</span>
-                  </label>
+                  <div class="label-toggle-row">
+                    <label for="adm-letter-btn-fold" class="admin-label" style="margin: 0;">
+                      <span>🌸 Nút Phụ Gấp Thư Cất Đi:</span>
+                    </label>
+                    <label class="switch-pill-label" title="Bật hoặc Tắt nút phụ gấp thư">
+                      <input type="checkbox" id="adm-toggle-fold-btn" checked class="mini-toggle-checkbox" />
+                      <span class="mini-toggle-text" id="toggle-fold-txt">HIỆN</span>
+                    </label>
+                  </div>
                   <input
                     type="text"
                     id="adm-letter-btn-fold"
-                    class="admin-input"
+                    class="admin-input mt-1"
                     placeholder="Mặc định: 🌸 Gấp Thư Lại Cất Đi"
                   />
                 </div>
@@ -302,10 +350,10 @@ const { title } = COUPLE_CONFIG;
             <!-- Checkbox: Show Once Option -->
             <div class="form-checkbox-row mt-3">
               <label class="custom-checkbox-label">
-                <input type="checkbox" id="adm-letter-show-once" class="custom-checkbox" />
+                <input type="checkbox" id="adm-letter-show-once" class="custom-checkbox" checked />
                 <span class="checkbox-box"></span>
                 <span class="checkbox-text">
-                  <strong>Chế độ chỉ hiện 1 lần:</strong> Sau khi nàng bấm nút <em>"Em Đã Đọc Và Rất Yêu Anh"</em> thì bức thư sẽ tự động không hiện lại nữa (trừ khi anh sửa nội dung mới).
+                  <strong>Chế độ chỉ hiện 1 lần (Khuyên dùng):</strong> Sau khi nàng bấm nút <em>"Em Đã Đọc Và Rất Yêu Anh"</em> thì bức thư sẽ tự động không hiện lại nữa (trừ khi anh gửi thư mới).
                 </span>
               </label>
             </div>
@@ -650,6 +698,29 @@ const { title } = COUPLE_CONFIG;
     color: #ffffff;
   }
 
+  .btn-micro-resend {
+    background: rgba(244, 63, 94, 0.15);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    color: #fda4af;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .btn-micro-resend:hover {
+    background: rgba(244, 63, 94, 0.35);
+    color: #ffffff;
+    border-color: #f43f5e;
+  }
+
   /* Editor Panel */
   .editor-panel {
     background: rgba(15, 23, 42, 0.85);
@@ -901,6 +972,55 @@ const { title } = COUPLE_CONFIG;
     grid-column: 1 / -1;
   }
 
+  .label-toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .switch-pill-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 2px 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s;
+  }
+
+  .switch-pill-label:hover {
+    border-color: #f43f5e;
+  }
+
+  .mini-toggle-checkbox {
+    accent-color: #f43f5e;
+    cursor: pointer;
+    width: 14px;
+    height: 14px;
+    margin: 0;
+  }
+
+  .mini-toggle-text {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+  }
+
+  .switch-pill-label:has(.mini-toggle-checkbox:checked) {
+    background: rgba(244, 63, 94, 0.18);
+    border-color: rgba(244, 63, 94, 0.5);
+  }
+
+  .switch-pill-label:has(.mini-toggle-checkbox:checked) .mini-toggle-text {
+    color: #fda4af;
+  }
+
   /* Actions Bar */
   .admin-actions-bar {
     display: flex;
@@ -1046,10 +1166,15 @@ const { title } = COUPLE_CONFIG;
   import {
     pushDataToFirebase,
     subscribeToRealtimeSync,
+    getSavedFirebaseConfig,
     type SurpriseLetterPayload
   } from '../lib/firebaseClient';
 
   function initLetterAdmin() {
+    // Đánh dấu thiết bị này là của Bạn Trai (Người viết thư)
+    localStorage.setItem('couple_my_role', 'ai');
+    localStorage.setItem('couple_is_letter_author', 'true');
+
     // DOM Elements
     const cardSwitch = document.getElementById('card-master-switch');
     const btnToggle = document.getElementById('btn-admin-toggle') as HTMLButtonElement | null;
@@ -1083,6 +1208,46 @@ const { title } = COUPLE_CONFIG;
     const inputBtnRead = document.getElementById('adm-letter-btn-read') as HTMLInputElement | null;
     const inputBtnFold = document.getElementById('adm-letter-btn-fold') as HTMLInputElement | null;
 
+    // Component Visibility Toggle Checkboxes
+    const toggleSalutation = document.getElementById('adm-toggle-salutation') as HTMLInputElement | null;
+    const toggleBadge = document.getElementById('adm-toggle-badge') as HTMLInputElement | null;
+    const toggleDate = document.getElementById('adm-toggle-date') as HTMLInputElement | null;
+    const toggleQuote = document.getElementById('adm-toggle-quote') as HTMLInputElement | null;
+    const toggleSignature = document.getElementById('adm-toggle-signature') as HTMLInputElement | null;
+    const toggleFoldBtn = document.getElementById('adm-toggle-fold-btn') as HTMLInputElement | null;
+
+    const txtToggleSalutation = document.getElementById('toggle-salutation-txt');
+    const txtToggleBadge = document.getElementById('toggle-badge-txt');
+    const txtToggleDate = document.getElementById('toggle-date-txt');
+    const txtToggleQuote = document.getElementById('toggle-quote-txt');
+    const txtToggleSig = document.getElementById('toggle-sig-txt');
+    const txtToggleFold = document.getElementById('toggle-fold-txt');
+
+    function updateMiniToggleLabels() {
+      if (toggleSalutation && txtToggleSalutation) {
+        txtToggleSalutation.textContent = toggleSalutation.checked ? 'HIỆN' : 'ẨN';
+      }
+      if (toggleBadge && txtToggleBadge) {
+        txtToggleBadge.textContent = toggleBadge.checked ? 'HIỆN' : 'ẨN';
+      }
+      if (toggleDate && txtToggleDate) {
+        txtToggleDate.textContent = toggleDate.checked ? 'HIỆN' : 'ẨN';
+      }
+      if (toggleQuote && txtToggleQuote) {
+        txtToggleQuote.textContent = toggleQuote.checked ? 'HIỆN' : 'ẨN';
+      }
+      if (toggleSignature && txtToggleSig) {
+        txtToggleSig.textContent = toggleSignature.checked ? 'HIỆN' : 'ẨN';
+      }
+      if (toggleFoldBtn && txtToggleFold) {
+        txtToggleFold.textContent = toggleFoldBtn.checked ? 'HIỆN' : 'ẨN';
+      }
+    }
+
+    [toggleSalutation, toggleBadge, toggleDate, toggleQuote, toggleSignature, toggleFoldBtn].forEach((chk) => {
+      chk?.addEventListener('change', updateMiniToggleLabels);
+    });
+
     const btnSave = document.getElementById('btn-adm-save') as HTMLButtonElement | null;
     const btnSaveLabel = document.getElementById('btn-save-label');
     const btnPreview = document.getElementById('btn-adm-preview');
@@ -1096,7 +1261,7 @@ const { title } = COUPLE_CONFIG;
       sender: 'ai',
       recipient: 'maze',
       waxColor: 'ruby',
-      showOnce: false,
+      showOnce: true,
       updatedAt: new Date().toISOString()
     };
 
@@ -1117,7 +1282,7 @@ const { title } = COUPLE_CONFIG;
       if (selectWax) selectWax.value = letterState.waxColor || 'ruby';
       if (inputTitle) inputTitle.value = letterState.title || '';
       if (textareaContent) textareaContent.value = letterState.content || '';
-      if (checkShowOnce) checkShowOnce.checked = !!letterState.showOnce;
+      if (checkShowOnce) checkShowOnce.checked = letterState.showOnce !== false;
 
       // Populate Custom Components
       if (inputSalutation) inputSalutation.value = letterState.salutation || '';
@@ -1127,6 +1292,15 @@ const { title } = COUPLE_CONFIG;
       if (inputSigName) inputSigName.value = letterState.signatureName || '';
       if (inputBtnRead) inputBtnRead.value = letterState.btnReadText || '';
       if (inputBtnFold) inputBtnFold.value = letterState.btnFoldText || '';
+
+      // Populate Visibility Toggles
+      if (toggleSalutation) toggleSalutation.checked = letterState.showSalutation !== false;
+      if (toggleBadge) toggleBadge.checked = letterState.showBadge !== false;
+      if (toggleDate) toggleDate.checked = letterState.showDate !== false;
+      if (toggleQuote) toggleQuote.checked = letterState.showQuote !== false;
+      if (toggleSignature) toggleSignature.checked = letterState.showSignature !== false;
+      if (toggleFoldBtn) toggleFoldBtn.checked = letterState.showFoldBtn !== false;
+      updateMiniToggleLabels();
 
       updateWordCounts();
       renderSwitchUI(letterState.enabled);
@@ -1161,9 +1335,12 @@ const { title } = COUPLE_CONFIG;
     function renderReceiptUI() {
       if (!receiptCard || !receiptHeading || !receiptDetail || !receiptBadge || !receiptIcon) return;
 
+      const receiptActionRow = document.getElementById('receipt-action-row');
+
       if (letterState.readAt) {
         receiptCard.classList.add('is-read');
         receiptIcon.textContent = '💖';
+        if (receiptActionRow) receiptActionRow.style.display = 'block';
         try {
           const d = new Date(letterState.readAt);
           const timeStr = d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
@@ -1179,10 +1356,34 @@ const { title } = COUPLE_CONFIG;
       } else {
         receiptCard.classList.remove('is-read');
         receiptIcon.textContent = '⏳';
+        if (receiptActionRow) receiptActionRow.style.display = 'none';
         receiptHeading.textContent = 'Chưa Mở Đọc';
         receiptDetail.textContent = 'Nàng chưa mở đọc bức thư này.';
         receiptBadge.innerHTML = '<span>Đang chờ nàng mở...</span>';
       }
+    }
+
+    // Nút Gửi Lại Thư Này Cho Bé
+    const btnResend = document.getElementById('btn-resend-letter');
+    if (btnResend) {
+      btnResend.addEventListener('click', async () => {
+        if (confirm('💌 Bạn có muốn gửi lại bức thư này cho nàng không?\n\nTrạng thái "Đã đọc" sẽ được xóa để khi nàng mở web, phong thư hoàng gia sẽ xuất hiện trở lại!')) {
+          letterState.readAt = undefined;
+          letterState.readBy = undefined;
+          letterState.enabled = true;
+          letterState.updatedAt = new Date().toISOString();
+          localStorage.setItem('couple_surprise_letter', JSON.stringify(letterState));
+          renderReceiptUI();
+          renderSwitchUI(true);
+          try {
+            await pushDataToFirebase({ surpriseLetter: letterState });
+            window.dispatchEvent(new CustomEvent('couple-letter-updated', { detail: letterState }));
+            alert('✨ Đã làm mới trạng thái gửi thư! Nàng vào web sẽ thấy phong thư xuất hiện trở lại.');
+          } catch {
+            alert('⚠️ Đã làm mới trên máy này.');
+          }
+        }
+      });
     }
 
     // Render Cloud Timestamp
@@ -1247,28 +1448,37 @@ const { title } = COUPLE_CONFIG;
         const newContent = textareaContent ? textareaContent.value.trim() : letterState.content;
         const newRecipient = selectRecipient ? (selectRecipient.value as any) : letterState.recipient;
         const newWax = selectWax ? (selectWax.value as any) : letterState.waxColor;
-        const newShowOnce = checkShowOnce ? checkShowOnce.checked : false;
+        const newShowOnce = checkShowOnce ? checkShowOnce.checked : true;
 
         const hasContentChanged = newContent !== letterState.content || newTitle !== letterState.title;
+        const isTurningOn = isEnabled && !letterState.enabled;
+        const shouldResetReadStatus = hasContentChanged || isTurningOn;
 
         letterState = {
           ...letterState,
           enabled: isEnabled,
           title: newTitle || 'Thư Tình Gửi Em 💌',
           content: newContent || 'Anh yêu em nhiều lắm!',
+          sender: 'ai',
           recipient: newRecipient,
           waxColor: newWax,
           showOnce: newShowOnce,
           updatedAt: new Date().toISOString(),
-          readAt: hasContentChanged ? undefined : letterState.readAt,
-          readBy: hasContentChanged ? undefined : letterState.readBy,
+          readAt: shouldResetReadStatus ? undefined : letterState.readAt,
+          readBy: shouldResetReadStatus ? undefined : letterState.readBy,
           badgeText: inputBadge ? inputBadge.value.trim() : undefined,
           salutation: inputSalutation ? inputSalutation.value.trim() : undefined,
           bottomQuote: inputQuote ? inputQuote.value.trim() : undefined,
           signatureSignoff: inputSigFrom ? inputSigFrom.value.trim() : undefined,
           signatureName: inputSigName ? inputSigName.value.trim() : undefined,
           btnReadText: inputBtnRead ? inputBtnRead.value.trim() : undefined,
-          btnFoldText: inputBtnFold ? inputBtnFold.value.trim() : undefined
+          btnFoldText: inputBtnFold ? inputBtnFold.value.trim() : undefined,
+          showBadge: toggleBadge ? toggleBadge.checked : true,
+          showDate: toggleDate ? toggleDate.checked : true,
+          showSalutation: toggleSalutation ? toggleSalutation.checked : true,
+          showQuote: toggleQuote ? toggleQuote.checked : true,
+          showSignature: toggleSignature ? toggleSignature.checked : true,
+          showFoldBtn: toggleFoldBtn ? toggleFoldBtn.checked : true
         };
 
         // Save local
@@ -1281,7 +1491,7 @@ const { title } = COUPLE_CONFIG;
 
         try {
           const res = await pushDataToFirebase({ surpriseLetter: letterState });
-          if (res.success) {
+          if (res) {
             window.dispatchEvent(new CustomEvent('couple-letter-updated', { detail: letterState }));
             renderReceiptUI();
             renderCloudTime();
@@ -1319,7 +1529,13 @@ const { title } = COUPLE_CONFIG;
           signatureSignoff: inputSigFrom ? inputSigFrom.value.trim() : undefined,
           signatureName: inputSigName ? inputSigName.value.trim() : undefined,
           btnReadText: inputBtnRead ? inputBtnRead.value.trim() : undefined,
-          btnFoldText: inputBtnFold ? inputBtnFold.value.trim() : undefined
+          btnFoldText: inputBtnFold ? inputBtnFold.value.trim() : undefined,
+          showBadge: toggleBadge ? toggleBadge.checked : true,
+          showDate: toggleDate ? toggleDate.checked : true,
+          showSalutation: toggleSalutation ? toggleSalutation.checked : true,
+          showQuote: toggleQuote ? toggleQuote.checked : true,
+          showSignature: toggleSignature ? toggleSignature.checked : true,
+          showFoldBtn: toggleFoldBtn ? toggleFoldBtn.checked : true
         };
 
         // Dispatch preview event for global SurpriseLoveLetter component
@@ -1350,18 +1566,24 @@ const { title } = COUPLE_CONFIG;
     // Refresh from Cloud Button
     if (btnRefreshCloud) {
       btnRefreshCloud.addEventListener('click', async () => {
-        btnRefreshCloud.innerHTML = '<span>⏳ Đang tải...</span>';
+        btnRefreshCloud.innerHTML = '<span>⏳ Đang tải từ Cloud...</span>';
         try {
-          const raw = localStorage.getItem('couple_surprise_letter');
-          if (raw) {
-            letterState = { ...letterState, ...JSON.parse(raw) };
-            loadLetterState();
+          const cfg = getSavedFirebaseConfig();
+          const dbUrl = cfg?.databaseURL || 'https://tinh-cau-ai-maze-default-rtdb.firebaseio.com';
+          const resp = await fetch(`${dbUrl.replace(/\/+$/, '')}/couple_data/surpriseLetter.json`);
+          if (resp.ok) {
+            const cloudLetter = await resp.json();
+            if (cloudLetter && typeof cloudLetter === 'object') {
+              letterState = { ...letterState, ...cloudLetter };
+              localStorage.setItem('couple_surprise_letter', JSON.stringify(letterState));
+              loadLetterState();
+              window.dispatchEvent(new CustomEvent('couple-letter-updated', { detail: letterState }));
+            }
           }
-          setTimeout(() => {
-            btnRefreshCloud.innerHTML = '<span>🔄 Tải Lại Dữ Liệu Cloud</span>';
-            alert('✅ Đã làm mới dữ liệu từ Cloud thành công!');
-          }, 400);
-        } catch {
+          alert('✅ Đã làm mới dữ liệu mới nhất từ Cloud Firebase!');
+        } catch (e: any) {
+          alert('⚠️ Không thể tải từ Cloud: ' + (e?.message || e));
+        } finally {
           btnRefreshCloud.innerHTML = '<span>🔄 Tải Lại Dữ Liệu Cloud</span>';
         }
       });

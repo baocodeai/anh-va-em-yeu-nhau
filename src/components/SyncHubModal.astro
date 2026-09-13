@@ -1506,7 +1506,7 @@
 
         try {
           const pushRes = await pushDataToFirebase({ surpriseLetter: currentLetterState });
-          if (pushRes.success) {
+          if (pushRes) {
             window.dispatchEvent(new CustomEvent('couple-letter-updated', { detail: currentLetterState }));
             alert(isEnabled
               ? '💌 Tuyệt vời! Bức thư tay đã được BẬT và đồng bộ lên Cloud. Nàng vào web sẽ thấy ngay!'

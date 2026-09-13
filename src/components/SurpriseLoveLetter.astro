@@ -83,7 +83,7 @@
 
         <!-- Header Bức Thư -->
         <div class="parchment-header">
-          <div class="parchment-badge">
+          <div class="parchment-badge" id="parchment-badge-wrap">
             <span id="letter-badge-display">💌 Bức Thư Tình Yêu</span>
           </div>
           <div class="parchment-date" id="letter-date-display">13 Tháng 9, 2026</div>
@@ -103,10 +103,10 @@
         </div>
 
         <!-- Lời Kết & Ký Tên -->
-        <div class="parchment-footer">
+        <div class="parchment-footer" id="parchment-footer-wrap">
           <div class="parchment-signoff">
             <p class="signoff-quote" id="letter-quote-display">"Mãi luôn thương và đồng hành cùng em qua muôn ngàn vì sao."</p>
-            <div class="signoff-signature">
+            <div class="signoff-signature" id="parchment-signature-wrap">
               <span class="sig-from" id="letter-sig-from-display">Thương gửi từ,</span>
               <strong class="sig-name" id="letter-author-name">AI (Anh 🚀)</strong>
             </div>
@@ -736,6 +736,12 @@
     signatureName?: string;
     btnReadText?: string;
     btnFoldText?: string;
+    showBadge?: boolean;
+    showDate?: boolean;
+    showSalutation?: boolean;
+    showQuote?: boolean;
+    showSignature?: boolean;
+    showFoldBtn?: boolean;
   }
 
   // AudioContext singleton to eliminate sound lag
@@ -960,6 +966,50 @@
       dateEl.textContent = `${now.getDate()} Tháng ${now.getMonth() + 1}, ${now.getFullYear()}`;
     }
 
+    // ==========================================
+    // Áp dụng bật / tắt (Visibility Toggles)
+    // ==========================================
+    const badgeWrap = document.getElementById('parchment-badge-wrap');
+    const footerWrap = document.getElementById('parchment-footer-wrap');
+    const sigWrap = document.getElementById('parchment-signature-wrap');
+    const btnFoldBtn = document.getElementById('btn-fold-letter');
+
+    // 1. Huy hiệu đầu thư
+    if (badgeWrap) {
+      badgeWrap.style.display = data.showBadge !== false ? 'inline-flex' : 'none';
+    }
+
+    // 2. Ngày tháng
+    if (dateEl) {
+      dateEl.style.display = data.showDate !== false ? 'block' : 'none';
+    }
+
+    // 3. Lời chào mở đầu
+    if (salutationEl) {
+      salutationEl.style.display = data.showSalutation !== false ? 'block' : 'none';
+    }
+
+    // 4. Lời dặn / Châm ngôn cuối thư
+    if (quoteEl) {
+      quoteEl.style.display = data.showQuote !== false ? 'block' : 'none';
+    }
+
+    // 5. Khối chữ ký người gửi
+    if (sigWrap) {
+      sigWrap.style.display = data.showSignature !== false ? 'inline-flex' : 'none';
+    }
+
+    // Ẩn toàn bộ footer nếu cả quote và chữ ký đều tắt
+    if (footerWrap) {
+      const hasFooterContent = (data.showQuote !== false) || (data.showSignature !== false);
+      footerWrap.style.display = hasFooterContent ? 'block' : 'none';
+    }
+
+    // 6. Nút gấp thư lại
+    if (btnFoldBtn) {
+      btnFoldBtn.style.display = data.showFoldBtn !== false ? 'inline-flex' : 'none';
+    }
+
     overlay.style.display = 'flex';
     overlay.setAttribute('aria-hidden', 'false');
   }
@@ -967,6 +1017,12 @@
   function closeLetterModal() {
     // Resume background animations
     document.body.classList.remove('letter-modal-open');
+
+    // Ghi nhớ đã đóng/gấp thư trong phiên lướt web này để không bị bật lại liên tục
+    if (currentLetterData) {
+      const curHash = hashLetter(currentLetterData.title, currentLetterData.content);
+      sessionStorage.setItem('couple_letter_session_dismissed', curHash);
+    }
 
     const overlay = document.getElementById('surprise-letter-overlay');
     if (overlay) {
@@ -1009,6 +1065,7 @@
       const readHash = hashLetter(currentLetterData.title, currentLetterData.content);
       localStorage.setItem('couple_letter_last_read_hash', readHash);
       localStorage.setItem('couple_letter_last_read_at', nowIso);
+      sessionStorage.setItem('couple_letter_session_dismissed', readHash);
 
       try {
         await pushDataToFirebase({
@@ -1034,14 +1091,40 @@
     const data = getStoredLetterData();
     if (!data || !data.enabled) return;
 
-    // Check if showOnce is true and user already read this exact letter
-    if (data.showOnce) {
-      const readHash = localStorage.getItem('couple_letter_last_read_hash');
-      const curHash = hashLetter(data.title, data.content);
-      if (readHash === curHash) return; // Already read
+    // 1. Phân biệt người gửi vs người nhận:
+    // Nếu thiết bị này là của người gửi (đã vào /gui-thu hoặc lưu role là 'ai'):
+    const myRole = localStorage.getItem('couple_my_role');
+    const isSenderDevice = myRole === 'ai' || localStorage.getItem('couple_is_letter_author') === 'true';
+
+    // Thư gửi riêng cho Maze (recipient === 'maze') và máy này là của AI (bạn trai):
+    if (data.recipient === 'maze' && isSenderDevice) {
+      // Bạn trai là người gửi, không tự động bung thư đè lên màn hình bạn trai khi quay lại tinh cầu!
+      return;
     }
 
-    // Auto-pop after 1.2s delay for delightful entrance
+    // 2. Kiểm tra xem thư đã được đọc hay chưa (Cả trên Cloud lẫn LocalStorage):
+    const curHash = hashLetter(data.title, data.content);
+    const localReadHash = localStorage.getItem('couple_letter_last_read_hash');
+
+    // Thư được coi là ĐÃ ĐỌC trên Cloud nếu có readAt và thời điểm đọc sau/bằng thời điểm cập nhật
+    const isReadOnCloud = Boolean(
+      data.readAt && (!data.updatedAt || new Date(data.readAt).getTime() >= new Date(data.updatedAt).getTime() - 5000)
+    );
+    const isReadLocally = localReadHash === curHash;
+    const isAlreadyRead = isReadOnCloud || isReadLocally;
+
+    // Nếu showOnce bật (hoặc mặc định true) và bức thư này đã được đọc: KHÔNG TỰ ĐỘNG BẬT LẠI!
+    if (data.showOnce !== false && isAlreadyRead) {
+      return;
+    }
+
+    // 3. Kiểm tra xem người dùng có vừa bấm đóng/gấp thư trong phiên làm việc này không
+    const sessionDismissed = sessionStorage.getItem('couple_letter_session_dismissed');
+    if (sessionDismissed === curHash) {
+      return;
+    }
+
+    // Tự động bật sau 1.2s delay cho trải nghiệm ngọt ngào
     setTimeout(() => {
       openLetterModal(data);
     }, 1200);
