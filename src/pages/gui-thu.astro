@@ -366,8 +366,8 @@ const { title } = COUPLE_CONFIG;
                       <span>❧ 4 Con Dấu Hoa Văn Góc Thư (Giấy Thư):</span>
                     </label>
                     <label class="switch-pill-label" title="Bật hoặc Tắt 4 con dấu họa tiết cổ điển in ở 4 góc tờ giấy">
-                      <input type="checkbox" id="adm-toggle-corner-marks" checked class="mini-toggle-checkbox" />
-                      <span class="mini-toggle-text" id="toggle-corner-marks-txt">HIỆN</span>
+                      <input type="checkbox" id="adm-toggle-corner-marks" class="mini-toggle-checkbox" />
+                      <span class="mini-toggle-text" id="toggle-corner-marks-txt">ẨN</span>
                     </label>
                   </div>
                   <small class="field-hint" style="margin-top: 6px;">Họa tiết in chìm hoàng gia ❧ ở 4 góc tờ giấy da vintage.</small>
@@ -1339,7 +1339,7 @@ const { title } = COUPLE_CONFIG;
       if (toggleSignature) toggleSignature.checked = letterState.showSignature !== false;
       if (toggleFoldBtn) toggleFoldBtn.checked = letterState.showFoldBtn !== false;
       if (togglePostage) togglePostage.checked = letterState.showPostage !== false;
-      if (toggleCornerMarks) toggleCornerMarks.checked = letterState.showCornerMarks !== false;
+      if (toggleCornerMarks) toggleCornerMarks.checked = letterState.showCornerMarks === true;
       updateMiniToggleLabels();
 
       updateWordCounts();

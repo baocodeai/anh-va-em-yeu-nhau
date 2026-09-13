@@ -870,7 +870,9 @@
   }
 
   function getSafeStr(val: any, defaultVal = ''): string {
-    if (typeof val === 'string') return val.trim();
+    if (typeof val === 'string' && val.trim().length > 0) {
+      return val.trim();
+    }
     return defaultVal;
   }
 
@@ -1053,8 +1055,12 @@
       const safeQuote = getSafeStr(data.bottomQuote);
       const safeSigFrom = getSafeStr(data.signatureSignoff);
       const safeSigName = getSafeStr(data.signatureName);
-      const safeBtnRead = getSafeStr(data.btnReadText, '💖 Em Đã Đọc Và Rất Yêu Anh!');
-      const safeBtnFold = getSafeStr(data.btnFoldText, '🌸 Gấp Thư Lại Cất Đi');
+      const safeBtnRead = (typeof data.btnReadText === 'string' && data.btnReadText.trim().length > 0)
+        ? data.btnReadText.trim()
+        : '💖 Em Đã Đọc Và Rất Yêu Anh!';
+      const safeBtnFold = (typeof data.btnFoldText === 'string' && data.btnFoldText.trim().length > 0)
+        ? data.btnFoldText.trim()
+        : '🌸 Gấp Thư Lại Cất Đi';
 
       if (badgeEl) badgeEl.textContent = safeBadge.length > 0 ? safeBadge : '💌 Bức Thư Tình Yêu';
       if (titleEl) titleEl.textContent = safeTitle.length > 0 ? safeTitle : 'Gửi Người Anh Thương...';
@@ -1090,9 +1096,13 @@
           : (data.sender === 'ai' ? 'AI (Anh người yêu 🚀)' : 'Maze (Em người yêu 🌸)');
       }
 
-      // Button Labels
-      if (btnReadEl) btnReadEl.textContent = safeBtnRead;
-      if (btnFoldEl) btnFoldEl.textContent = safeBtnFold;
+      // Button Labels - Luôn đảm bảo có chữ, không bao giờ rỗng
+      if (btnReadEl) {
+        btnReadEl.textContent = safeBtnRead;
+      }
+      if (btnFoldEl) {
+        btnFoldEl.textContent = safeBtnFold;
+      }
 
       if (dateEl) {
         const now = new Date();
@@ -1157,9 +1167,9 @@
         postageWrap.style.display = data.showPostage !== false ? 'flex' : 'none';
       }
 
-      // 8. 4 Con dấu hoa văn góc thư (Corner Fleurons ❧)
+      // 8. 4 Con dấu hoa văn góc thư (Corner Fleurons ❧) - Mặc định ẨN để tránh vết lem góc
       corners.forEach((c) => {
-        (c as HTMLElement).style.display = data.showCornerMarks !== false ? 'block' : 'none';
+        (c as HTMLElement).style.display = data.showCornerMarks === true ? 'block' : 'none';
       });
 
     } catch (err) {
