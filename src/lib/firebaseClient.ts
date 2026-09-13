@@ -91,6 +91,8 @@ export interface SurpriseLetterPayload {
   showQuote?: boolean;
   showSignature?: boolean;
   showFoldBtn?: boolean;
+  showPostage?: boolean;
+  showCornerMarks?: boolean;
 }
 
 export interface CoupleCloudPayload {
@@ -277,7 +279,9 @@ export function normalizeCoupleCloudPayload(raw: any): CoupleCloudPayload {
       showSalutation: raw.surpriseLetter.showSalutation !== undefined ? Boolean(raw.surpriseLetter.showSalutation) : true,
       showQuote: raw.surpriseLetter.showQuote !== undefined ? Boolean(raw.surpriseLetter.showQuote) : true,
       showSignature: raw.surpriseLetter.showSignature !== undefined ? Boolean(raw.surpriseLetter.showSignature) : true,
-      showFoldBtn: raw.surpriseLetter.showFoldBtn !== undefined ? Boolean(raw.surpriseLetter.showFoldBtn) : true
+      showFoldBtn: raw.surpriseLetter.showFoldBtn !== undefined ? Boolean(raw.surpriseLetter.showFoldBtn) : true,
+      showPostage: raw.surpriseLetter.showPostage !== undefined ? Boolean(raw.surpriseLetter.showPostage) : true,
+      showCornerMarks: raw.surpriseLetter.showCornerMarks !== undefined ? Boolean(raw.surpriseLetter.showCornerMarks) : true
     } : undefined,
     lastUpdatedBy: typeof raw.lastUpdatedBy === 'string' ? raw.lastUpdatedBy : undefined,
     updatedAt: typeof raw.updatedAt === 'string' ? raw.updatedAt : undefined
