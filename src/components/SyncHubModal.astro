@@ -372,11 +372,28 @@
   }
 
   .sync-hub-floating-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     box-shadow: 0 8px 32px rgba(244, 63, 94, 0.45);
-    padding: 12px 20px;
-    font-size: 0.95rem;
+    padding: 10px 18px;
+    font-size: 0.92rem;
+    font-weight: 700;
     cursor: pointer;
     position: relative;
+    border-radius: 9999px;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+  }
+
+  .sync-hub-floating-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 12px 36px rgba(244, 63, 94, 0.6);
+  }
+
+  @media (max-width: 768px) {
+    .sync-hub-trigger-wrap {
+      display: none !important;
+    }
   }
 
   .sync-live-dot {
@@ -385,7 +402,7 @@
     border-radius: 50%;
     background: #64748b;
     display: inline-block;
-    margin-left: 6px;
+    margin-left: 4px;
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
     transition: background 0.3s;
   }
@@ -877,14 +894,37 @@
 
     if (!modal) return;
 
-    const openModal = () => modal.classList.add('is-open');
-    const closeModal = () => modal.classList.remove('is-open');
+    const openModal = () => {
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      updateStorageUsage();
+      const isConfigured = isFirebaseConfigured();
+      updateFirebaseStatusUI(isConfigured);
+    };
+    const closeModal = () => {
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+    };
 
     if (openBtn) openBtn.addEventListener('click', openModal);
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
     document.querySelectorAll('.btn-open-sync-trigger').forEach((btn: any) => {
       btn.addEventListener('click', openModal);
     });
+
+    // Expose helpers globally
+    (window as any).openSyncHub = openModal;
+    (window as any).closeSyncHub = closeModal;
+
+    // Open automatically if hash is #sync or #cloud
+    const handleSyncHash = () => {
+      const h = window.location.hash.toLowerCase();
+      if (h === '#sync' || h === '#sync-hub' || h === '#cloud' || h === '#firebase') {
+        openModal();
+      }
+    };
+    handleSyncHash();
+    window.addEventListener('hashchange', handleSyncHash);
 
     modal.addEventListener('click', (e) => {
       if (e.target === modal) closeModal();
@@ -910,12 +950,14 @@
 
     // Update Status Banner
     const globalDot = document.getElementById('global-sync-dot');
+    const headerDot = document.getElementById('header-sync-dot');
     const statusDot = document.getElementById('status-indicator-dot');
     const statusText = document.getElementById('status-banner-text');
 
     function updateFirebaseStatusUI(connected: boolean) {
       if (connected) {
         if (globalDot) globalDot.classList.add('is-live');
+        if (headerDot) headerDot.classList.add('is-live');
         if (statusDot) {
           statusDot.className = 'status-indicator-dot dot-connected';
         }
@@ -924,6 +966,7 @@
         }
       } else {
         if (globalDot) globalDot.classList.remove('is-live');
+        if (headerDot) headerDot.classList.remove('is-live');
         if (statusDot) {
           statusDot.className = 'status-indicator-dot dot-offline';
         }
@@ -1286,17 +1329,18 @@
 
     // Storage Health Monitor
     function updateStorageHealthUI() {
-      let totalBytes = 0;
+      let totalChars = 0;
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
         if (k) {
           const val = localStorage.getItem(k) || '';
-          totalBytes += (k.length + val.length) * 2;
+          totalChars += (k.length + val.length);
         }
       }
-      const usedMB = (totalBytes / (1024 * 1024)).toFixed(2);
-      const maxBytes = 5 * 1024 * 1024; // 5MB standard limit
-      const percent = Math.min(100, Math.round((totalBytes / maxBytes) * 100));
+      // Browser LocalStorage quota is standard 5,000,000 to 10,000,000 characters (5MB to 10MB text)
+      const usedMB = (totalChars / (1024 * 1024)).toFixed(2);
+      const maxMB = 5.0; // standard 5MB text limit
+      const percent = Math.min(100, Math.round((Number(usedMB) / maxMB) * 100));
 
       const textEl = document.getElementById('storage-usage-text');
       const barEl = document.getElementById('storage-usage-bar');
@@ -1307,9 +1351,17 @@
         barEl.style.width = `${percent}%`;
         barEl.classList.toggle('is-warning', percent >= 75);
       }
-      if (hintEl && percent >= 75) {
-        hintEl.innerHTML = '⚠️ <strong>Lưu ý:</strong> Dung lượng bộ nhớ sắp đạt ngưỡng 5MB. Hãy tải file JSON sao lưu hoặc sử dụng Cloud CDN nhé!';
-        hintEl.style.color = '#fda4af';
+      if (hintEl) {
+        if (percent >= 90) {
+          hintEl.innerHTML = '⚠️ <strong>Lưu ý:</strong> Dung lượng bộ nhớ LocalStorage sắp đầy (~5MB). Hãy tải file JSON sao lưu ở Tab "Sao Lưu" hoặc kết nối Cloudinary/Firebase để lưu không giới hạn!';
+          hintEl.style.color = '#fda4af';
+        } else if (percent >= 75) {
+          hintEl.innerHTML = '⚡ Bộ nhớ LocalStorage đã dùng hơn 75%. Bạn có thể xuất file JSON sao lưu để bảo vệ kỷ niệm an toàn.';
+          hintEl.style.color = '#fef08a';
+        } else {
+          hintEl.innerHTML = '💡 Bộ nhớ an toàn. Ảnh và bài viết kỷ niệm đang được lưu trữ mượt mà!';
+          hintEl.style.color = '#94a3b8';
+        }
       }
     }
 

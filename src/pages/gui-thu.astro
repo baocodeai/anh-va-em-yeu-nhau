@@ -27,9 +27,14 @@ const { title } = COUPLE_CONFIG;
       
       <!-- Top Navigation & Breadcrumb -->
       <nav class="admin-nav-bar">
-        <a href="/" class="btn-back-home">
-          <span>⬅️ Về Tinh Cầu Tình Yêu</span>
-        </a>
+        <div class="admin-nav-left">
+          <a href="/" class="btn-back-home">
+            <span>⬅️ Về Tinh Cầu Tình Yêu</span>
+          </a>
+          <button type="button" class="admin-btn-sync btn-open-sync-trigger" title="Cấu hình Google Firebase / Trung tâm Đồng Bộ Cloud">
+            <span>☁️ Cấu Hình Đồng Bộ Cloud</span>
+          </button>
+        </div>
         <div class="admin-role-badge">
           <span class="role-icon">👑</span>
           <span class="role-text">Trang Quản Trị Bạn Trai</span>
@@ -470,6 +475,36 @@ const { title } = COUPLE_CONFIG;
     color: #ffffff;
     border-color: #f43f5e;
     transform: translateX(-2px);
+  }
+
+  .admin-nav-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .admin-btn-sync {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(14, 165, 233, 0.15);
+    color: #7dd3fc;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    padding: 8px 16px;
+    border-radius: 9999px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .admin-btn-sync:hover {
+    background: rgba(14, 165, 233, 0.3);
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+    transform: translateY(-1px);
   }
 
   .admin-role-badge {

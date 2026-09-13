@@ -167,7 +167,7 @@ const ogImageUrl = new URL('/assets/og.png', site).toString();
       document.addEventListener('astro:page-load', initGlobalSyncEngine);
       document.addEventListener('astro:after-swap', initGlobalSyncEngine);
 
-      function initHeaderLockAction() {
+      function initHeaderActions() {
         const lockBtn = document.getElementById('header-btn-lock');
         const mobileLockBtns = document.querySelectorAll('.btn-lock-app-trigger');
         const triggerLock = () => {
@@ -178,11 +178,57 @@ const ogImageUrl = new URL('/assets/og.png', site).toString();
 
         if (lockBtn) lockBtn.addEventListener('click', triggerLock);
         mobileLockBtns.forEach((btn) => btn.addEventListener('click', triggerLock));
+
+        // Auto close mobile drawer menu when any item is clicked
+        const mobileDrawer = document.getElementById('header-mobile-menu') as HTMLDetailsElement | null;
+        if (mobileDrawer) {
+          const drawerLinks = mobileDrawer.querySelectorAll('.mobile-tab-btn');
+          drawerLinks.forEach((item) => {
+            item.addEventListener('click', () => {
+              mobileDrawer.removeAttribute('open');
+            });
+          });
+        }
+
+        // Secret Boyfriend Access: Click 3 times on brand logo within 1.5s to open Sync Hub
+        let brandClickCount = 0;
+        let brandClickTimer: any = null;
+        const brandLinks = document.querySelectorAll('.couple-header-brand');
+        brandLinks.forEach((brand) => {
+          brand.addEventListener('click', (e) => {
+            brandClickCount++;
+            if (brandClickCount === 1) {
+              brandClickTimer = setTimeout(() => {
+                brandClickCount = 0;
+              }, 1500);
+            } else if (brandClickCount >= 3) {
+              e.preventDefault();
+              clearTimeout(brandClickTimer);
+              brandClickCount = 0;
+              if (typeof (window as any).openSyncHub === 'function') {
+                (window as any).openSyncHub();
+              }
+            }
+          });
+        });
+
+        // Secret Boyfriend Hotkey: Ctrl + Shift + S to open Sync Hub
+        if (!(window as any).__sync_hotkey_registered) {
+          (window as any).__sync_hotkey_registered = true;
+          window.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'S' || e.key === 's')) {
+              e.preventDefault();
+              if (typeof (window as any).openSyncHub === 'function') {
+                (window as any).openSyncHub();
+              }
+            }
+          });
+        }
       }
 
-      initHeaderLockAction();
-      document.addEventListener('astro:page-load', initHeaderLockAction);
-      document.addEventListener('astro:after-swap', initHeaderLockAction);
+      initHeaderActions();
+      document.addEventListener('astro:page-load', initHeaderActions);
+      document.addEventListener('astro:after-swap', initHeaderActions);
     </script>
     <!-- Native-like Mobile Bottom Navigation Bar -->
     <nav class="mobile-bottom-app-bar" id="mobile-bottom-bar" aria-label="Mobile bottom navigation">
