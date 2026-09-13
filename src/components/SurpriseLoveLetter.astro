@@ -995,7 +995,9 @@
   let currentLetterData: SurpriseLetterData | null = null;
 
   function openLetterModal(data: SurpriseLetterData) {
+    if (!data) return;
     currentLetterData = data;
+
     const overlay = document.getElementById('surprise-letter-overlay');
     const envelopeCard = document.getElementById('wax-envelope-card');
     const parchmentSheet = document.getElementById('parchment-sheet');
@@ -1004,136 +1006,161 @@
 
     if (!overlay || !envelopeCard || !parchmentSheet) return;
 
-    // Pause heavy background animation and optimize page scroll
-    document.body.classList.add('letter-modal-open');
+    try {
+      // Pause heavy background animation and optimize page scroll
+      document.body.classList.add('letter-modal-open');
 
-    // Reset envelope state
-    isLetterOpened = false;
-    envelopeCard.classList.remove('is-opening', 'is-hidden');
-    envelopeCard.style.display = 'block';
-    parchmentSheet.style.display = 'none';
+      // Reset envelope state
+      isLetterOpened = false;
+      envelopeCard.classList.remove('is-opening', 'is-hidden');
+      envelopeCard.style.display = 'block';
+      parchmentSheet.style.display = 'none';
 
-    // Recipient on envelope
-    if (recipientEl) {
-      if (data.recipient === 'maze') recipientEl.textContent = 'Bé Yêu (Maze 🌸)';
-      else if (data.recipient === 'ai') recipientEl.textContent = 'Anh Yêu (AI 🚀)';
-      else recipientEl.textContent = 'Cả Hai Đứa 💖';
-    }
-
-    // Wax color
-    if (waxDisc) {
-      waxDisc.className = `wax-seal-disc wax-color-${data.waxColor || 'ruby'}`;
-    }
-
-    // Populate parchment content
-    const badgeEl = document.getElementById('letter-badge-display');
-    const titleEl = document.getElementById('letter-title-display');
-    const contentEl = document.getElementById('letter-content-display');
-    const authorEl = document.getElementById('letter-author-name');
-    const sigFromEl = document.getElementById('letter-sig-from-display');
-    const quoteEl = document.getElementById('letter-quote-display');
-    const dateEl = document.getElementById('letter-date-display');
-    const salutationEl = document.getElementById('letter-salutation-display');
-    const btnReadEl = document.getElementById('letter-btn-read-display');
-    const btnFoldEl = document.getElementById('letter-btn-fold-display');
-
-    if (badgeEl) badgeEl.textContent = data.badgeText || '💌 Bức Thư Tình Yêu';
-    if (titleEl) titleEl.textContent = data.title || 'Gửi Người Anh Thương...';
-    if (contentEl) contentEl.textContent = data.content || 'Anh nhớ em nhiều lắm...';
-    
-    // Salutation
-    if (salutationEl) {
-      if (data.salutation && data.salutation.trim().length > 0) {
-        salutationEl.textContent = data.salutation;
-      } else if (data.recipient === 'maze') {
-        salutationEl.textContent = 'Em yêu dấu thương mến,';
-      } else if (data.recipient === 'ai') {
-        salutationEl.textContent = 'Anh yêu dấu của em,';
-      } else {
-        salutationEl.textContent = 'Gửi người đặc biệt nhất cuộc đời anh,';
+      // Recipient on envelope
+      if (recipientEl) {
+        if (data.recipient === 'maze') recipientEl.textContent = 'Bé Yêu (Maze 🌸)';
+        else if (data.recipient === 'ai') recipientEl.textContent = 'Anh Yêu (AI 🚀)';
+        else recipientEl.textContent = 'Cả Hai Đứa 💖';
       }
+
+      // Wax color
+      if (waxDisc) {
+        waxDisc.className = `wax-seal-disc wax-color-${data.waxColor || 'ruby'}`;
+      }
+
+      // Populate parchment content
+      const badgeEl = document.getElementById('letter-badge-display');
+      const titleEl = document.getElementById('letter-title-display');
+      const contentEl = document.getElementById('letter-content-display');
+      const authorEl = document.getElementById('letter-author-name');
+      const sigFromEl = document.getElementById('letter-sig-from-display');
+      const quoteEl = document.getElementById('letter-quote-display');
+      const dateEl = document.getElementById('letter-date-display');
+      const salutationEl = document.getElementById('letter-salutation-display');
+      const btnReadEl = document.getElementById('letter-btn-read-display');
+      const btnFoldEl = document.getElementById('letter-btn-fold-display');
+
+      const safeBadge = getSafeStr(data.badgeText, '💌 Bức Thư Tình Yêu');
+      const safeTitle = getSafeStr(data.title, 'Gửi Người Anh Thương...');
+      const safeContent = getSafeStr(data.content, 'Anh nhớ em nhiều lắm...');
+      const safeSalutation = getSafeStr(data.salutation);
+      const safeQuote = getSafeStr(data.bottomQuote);
+      const safeSigFrom = getSafeStr(data.signatureSignoff);
+      const safeSigName = getSafeStr(data.signatureName);
+      const safeBtnRead = getSafeStr(data.btnReadText, '💖 Em Đã Đọc Và Rất Yêu Anh!');
+      const safeBtnFold = getSafeStr(data.btnFoldText, '🌸 Gấp Thư Lại Cất Đi');
+
+      if (badgeEl) badgeEl.textContent = safeBadge.length > 0 ? safeBadge : '💌 Bức Thư Tình Yêu';
+      if (titleEl) titleEl.textContent = safeTitle.length > 0 ? safeTitle : 'Gửi Người Anh Thương...';
+      if (contentEl) contentEl.textContent = safeContent.length > 0 ? safeContent : 'Anh nhớ em nhiều lắm...';
+      
+      // Salutation
+      if (salutationEl) {
+        if (safeSalutation.length > 0) {
+          salutationEl.textContent = safeSalutation;
+        } else if (data.recipient === 'maze') {
+          salutationEl.textContent = 'Em yêu dấu thương mến,';
+        } else if (data.recipient === 'ai') {
+          salutationEl.textContent = 'Anh yêu dấu của em,';
+        } else {
+          salutationEl.textContent = 'Gửi người đặc biệt nhất cuộc đời anh,';
+        }
+      }
+
+      // Quote / Bottom note
+      if (quoteEl) {
+        quoteEl.textContent = safeQuote.length > 0
+          ? safeQuote
+          : '"Mãi luôn thương và đồng hành cùng em qua muôn ngàn vì sao."';
+      }
+
+      // Sign-off prefix & Author Signature
+      if (sigFromEl) {
+        sigFromEl.textContent = safeSigFrom.length > 0 ? safeSigFrom : 'Thương gửi từ,';
+      }
+      if (authorEl) {
+        authorEl.textContent = safeSigName.length > 0
+          ? safeSigName
+          : (data.sender === 'ai' ? 'AI (Anh người yêu 🚀)' : 'Maze (Em người yêu 🌸)');
+      }
+
+      // Button Labels
+      if (btnReadEl) btnReadEl.textContent = safeBtnRead;
+      if (btnFoldEl) btnFoldEl.textContent = safeBtnFold;
+
+      if (dateEl) {
+        const now = new Date();
+        dateEl.textContent = `${now.getDate()} Tháng ${now.getMonth() + 1}, ${now.getFullYear()}`;
+      }
+
+      // ==========================================
+      // Áp dụng bật / tắt (Visibility Toggles)
+      // ==========================================
+      const badgeWrap = document.getElementById('parchment-badge-wrap');
+      const footerWrap = document.getElementById('parchment-footer-wrap');
+      const sigWrap = document.getElementById('parchment-signature-wrap');
+      const btnFoldBtn = document.getElementById('btn-fold-letter');
+      const headerWrap = document.querySelector('.parchment-header') as HTMLElement | null;
+      const postageWrap = document.querySelector('.envelope-postage') as HTMLElement | null;
+      const corners = document.querySelectorAll('.parchment-corner');
+
+      // 1. Huy hiệu đầu thư
+      if (badgeWrap) {
+        badgeWrap.style.display = data.showBadge !== false ? 'inline-flex' : 'none';
+      }
+
+      // 2. Ngày tháng
+      if (dateEl) {
+        dateEl.style.display = data.showDate !== false ? 'block' : 'none';
+      }
+
+      // Ẩn hoàn toàn khung Header nếu cả huy hiệu lẫn ngày tháng đều tắt (loại bỏ vạch kẻ đứt thừa)
+      if (headerWrap) {
+        const hasHeaderContent = (data.showBadge !== false) || (data.showDate !== false);
+        headerWrap.style.display = hasHeaderContent ? 'flex' : 'none';
+      }
+
+      // 3. Lời chào mở đầu
+      if (salutationEl) {
+        salutationEl.style.display = data.showSalutation !== false ? 'block' : 'none';
+      }
+
+      // 4. Lời dặn / Châm ngôn cuối thư
+      if (quoteEl) {
+        quoteEl.style.display = data.showQuote !== false ? 'block' : 'none';
+      }
+
+      // 5. Khối chữ ký người gửi
+      if (sigWrap) {
+        sigWrap.style.display = data.showSignature !== false ? 'inline-flex' : 'none';
+      }
+
+      // Ẩn toàn bộ footer nếu cả quote và chữ ký đều tắt
+      if (footerWrap) {
+        const hasFooterContent = (data.showQuote !== false) || (data.showSignature !== false);
+        footerWrap.style.display = hasFooterContent ? 'block' : 'none';
+      }
+
+      // 6. Nút gấp thư lại
+      if (btnFoldBtn) {
+        btnFoldBtn.style.display = data.showFoldBtn !== false ? 'inline-flex' : 'none';
+      }
+
+      // 7. Tem thư & Dấu bưu điện (Envelope Postage)
+      if (postageWrap) {
+        postageWrap.style.display = data.showPostage !== false ? 'flex' : 'none';
+      }
+
+      // 8. 4 Con dấu hoa văn góc thư (Corner Fleurons ❧)
+      corners.forEach((c) => {
+        (c as HTMLElement).style.display = data.showCornerMarks !== false ? 'block' : 'none';
+      });
+
+    } catch (err) {
+      console.warn('[LoveLetter] Lỗi khi điền nội dung thư:', err);
     }
 
-    // Quote / Bottom note
-    if (quoteEl) {
-      quoteEl.textContent = data.bottomQuote !== undefined && data.bottomQuote.trim().length > 0
-        ? data.bottomQuote
-        : '"Mãi luôn thương và đồng hành cùng em qua muôn ngàn vì sao."';
-    }
-
-    // Sign-off prefix & Author Signature
-    if (sigFromEl) {
-      sigFromEl.textContent = data.signatureSignoff && data.signatureSignoff.trim().length > 0
-        ? data.signatureSignoff
-        : 'Thương gửi từ,';
-    }
-    if (authorEl) {
-      authorEl.textContent = data.signatureName && data.signatureName.trim().length > 0
-        ? data.signatureName
-        : (data.sender === 'ai' ? 'AI (Anh người yêu 🚀)' : 'Maze (Em người yêu 🌸)');
-    }
-
-    // Button Labels
-    if (btnReadEl) {
-      btnReadEl.textContent = data.btnReadText && data.btnReadText.trim().length > 0
-        ? data.btnReadText
-        : '💖 Em Đã Đọc Và Rất Yêu Anh!';
-    }
-    if (btnFoldEl) {
-      btnFoldEl.textContent = data.btnFoldText && data.btnFoldText.trim().length > 0
-        ? data.btnFoldText
-        : '🌸 Gấp Thư Lại Cất Đi';
-    }
-
-    if (dateEl) {
-      const now = new Date();
-      dateEl.textContent = `${now.getDate()} Tháng ${now.getMonth() + 1}, ${now.getFullYear()}`;
-    }
-
-    // ==========================================
-    // Áp dụng bật / tắt (Visibility Toggles)
-    // ==========================================
-    const badgeWrap = document.getElementById('parchment-badge-wrap');
-    const footerWrap = document.getElementById('parchment-footer-wrap');
-    const sigWrap = document.getElementById('parchment-signature-wrap');
-    const btnFoldBtn = document.getElementById('btn-fold-letter');
-
-    // 1. Huy hiệu đầu thư
-    if (badgeWrap) {
-      badgeWrap.style.display = data.showBadge !== false ? 'inline-flex' : 'none';
-    }
-
-    // 2. Ngày tháng
-    if (dateEl) {
-      dateEl.style.display = data.showDate !== false ? 'block' : 'none';
-    }
-
-    // 3. Lời chào mở đầu
-    if (salutationEl) {
-      salutationEl.style.display = data.showSalutation !== false ? 'block' : 'none';
-    }
-
-    // 4. Lời dặn / Châm ngôn cuối thư
-    if (quoteEl) {
-      quoteEl.style.display = data.showQuote !== false ? 'block' : 'none';
-    }
-
-    // 5. Khối chữ ký người gửi
-    if (sigWrap) {
-      sigWrap.style.display = data.showSignature !== false ? 'inline-flex' : 'none';
-    }
-
-    // Ẩn toàn bộ footer nếu cả quote và chữ ký đều tắt
-    if (footerWrap) {
-      const hasFooterContent = (data.showQuote !== false) || (data.showSignature !== false);
-      footerWrap.style.display = hasFooterContent ? 'block' : 'none';
-    }
-
-    // 6. Nút gấp thư lại
-    if (btnFoldBtn) {
-      btnFoldBtn.style.display = data.showFoldBtn !== false ? 'inline-flex' : 'none';
-    }
-
+    // Luôn hiển thị overlay
     overlay.style.display = 'flex';
     overlay.setAttribute('aria-hidden', 'false');
   }
@@ -1201,6 +1228,12 @@
           lastUpdatedBy: 'MazeReadLetter'
         });
       } catch {}
+
+      updateFloatingButton({
+        ...currentLetterData,
+        readAt: nowIso,
+        readBy: 'Maze'
+      });
     }
 
     setTimeout(() => {
@@ -1208,25 +1241,53 @@
     }, 800);
   }
 
-  function checkAndTriggerSurpriseLetter() {
-    // Không tự động bật trên trang quản trị / cài đặt thư
-    if (window.location.pathname.includes('/gui-thu')) return;
+  function updateFloatingButton(data: SurpriseLetterData | null) {
+    const wrap = document.getElementById('floating-letter-wrap');
+    const badgeDot = document.getElementById('floating-letter-badge-dot');
+    const subLabel = document.getElementById('floating-label-sub');
+    if (!wrap) return;
 
-    const data = getStoredLetterData();
-    if (!data || !data.enabled) return;
-
-    // 1. Phân biệt người gửi vs người nhận:
-    // Nếu thiết bị này là của người gửi (đã vào /gui-thu hoặc lưu role là 'ai'):
-    const myRole = localStorage.getItem('couple_my_role');
-    const isSenderDevice = myRole === 'ai' || localStorage.getItem('couple_is_letter_author') === 'true';
-
-    // Thư gửi riêng cho Maze (recipient === 'maze') và máy này là của AI (bạn trai):
-    if (data.recipient === 'maze' && isSenderDevice) {
-      // Bạn trai là người gửi, không tự động bung thư đè lên màn hình bạn trai khi quay lại tinh cầu!
+    if (!data || !data.enabled) {
+      wrap.style.display = 'none';
       return;
     }
 
-    // 2. Kiểm tra xem thư đã được đọc hay chưa (Cả trên Cloud lẫn LocalStorage):
+    const curHash = hashLetter(data.title, data.content);
+    const localReadHash = localStorage.getItem('couple_letter_last_read_hash');
+    const isReadOnCloud = Boolean(
+      data.readAt && (!data.updatedAt || new Date(data.readAt).getTime() >= new Date(data.updatedAt).getTime() - 5000)
+    );
+    const isAlreadyRead = isReadOnCloud || (localReadHash === curHash);
+
+    wrap.style.display = 'block';
+    if (badgeDot) {
+      badgeDot.style.display = isAlreadyRead ? 'none' : 'block';
+    }
+    if (subLabel) {
+      subLabel.textContent = isAlreadyRead ? 'Đọc lại' : '✨ Thư Mới!';
+    }
+  }
+
+  function checkAndTriggerSurpriseLetter() {
+    const isOnAdminPage = window.location.pathname.includes('/gui-thu');
+
+    const data = getStoredLetterData();
+    if (!data || !data.enabled) {
+      updateFloatingButton(null);
+      return;
+    }
+
+    // Hiển thị nút nổi mở thư (ngoại trừ khi đang ở trang soạn thảo /gui-thu)
+    if (!isOnAdminPage) {
+      updateFloatingButton(data);
+    } else {
+      updateFloatingButton(null);
+    }
+
+    // Nếu đang ở trang soạn thư /gui-thu, không tự động bung thư đè lên màn hình
+    if (isOnAdminPage) return;
+
+    // 1. Kiểm tra xem thư đã được đọc hay chưa:
     const curHash = hashLetter(data.title, data.content);
     const localReadHash = localStorage.getItem('couple_letter_last_read_hash');
 
@@ -1238,11 +1299,12 @@
     const isAlreadyRead = isReadOnCloud || isReadLocally;
 
     // Nếu showOnce bật (hoặc mặc định true) và bức thư này đã được đọc: KHÔNG TỰ ĐỘNG BẬT LẠI!
+    // (Người dùng vẫn có thể bấm nút nổi "💌 Thư Tình Cho Em" để xem lại bất cứ lúc nào)
     if (data.showOnce !== false && isAlreadyRead) {
       return;
     }
 
-    // 3. Kiểm tra xem người dùng có vừa bấm đóng/gấp thư trong phiên làm việc này không
+    // 2. Kiểm tra xem người dùng có vừa bấm đóng/gấp thư trong phiên làm việc này không
     const sessionDismissed = sessionStorage.getItem('couple_letter_session_dismissed');
     if (sessionDismissed === curHash) {
       return;
@@ -1254,39 +1316,54 @@
     }, 1200);
   }
 
+  let isLetterInteractiveInitialized = false;
+
   function setupSurpriseLetterInteractive() {
     const waxSealBtn = document.getElementById('wax-seal-btn');
     const btnRead = document.getElementById('btn-confirm-letter-read');
     const btnFold = document.getElementById('btn-fold-letter');
     const btnCloseCorner = document.getElementById('btn-close-letter-corner');
+    const btnFloating = document.getElementById('btn-floating-letter');
 
     waxSealBtn?.addEventListener('click', breakWaxSealAndOpen);
     btnRead?.addEventListener('click', handleConfirmRead);
     btnFold?.addEventListener('click', closeLetterModal);
     btnCloseCorner?.addEventListener('click', closeLetterModal);
 
-    // Listen for custom preview trigger from SyncHubModal or /gui-thu
-    window.addEventListener('open-surprise-letter-preview', (e: any) => {
-      const previewData: SurpriseLetterData = e.detail || {
-        enabled: true,
-        title: 'Gửi Bông Hoa Nhỏ Của Anh...',
-        content: 'Mỗi ngày thức dậy được nhớ về em là điều hạnh phúc nhất...',
-        sender: 'ai',
-        recipient: 'maze',
-        waxColor: 'ruby'
-      };
-      openLetterModal(previewData);
-    });
-
-    // Listen for realtime updates from partner
-    window.addEventListener('couple-letter-updated', (e: any) => {
-      const updatedData: SurpriseLetterData = e.detail;
-      if (updatedData && updatedData.enabled) {
-        checkAndTriggerSurpriseLetter();
-      } else {
-        closeLetterModal();
+    btnFloating?.addEventListener('click', () => {
+      const data = getStoredLetterData();
+      if (data && data.enabled) {
+        openLetterModal(data);
       }
     });
+
+    if (!isLetterInteractiveInitialized) {
+      isLetterInteractiveInitialized = true;
+
+      // Listen for custom preview trigger from SyncHubModal or /gui-thu
+      window.addEventListener('open-surprise-letter-preview', (e: any) => {
+        const previewData: SurpriseLetterData = e.detail || {
+          enabled: true,
+          title: 'Gửi Bông Hoa Nhỏ Của Anh...',
+          content: 'Mỗi ngày thức dậy được nhớ về em là điều hạnh phúc nhất...',
+          sender: 'ai',
+          recipient: 'maze',
+          waxColor: 'ruby'
+        };
+        openLetterModal(previewData);
+      });
+
+      // Listen for realtime updates from partner
+      window.addEventListener('couple-letter-updated', (e: any) => {
+        const updatedData: SurpriseLetterData = e.detail;
+        if (updatedData && updatedData.enabled) {
+          checkAndTriggerSurpriseLetter();
+        } else {
+          updateFloatingButton(null);
+          closeLetterModal();
+        }
+      });
+    }
 
     // Check on page load
     checkAndTriggerSurpriseLetter();
