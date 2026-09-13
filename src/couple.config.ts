@@ -47,7 +47,7 @@ export const COUPLE_CONFIG: CoupleConfig = {
     birthday: '2005-09-28', // 28/09/2005
     zodiac: 'Thiên Bình',
     avatar: '/assets/ai.png',
-    bio: 'Chàng trai ấm áp luôn muốn dùng tất cả của mình cùng sự kiên trì để che chở và đồng hành cùng Maze.',
+    bio: 'Chàng trai ấm áp luôn muốn dành tất cả của mình cùng sự kiên trì để che chở và đồng hành cùng Maze.',
     color: '#38bdf8' // Xanh ánh sao lấp lánh
   },
 
