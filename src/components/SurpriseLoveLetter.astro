@@ -859,6 +859,13 @@
     showQuote?: boolean;
     showSignature?: boolean;
     showFoldBtn?: boolean;
+    showPostage?: boolean;
+    showCornerMarks?: boolean;
+  }
+
+  function getSafeStr(val: any, defaultVal = ''): string {
+    if (typeof val === 'string') return val.trim();
+    return defaultVal;
   }
 
   // AudioContext singleton to eliminate sound lag
