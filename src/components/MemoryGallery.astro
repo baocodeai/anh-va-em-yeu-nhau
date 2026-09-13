@@ -4418,21 +4418,21 @@ Hai đứa mình dạo bước bên nhau..."
       });
     });
 
-    async function compressAndResizeImage(file: File, maxDim = 1100, quality = 0.76): Promise<string> {
+    async function compressAndResizeImage(file: File, maxDim = 850, quality = 0.68): Promise<string> {
       if (!file || !file.type.startsWith('image/')) return '';
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = (e) => {
           const img = new Image();
           img.onload = () => {
-            let width = img.naturalWidth || img.width;
-            let height = img.naturalHeight || img.height;
+            let width = img.naturalWidth || img.naturalWidth;
+            let height = img.naturalHeight || img.naturalHeight;
             if (width <= 0 || height <= 0) {
               resolve((e.target?.result as string) || '');
               return;
             }
             
-            // Giảm kích thước ảnh quá khổ về độ phân giải Retina gọn nhẹ tối ưu tốc độ & dung lượng
+            // Giảm kích thước ảnh về độ phân giải tối ưu Retina gọn nhẹ (<50KB), tránh tràn 5MB LocalStorage Safari
             if (width > maxDim || height > maxDim) {
               if (width > height) {
                 height = Math.round((height * maxDim) / width);
@@ -4456,12 +4456,20 @@ Hai đứa mình dạo bước bên nhau..."
             ctx.imageSmoothingQuality = 'high';
             ctx.drawImage(img, 0, 0, width, height);
 
-            const mimeType = file.type === 'image/png' ? 'image/webp' : 'image/jpeg';
+            // Ưu tiên WebP với mức nén tối ưu (chất lượng ~0.68), an toàn trên mọi thiết bị
             try {
-              const dataUrl = canvas.toDataURL(mimeType, quality);
+              let dataUrl = canvas.toDataURL('image/webp', quality);
+              // Nếu dataUrl vẫn lớn hơn ~90KB, tự động nén thêm 1 bậc để bảo vệ quota bộ nhớ
+              if (dataUrl.length > 90000) {
+                dataUrl = canvas.toDataURL('image/webp', Math.max(0.5, quality - 0.15));
+              }
               resolve(dataUrl);
             } catch {
-              resolve(canvas.toDataURL('image/jpeg', quality));
+              try {
+                resolve(canvas.toDataURL('image/jpeg', quality));
+              } catch {
+                resolve((e.target?.result as string) || '');
+              }
             }
           };
           img.onerror = () => resolve((e.target?.result as string) || '');
@@ -4495,7 +4503,7 @@ Hai đứa mình dạo bước bên nhau..."
           const tokensToInsert: string[] = [];
           for (let idx = 0; idx < validFiles.length; idx++) {
             const file = validFiles[idx];
-            const dataUrl = await compressAndResizeImage(file, 960, 0.72);
+            const dataUrl = await compressAndResizeImage(file, 800, 0.65);
             if (dataUrl && !currentAttachedGallery.some((img) => img.url === dataUrl)) {
               currentAttachedGallery.push({
                 id: 'g-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
@@ -4610,8 +4618,8 @@ Hai đứa mình dạo bước bên nhau..."
 
       isProcessingCoverFiles = true;
       try {
-        // 1. First image becomes Cover photo (tự động nén thông minh)
-        const firstDataUrl = await compressAndResizeImage(validFiles[0], 1150, 0.78);
+        // 1. First image becomes Cover photo (tự động nén thông minh chuẩn WebP <50KB)
+        const firstDataUrl = await compressAndResizeImage(validFiles[0], 850, 0.70);
         if (firstDataUrl) {
           currentUploadedMemPhoto = firstDataUrl;
           updateMemPhotoPreview(currentUploadedMemPhoto);
@@ -4620,7 +4628,7 @@ Hai đứa mình dạo bước bên nhau..."
         // 2. Extra images (if uploaded multiple) automatically go to Attached Gallery
         if (validFiles.length > 1) {
           for (let i = 1; i < validFiles.length; i++) {
-            const extraUrl = await compressAndResizeImage(validFiles[i], 960, 0.72);
+            const extraUrl = await compressAndResizeImage(validFiles[i], 800, 0.65);
             if (extraUrl && !currentAttachedGallery.some((img) => img.url === extraUrl)) {
               currentAttachedGallery.push({
                 id: 'g-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
@@ -4735,7 +4743,7 @@ Hai đứa mình dạo bước bên nhau..."
         try {
           for (let i = 0; i < validFiles.length; i++) {
             const file = validFiles[i];
-            const dataUrl = await compressAndResizeImage(file, 960, 0.72);
+            const dataUrl = await compressAndResizeImage(file, 800, 0.65);
             if (dataUrl && !currentAttachedGallery.some((img) => img.url === dataUrl)) {
               currentAttachedGallery.push({
                 id: 'g-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),

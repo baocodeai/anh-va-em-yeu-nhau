@@ -24,8 +24,9 @@
 
     <div class="sync-hub-tabs">
       <button type="button" class="tab-btn is-active" data-tab="tab-firebase">🔥 Firebase Realtime</button>
+      <button type="button" class="tab-btn" data-tab="tab-music">🎶 Nhạc Tình Yêu (Drive/MP3)</button>
+      <button type="button" class="tab-btn" data-tab="tab-storage">🖼️ Bộ Nhớ Ảnh &amp; Cloud</button>
       <button type="button" class="tab-btn" data-tab="tab-backup">💾 Sao Lưu / Khôi Phục</button>
-      <button type="button" class="tab-btn" data-tab="tab-cloud-api">🌐 Custom API Server</button>
       <button type="button" class="tab-btn" data-tab="tab-code">📋 Xuất Mã Nguồn</button>
     </div>
 
@@ -158,6 +159,97 @@
           </button>
         </div>
         <textarea id="code-export-preview" class="code-preview-area" readonly placeholder="Mã nguồn sẽ hiển thị tại đây sau khi bạn bấm nút trên..."></textarea>
+      </div>
+    </div>
+
+    <!-- Tab 5: Nhạc Nền Tình Yêu (Google Drive & MP3) -->
+    <div class="tab-content" id="tab-music">
+      <div class="sync-block">
+        <h4 class="block-title gradient-rose-text">Cài Đặt Bài Hát Tình Yêu (Google Drive &amp; MP3):</h4>
+        <p class="block-desc">
+          Hai bạn có thể đổi bất kỳ bài hát tình cảm yêu thích nào. Khi lưu, bài hát sẽ tự động phát và đồng bộ sang máy của người kia trong tích tắc!
+        </p>
+
+        <div class="firebase-guide-box">
+          <p class="guide-title">📌 Cách lấy link Google Drive để nghe trực tiếp:</p>
+          <ol class="guide-steps-list">
+            <li>Tải bài hát <code>.mp3</code> lên <strong>Google Drive</strong> của bạn.</li>
+            <li>Bấm chuột phải vào file &rarr; Chọn <strong>Chia sẻ (Share)</strong>.</li>
+            <li>Đổi quyền truy cập từ <em>Hạn chế</em> sang <strong>Bất kỳ ai có đường liên kết (Anyone with the link)</strong>.</li>
+            <li>Sao chép liên kết và dán vào ô bên dưới. Hệ thống sẽ tự động nhận diện và chuyển đổi sang link nghe trực tiếp!</li>
+          </ol>
+        </div>
+
+        <div class="form-group mt-3">
+          <label for="music-input-url" class="form-label">Link bài hát (Link chia sẻ Google Drive hoặc link MP3 trực tiếp):</label>
+          <input
+            type="url"
+            id="music-input-url"
+            class="sync-input"
+            placeholder="https://drive.google.com/file/d/.../view?usp=sharing hoặc link .mp3"
+            spellcheck="false"
+          />
+        </div>
+
+        <div class="form-group mt-2">
+          <label for="music-input-title" class="form-label">Tên bài hát / Lời nhắn tình yêu:</label>
+          <input
+            type="text"
+            id="music-input-title"
+            class="sync-input"
+            placeholder="Ví dụ: Until I Found You, Perfect, Giai điệu dành riêng cho Maze 💕"
+          />
+        </div>
+
+        <div class="firebase-btn-row mt-3">
+          <button type="button" class="btn-love" id="btn-save-custom-music">
+            <span>💾 Lưu &amp; Phát Cho Cả Hai Đứa</span>
+          </button>
+          <button type="button" class="btn-outline-love" id="btn-reset-default-music">
+            <span>🔄 Khôi Phục Bài Mặc Định</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 6: Bộ Nhớ Ảnh & Cloud CDN -->
+    <div class="tab-content" id="tab-storage">
+      <div class="sync-block">
+        <h4 class="block-title gradient-cyan-text">Theo Dõi Bộ Nhớ Ảnh Kỷ Niệm (LocalStorage):</h4>
+        <p class="block-desc">
+          Các bức ảnh kỷ niệm được nén tự động theo chuẩn Retina sắc nét (~35KB-50KB/ảnh). Theo dõi dung lượng dưới đây để kiểm soát an toàn:
+        </p>
+
+        <div class="storage-health-box mt-3">
+          <div class="storage-health-row">
+            <span class="storage-health-label">Trạng thái bộ nhớ trình duyệt:</span>
+            <strong class="storage-health-val" id="storage-usage-text">Đang tính toán...</strong>
+          </div>
+          <div class="storage-health-track mt-2">
+            <div class="storage-health-fill" id="storage-usage-bar" style="width: 0%;"></div>
+          </div>
+          <p class="storage-health-hint mt-2" id="storage-usage-hint">
+            💡 Với công nghệ nén ảnh mới, hai bạn có thể lưu hơn 100 bức ảnh kỷ niệm hoàn toàn an toàn!
+          </p>
+        </div>
+
+        <div class="sync-block mt-4 border-top pt-3">
+          <h4 class="block-title">Lưu Trữ Không Giới Hạn Qua Cloud CDN (Miễn Phí):</h4>
+          <p class="block-desc">
+            Nếu muốn lưu trữ hàng ngàn bức ảnh kỷ niệm mà không tốn dung lượng máy, bạn có thể dán Cloud Name &amp; Upload Preset từ Cloudinary vào đây:
+          </p>
+          <div class="form-group mt-2">
+            <label for="cloudinary-cloud-name" class="form-label">Cloudinary Cloud Name (Tùy chọn):</label>
+            <input type="text" id="cloudinary-cloud-name" class="sync-input" placeholder="Ví dụ: my-love-cloud" />
+          </div>
+          <div class="form-group mt-2">
+            <label for="cloudinary-upload-preset" class="form-label">Cloudinary Upload Preset (Unsigned):</label>
+            <input type="text" id="cloudinary-upload-preset" class="sync-input" placeholder="Ví dụ: couple_preset" />
+          </div>
+          <button type="button" class="btn-love mt-3" id="btn-save-cloud-storage">
+            <span>☁️ Lưu Cấu Hình Cloud CDN</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -486,6 +578,45 @@
     padding: 10px;
     resize: vertical;
   }
+
+  /* Storage Health Monitor */
+  .storage-health-box {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .storage-health-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+  }
+  .storage-health-val {
+    color: #38bdf8;
+    font-family: var(--mono);
+  }
+  .storage-health-track {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .storage-health-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #38bdf8, #22c55e);
+    transition: width 0.3s ease, background 0.3s ease;
+  }
+  .storage-health-fill.is-warning {
+    background: linear-gradient(90deg, #fbbf24, #f43f5e);
+  }
+  .storage-health-hint {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    margin: 0;
+  }
 </style>
 
 <script>
@@ -494,7 +625,8 @@
     getSavedFirebaseConfig,
     saveFirebaseConfig,
     subscribeToRealtimeSync,
-    pushDataToFirebase
+    pushDataToFirebase,
+    convertDriveLinkToDirectAudio
   } from '../lib/firebaseClient';
 
   function initSyncHub() {
@@ -855,6 +987,118 @@
         codePreview.value = formatted;
         navigator.clipboard.writeText(formatted);
         alert('📋 Đã sao chép mã HABIT_21_DAYS vào clipboard!');
+      });
+    }
+
+    // Music Settings Handler (Google Drive & MP3)
+    const musicUrlInput = document.getElementById('music-input-url') as HTMLInputElement | null;
+    const musicTitleInput = document.getElementById('music-input-title') as HTMLInputElement | null;
+    const saveMusicBtn = document.getElementById('btn-save-custom-music');
+    const resetMusicBtn = document.getElementById('btn-reset-default-music');
+
+    if (musicUrlInput) {
+      musicUrlInput.value = localStorage.getItem('couple_custom_music_url') || '';
+    }
+    if (musicTitleInput) {
+      musicTitleInput.value = localStorage.getItem('couple_custom_music_title') || '';
+    }
+
+    if (saveMusicBtn && musicUrlInput) {
+      saveMusicBtn.addEventListener('click', async () => {
+        const rawUrl = musicUrlInput.value.trim();
+        if (!rawUrl) {
+          alert('⚠️ Vui lòng nhập link bài hát Google Drive hoặc link MP3!');
+          return;
+        }
+
+        const directUrl = convertDriveLinkToDirectAudio(rawUrl);
+        const title = musicTitleInput?.value.trim() || 'Giai Điệu Tình Yêu Của Hai Đứa 🎶';
+
+        localStorage.setItem('couple_custom_music_url', directUrl);
+        localStorage.setItem('couple_custom_music_title', title);
+
+        await pushDataToFirebase({ musicUrl: directUrl, musicTitle: title, lastUpdatedBy: 'MusicSettings' });
+
+        window.dispatchEvent(new CustomEvent('couple-music-updated', {
+          detail: { url: directUrl, title }
+        }));
+
+        alert('✅ Đã cập nhật và đồng bộ bài hát thành công! Nhạc đang phát...');
+      });
+    }
+
+    if (resetMusicBtn) {
+      resetMusicBtn.addEventListener('click', async () => {
+        localStorage.removeItem('couple_custom_music_url');
+        localStorage.removeItem('couple_custom_music_title');
+        const defaultUrl = 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3';
+        const defaultTitle = 'Giai Điệu Tình Yêu Của Hai Đứa 🎶';
+        await pushDataToFirebase({ musicUrl: defaultUrl, musicTitle: defaultTitle, lastUpdatedBy: 'MusicSettings' });
+        window.dispatchEvent(new CustomEvent('couple-music-updated', {
+          detail: { url: defaultUrl, title: defaultTitle }
+        }));
+        if (musicUrlInput) musicUrlInput.value = '';
+        if (musicTitleInput) musicTitleInput.value = '';
+        alert('🔄 Đã khôi phục bài hát mặc định!');
+      });
+    }
+
+    // Storage Health Monitor
+    function updateStorageHealthUI() {
+      let totalBytes = 0;
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k) {
+          const val = localStorage.getItem(k) || '';
+          totalBytes += (k.length + val.length) * 2;
+        }
+      }
+      const usedMB = (totalBytes / (1024 * 1024)).toFixed(2);
+      const maxBytes = 5 * 1024 * 1024; // 5MB standard limit
+      const percent = Math.min(100, Math.round((totalBytes / maxBytes) * 100));
+
+      const textEl = document.getElementById('storage-usage-text');
+      const barEl = document.getElementById('storage-usage-bar');
+      const hintEl = document.getElementById('storage-usage-hint');
+
+      if (textEl) textEl.textContent = `${usedMB} MB / 5.0 MB (${percent}%)`;
+      if (barEl) {
+        barEl.style.width = `${percent}%`;
+        barEl.classList.toggle('is-warning', percent >= 75);
+      }
+      if (hintEl && percent >= 75) {
+        hintEl.innerHTML = '⚠️ <strong>Lưu ý:</strong> Dung lượng bộ nhớ sắp đạt ngưỡng 5MB. Hãy tải file JSON sao lưu hoặc sử dụng Cloud CDN nhé!';
+        hintEl.style.color = '#fda4af';
+      }
+    }
+
+    updateStorageHealthUI();
+
+    // Cloudinary / Cloud CDN config
+    const cloudNameInput = document.getElementById('cloudinary-cloud-name') as HTMLInputElement | null;
+    const uploadPresetInput = document.getElementById('cloudinary-upload-preset') as HTMLInputElement | null;
+    const saveCloudStorageBtn = document.getElementById('btn-save-cloud-storage');
+
+    if (cloudNameInput) {
+      cloudNameInput.value = localStorage.getItem('couple_cloudinary_name') || '';
+    }
+    if (uploadPresetInput) {
+      uploadPresetInput.value = localStorage.getItem('couple_cloudinary_preset') || '';
+    }
+
+    if (saveCloudStorageBtn && cloudNameInput && uploadPresetInput) {
+      saveCloudStorageBtn.addEventListener('click', () => {
+        const name = cloudNameInput.value.trim();
+        const preset = uploadPresetInput.value.trim();
+        if (name && preset) {
+          localStorage.setItem('couple_cloudinary_name', name);
+          localStorage.setItem('couple_cloudinary_preset', preset);
+          alert('✅ Đã lưu cấu hình Cloudinary! Ảnh mới tải lên sẽ tự động lưu trữ trên Cloud CDN.');
+        } else {
+          localStorage.removeItem('couple_cloudinary_name');
+          localStorage.removeItem('couple_cloudinary_preset');
+          alert('ℹ️ Đã xóa cấu hình Cloudinary. Hệ thống sẽ sử dụng bộ nén ảnh Retina mặc định.');
+        }
       });
     }
   }

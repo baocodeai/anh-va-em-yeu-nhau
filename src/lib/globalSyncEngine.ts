@@ -156,6 +156,21 @@ export function initGlobalSyncEngine(): void {
       }
     }
 
+    // 8. Custom Background Music (Google Drive & MP3)
+    if (cloudData.musicUrl !== undefined && typeof cloudData.musicUrl === 'string') {
+      const currentMusic = localStorage.getItem('couple_custom_music_url');
+      if (currentMusic !== cloudData.musicUrl) {
+        safeSetItem('couple_custom_music_url', cloudData.musicUrl);
+        if (cloudData.musicTitle) {
+          safeSetItem('couple_custom_music_title', cloudData.musicTitle);
+        }
+        window.dispatchEvent(new CustomEvent('couple-music-updated', {
+          detail: { url: cloudData.musicUrl, title: cloudData.musicTitle }
+        }));
+        hasChanges = true;
+      }
+    }
+
     if (hasChanges) {
       window.dispatchEvent(new CustomEvent('couple-cloud-updated', { detail: cloudData }));
     }

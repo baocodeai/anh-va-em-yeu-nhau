@@ -47,7 +47,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     <div class="milestone-active-desc-box" id="milestone-desc-box">
       <span class="desc-box-icon" id="milestone-info-icon">🌱</span>
       <span class="desc-box-text" id="milestone-info-text">
-        <strong>Chặng 1 - 21 Ngày:</strong> Phá vỡ sự lười biến ban đầu và hình thành mối liên kế sâu sắc giữa Maze và AI.
+        <strong>Chặng 1 - 21 Ngày:</strong> Phá vỡ sự lười biếng ban đầu và hình thành mối liên kết sâu sắc giữa Maze và AI.
       </span>
     </div>
   </div>
@@ -90,7 +90,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
         <span class="preset-label">Chọn nhanh:</span>
         <button type="button" class="btn-preset-pill" id="btn-preset-today">⚡ Hôm Nay</button>
         <button type="button" class="btn-preset-pill" id="btn-preset-anniversary">💌 Kỷ Niệm (15/08)</button>
-        <button type="button" class="btn-preset-pill" id="btn-preset-default">🔄 Mặc Định (20/08)</button>
+        <button type="button" class="btn-preset-pill" id="btn-preset-default">🔄 Mặc Định (12/09)</button>
       </div>
     </div>
 
@@ -1813,7 +1813,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       const stored = localStorage.getItem(START_DATE_STORAGE_KEY);
       if (stored && /^\d{4}-\d{2}-\d{2}$/.test(stored)) return stored;
     } catch {}
-    return (window as any).__DEFAULT_HABIT_START_DATE__ || '2026-08-20';
+    return (window as any).__DEFAULT_HABIT_START_DATE__ || '2026-09-12';
   }
 
   function saveStoredStartDate(dateStr: string) {
@@ -2817,7 +2817,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     const presetDefault = document.getElementById('btn-preset-default');
     if (presetDefault) {
       presetDefault.addEventListener('click', () => {
-        saveStoredStartDate('2026-08-20');
+        saveStoredStartDate((window as any).__DEFAULT_HABIT_START_DATE__ || '2026-09-12');
         renderHabitUI();
       });
     }

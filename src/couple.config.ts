@@ -26,6 +26,7 @@ export interface CoupleConfig {
   girlsInfo: PartnerInfo;
   loveDeclaration: string;
   musicUrl?: string; // Tùy chọn bài hát nền
+  musicTitle?: string; // Tên bài hát hiển thị
 }
 
 export const COUPLE_CONFIG: CoupleConfig = {
@@ -64,4 +65,8 @@ export const COUPLE_CONFIG: CoupleConfig = {
 
   // Lời tựa tình yêu
   loveDeclaration: 'Tu trăm năm mới chung một thuyền, tu ngàn năm mới chung chăn gối.\n Hơn 8 tỷ người, tại sao hai ta gặp nhau nhỉ ?',
+
+  // Nhạc nền lãng mạn dành riêng cho hai đứa (có thể thay đổi bài hát bất kỳ lúc nào)
+  musicUrl: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3',
+  musicTitle: 'Giai Điệu Tình Yêu Của Hai Đứa 🎶'
 };

@@ -81,6 +81,8 @@ export interface CoupleCloudPayload {
     ai?: string;
     maze?: string;
   };
+  musicUrl?: string;
+  musicTitle?: string;
   lastUpdatedBy?: string;
   updatedAt?: string;
 }
@@ -218,6 +220,8 @@ export function normalizeCoupleCloudPayload(raw: any): CoupleCloudPayload {
     passcode: typeof raw.passcode === 'string' ? raw.passcode : undefined,
     passcodeVersion: typeof raw.passcodeVersion === 'number' ? raw.passcodeVersion : undefined,
     avatars: raw.avatars && typeof raw.avatars === 'object' ? raw.avatars : undefined,
+    musicUrl: typeof raw.musicUrl === 'string' ? raw.musicUrl : undefined,
+    musicTitle: typeof raw.musicTitle === 'string' ? raw.musicTitle : undefined,
     lastUpdatedBy: typeof raw.lastUpdatedBy === 'string' ? raw.lastUpdatedBy : undefined,
     updatedAt: typeof raw.updatedAt === 'string' ? raw.updatedAt : undefined
   };
@@ -271,10 +275,16 @@ export async function pushDataToFirebase(payload: CoupleCloudPayload): Promise<b
       'bucketList',
       'bucketCategories',
       'habit21',
+      'habitStartDate',
+      'habitStartDateLocked',
+      'habitShields',
+      'habitTargetDays',
       'trashBin',
       'passcode',
       'passcodeVersion',
-      'avatars'
+      'avatars',
+      'musicUrl',
+      'musicTitle'
     ];
 
     for (const key of keys) {
@@ -298,3 +308,28 @@ export async function pushDataToFirebase(payload: CoupleCloudPayload): Promise<b
     return false;
   }
 }
+
+/**
+ * Chuyển đổi link chia sẻ Google Drive thành link phát trực tiếp cho trình phát audio:
+ * - https://drive.google.com/file/d/FILE_ID/view... -> https://docs.google.com/uc?export=download&id=FILE_ID
+ * - https://drive.google.com/open?id=FILE_ID -> https://docs.google.com/uc?export=download&id=FILE_ID
+ */
+export function convertDriveLinkToDirectAudio(rawUrl: string): string {
+  if (!rawUrl) return '';
+  const trimmed = rawUrl.trim();
+
+  // Pattern 1: https://drive.google.com/file/d/FILE_ID/view...
+  const fileIdMatch = trimmed.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (fileIdMatch && fileIdMatch[1]) {
+    return `https://docs.google.com/uc?export=download&id=${fileIdMatch[1]}`;
+  }
+
+  // Pattern 2: https://drive.google.com/open?id=FILE_ID
+  const openIdMatch = trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (openIdMatch && openIdMatch[1] && trimmed.includes('drive.google.com')) {
+    return `https://docs.google.com/uc?export=download&id=${openIdMatch[1]}`;
+  }
+
+  return trimmed;
+}
+

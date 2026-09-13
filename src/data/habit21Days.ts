@@ -35,12 +35,12 @@ export const HABIT_MILESTONES: HabitMilestone[] = [
     badge: 'Chặng 1',
     subtitle: '21 Ngày Xây Dựng Mối Liên Kết',
     icon: '🌱',
-    description: 'Phá vỡ sự lừi biếng và hình thành mối liên kết giữa AI và Maze.'
+    description: 'Phá vỡ sự lười biếng và hình thành mối liên kết giữa AI và Maze.'
   },
   {
     days: 66,
     title: 'Thiên Hà Tự Động Hóa',
-    badge: 'Chặng 2 · Tinh Cầu Nổ Lực',
+    badge: 'Chặng 2 · Tinh Cầu Nỗ Lực',
     subtitle: '66 Ngày Tự Động Hóa Tiềm Thức',
     icon: '🧠',
     description: '66 ngày để điều từng cố gắng trở thành điều tự nhiên — như cách anh nhớ em mỗi sáng.'
@@ -63,20 +63,19 @@ export const HABIT_MILESTONES: HabitMilestone[] = [
   }
 ];
 
-export const DEFAULT_HABIT_START_DATE = '2026-08-20';
+export const DEFAULT_HABIT_START_DATE = '2026-09-12';
 export const DEFAULT_SHIELDS = { ai: 2, maze: 2 };
 
 export const HABIT_21_DAYS: DayHabit[] = Array.from({ length: 21 }, (_, i) => {
-  const isSampleDone = i < 4;
-  const isPartialDone = i === 4;
+  const isDayOne = i === 0;
   return {
     day: i + 1,
-    aiCompleted: isSampleDone || isPartialDone,
-    mazeCompleted: isSampleDone,
-    completed: isSampleDone,
-    aiCompletedDate: isSampleDone || isPartialDone ? `2026-08-${20 + i}` : undefined,
-    mazeCompletedDate: isSampleDone ? `2026-08-${20 + i}` : undefined,
-    completedDate: isSampleDone ? `2026-08-${20 + i}` : undefined
+    aiCompleted: isDayOne,
+    mazeCompleted: isDayOne,
+    completed: isDayOne,
+    aiCompletedDate: isDayOne ? '2026-09-12' : undefined,
+    mazeCompletedDate: isDayOne ? '2026-09-12' : undefined,
+    completedDate: isDayOne ? '2026-09-12' : undefined
   };
 });
 

@@ -1,0 +1,605 @@
+---
+import { COUPLE_CONFIG } from '../couple.config';
+
+const defaultMusicUrl = COUPLE_CONFIG.musicUrl || 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3';
+const defaultMusicTitle = COUPLE_CONFIG.musicTitle || 'Giai Điệu Tình Yêu Của Hai Đứa 🎶';
+---
+
+<!-- Romantic Vinyl Floating Music Player -->
+<div class="romantic-player-widget is-collapsed" id="romantic-player-widget" aria-label="Trình phát nhạc tình yêu">
+  <!-- Audio element with transition:persist so playback continues across pages seamlessly -->
+  <audio
+    id="couple-bg-audio"
+    loop
+    preload="metadata"
+    transition:persist="couple-bg-audio"
+    src={defaultMusicUrl}
+  ></audio>
+
+  <!-- Mini Floating Disc Button (Always visible on bottom corner) -->
+  <button
+    type="button"
+    class="vinyl-disc-btn"
+    id="btn-vinyl-disc"
+    title="Bật/Tắt nhạc tình yêu (Bấm để mở rộng)"
+    aria-expanded="false"
+  >
+    <div class="vinyl-disc-rotor" id="vinyl-disc-rotor">
+      <div class="vinyl-groove-ring ring-1"></div>
+      <div class="vinyl-groove-ring ring-2"></div>
+      <div class="vinyl-groove-ring ring-3"></div>
+      <div class="vinyl-center-label">
+        <span class="vinyl-heart-icon">💖</span>
+      </div>
+    </div>
+    
+    <!-- Mini tone arm needle -->
+    <div class="vinyl-tone-arm" id="vinyl-tone-arm"></div>
+
+    <!-- Mini Playing Pulse Beacon -->
+    <span class="music-playing-beacon" id="music-playing-beacon"></span>
+  </button>
+
+  <!-- Expanded Glassmorphism Control Panel -->
+  <div class="player-expanded-panel romantic-card" id="player-expanded-panel">
+    <div class="player-header-row">
+      <div class="player-status-badge">
+        <span class="visualizer-bars" id="audio-visualizer-bars">
+          <span class="bar bar-1"></span>
+          <span class="bar bar-2"></span>
+          <span class="bar bar-3"></span>
+          <span class="bar bar-4"></span>
+        </span>
+        <span class="status-label" id="player-status-label">Đang phát</span>
+      </div>
+      <button type="button" class="btn-player-close" id="btn-player-close" aria-label="Thu nhỏ">✕</button>
+    </div>
+
+    <!-- Song title marquee -->
+    <div class="player-track-info">
+      <span class="track-icon">🎵</span>
+      <div class="track-title-marquee">
+        <span class="track-title-text" id="player-track-title">{defaultMusicTitle}</span>
+      </div>
+    </div>
+
+    <!-- Controls Row: Play/Pause, Volume -->
+    <div class="player-controls-row">
+      <button type="button" class="btn-player-toggle" id="btn-player-play-pause" title="Phát / Tạm dừng">
+        <span class="control-icon" id="play-pause-icon">▶</span>
+      </button>
+
+      <div class="player-volume-group">
+        <button type="button" class="btn-player-mute" id="btn-player-mute" title="Bật / Tắt tiếng">
+          <span id="volume-icon">🔊</span>
+        </button>
+        <input
+          type="range"
+          id="player-volume-slider"
+          class="player-volume-slider"
+          min="0"
+          max="1"
+          step="0.05"
+          value="0.5"
+          aria-label="Âm lượng"
+        />
+      </div>
+    </div>
+
+    <!-- Autoplay Hint Overlay Prompt -->
+    <div class="player-autoplay-prompt" id="player-autoplay-prompt" style="display: none;">
+      <span>✨ Chạm bất kỳ đâu để thưởng thức âm nhạc cùng em 💕</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .romantic-player-widget {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 998;
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    font-family: var(--sans);
+    user-select: none;
+  }
+
+  /* Vinyl Disc Button */
+  .vinyl-disc-btn {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #0f172a;
+    border: 2px solid rgba(244, 63, 94, 0.45);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 16px rgba(244, 63, 94, 0.25);
+    cursor: pointer;
+    padding: 0;
+    overflow: visible;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+    flex-shrink: 0;
+  }
+
+  .vinyl-disc-btn:hover {
+    transform: scale(1.08);
+    border-color: #f43f5e;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75), 0 0 25px rgba(244, 63, 94, 0.45);
+  }
+
+  /* Rotating vinyl body */
+  .vinyl-disc-rotor {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, #1e293b 0%, #090d16 65%, #020617 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: spinVinyl 4s linear infinite;
+    animation-play-state: paused;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.9);
+  }
+
+  .romantic-player-widget.is-playing .vinyl-disc-rotor {
+    animation-play-state: running;
+  }
+
+  @keyframes spinVinyl {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Vinyl groove rings */
+  .vinyl-groove-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+  }
+  .ring-1 { width: 84%; height: 84%; }
+  .ring-2 { width: 66%; height: 66%; }
+  .ring-3 { width: 48%; height: 48%; }
+
+  /* Center vinyl label */
+  .vinyl-center-label {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f43f5e, #ec4899);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 6px rgba(244, 63, 94, 0.6);
+  }
+
+  .vinyl-heart-icon {
+    font-size: 11px;
+    line-height: 1;
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
+  }
+
+  /* Tone arm */
+  .vinyl-tone-arm {
+    position: absolute;
+    top: -4px;
+    right: -2px;
+    width: 4px;
+    height: 28px;
+    background: linear-gradient(to bottom, #94a3b8, #cbd5e1);
+    border-radius: 2px;
+    transform-origin: top center;
+    transform: rotate(0deg);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  }
+
+  .vinyl-tone-arm::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: -2px;
+    width: 8px;
+    height: 5px;
+    border-radius: 2px;
+    background: #f43f5e;
+  }
+
+  .romantic-player-widget.is-playing .vinyl-tone-arm {
+    transform: rotate(26deg);
+  }
+
+  /* Playing beacon */
+  .music-playing-beacon {
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 10px #22c55e;
+    display: none;
+  }
+
+  .romantic-player-widget.is-playing .music-playing-beacon {
+    display: block;
+    animation: pulseBeacon 1.8s ease-in-out infinite;
+  }
+
+  @keyframes pulseBeacon {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.3); opacity: 0.6; }
+  }
+
+  /* Expanded Control Panel */
+  .player-expanded-panel {
+    width: 270px;
+    background: rgba(11, 17, 32, 0.94);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    border-radius: 18px;
+    padding: 14px 16px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75), 0 0 25px rgba(244, 63, 94, 0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .romantic-player-widget.is-collapsed .player-expanded-panel {
+    display: none;
+    opacity: 0;
+    transform: translateY(12px) scale(0.95);
+  }
+
+  .player-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .player-status-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status-label {
+    font-size: 0.75rem;
+    color: #fda4af;
+    font-weight: 600;
+  }
+
+  .btn-player-close {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: color 0.2s;
+  }
+
+  .btn-player-close:hover {
+    color: #f1f5f9;
+  }
+
+  /* Audio visualizer bars */
+  .visualizer-bars {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 14px;
+  }
+
+  .visualizer-bars .bar {
+    width: 3px;
+    background: linear-gradient(to top, #38bdf8, #f43f5e);
+    border-radius: 2px;
+    height: 4px;
+    transition: height 0.15s ease;
+  }
+
+  .romantic-player-widget.is-playing .bar-1 { animation: bounceBar 0.9s ease-in-out infinite alternate; }
+  .romantic-player-widget.is-playing .bar-2 { animation: bounceBar 0.65s ease-in-out infinite alternate 0.15s; }
+  .romantic-player-widget.is-playing .bar-3 { animation: bounceBar 0.85s ease-in-out infinite alternate 0.3s; }
+  .romantic-player-widget.is-playing .bar-4 { animation: bounceBar 0.75s ease-in-out infinite alternate 0.2s; }
+
+  @keyframes bounceBar {
+    from { height: 3px; }
+    to { height: 14px; }
+  }
+
+  /* Track Title */
+  .player-track-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 6px 10px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .track-icon {
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  .track-title-marquee {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+  }
+
+  .track-title-text {
+    font-size: 0.78rem;
+    color: #e2e8f0;
+    font-weight: 600;
+    display: inline-block;
+  }
+
+  /* Controls Row */
+  .player-controls-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-player-toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f43f5e, #e11d48);
+    border: none;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 14px rgba(244, 63, 94, 0.45);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .btn-player-toggle:hover {
+    transform: scale(1.06);
+    box-shadow: 0 6px 18px rgba(244, 63, 94, 0.6);
+  }
+
+  .player-volume-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+  }
+
+  .btn-player-mute {
+    background: transparent;
+    border: none;
+    font-size: 0.95rem;
+    cursor: pointer;
+    padding: 2px;
+  }
+
+  .player-volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.15);
+    outline: none;
+  }
+
+  .player-volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #f43f5e;
+    cursor: pointer;
+    box-shadow: 0 0 6px #f43f5e;
+  }
+
+  .player-volume-slider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #f43f5e;
+    cursor: pointer;
+    box-shadow: 0 0 6px #f43f5e;
+    border: none;
+  }
+
+  .player-autoplay-prompt {
+    font-size: 0.72rem;
+    color: #fbbf24;
+    text-align: center;
+    line-height: 1.35;
+    padding-top: 4px;
+  }
+
+  @media (max-width: 992px) {
+    .romantic-player-widget {
+      left: 16px;
+      bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+    }
+    .vinyl-disc-btn {
+      width: 52px;
+      height: 52px;
+    }
+    .player-expanded-panel {
+      width: 240px;
+    }
+  }
+</style>
+
+<script>
+  import { convertDriveLinkToDirectAudio } from '../lib/firebaseClient';
+
+  function initRomanticAudioPlayer() {
+    const audio = document.getElementById('couple-bg-audio') as HTMLAudioElement | null;
+    const widget = document.getElementById('romantic-player-widget');
+    const discBtn = document.getElementById('btn-vinyl-disc');
+    const closeBtn = document.getElementById('btn-player-close');
+    const playPauseBtn = document.getElementById('btn-player-play-pause');
+    const playPauseIcon = document.getElementById('play-pause-icon');
+    const statusLabel = document.getElementById('player-status-label');
+    const muteBtn = document.getElementById('btn-player-mute');
+    const volumeIcon = document.getElementById('volume-icon');
+    const volumeSlider = document.getElementById('player-volume-slider') as HTMLInputElement | null;
+    const titleText = document.getElementById('player-track-title');
+    const autoplayPrompt = document.getElementById('player-autoplay-prompt');
+
+    if (!audio || !widget) return;
+
+    // Load custom URL from localStorage if updated via SyncHubModal
+    const customUrl = localStorage.getItem('couple_custom_music_url');
+    if (customUrl) {
+      const converted = convertDriveLinkToDirectAudio(customUrl);
+      if (audio.src !== converted) {
+        audio.src = converted;
+      }
+    }
+
+    const customTitle = localStorage.getItem('couple_custom_music_title');
+    if (customTitle && titleText) {
+      titleText.textContent = customTitle;
+    }
+
+    // Volume setup
+    const savedVol = localStorage.getItem('couple_music_volume');
+    if (savedVol !== null) {
+      const v = parseFloat(savedVol);
+      audio.volume = isNaN(v) ? 0.5 : v;
+      if (volumeSlider) volumeSlider.value = String(audio.volume);
+    } else {
+      audio.volume = 0.5;
+    }
+
+    function updatePlayStateUI(isPlaying) {
+      widget?.classList.toggle('is-playing', isPlaying);
+      if (playPauseIcon) playPauseIcon.textContent = isPlaying ? '❚❚' : '▶';
+      if (statusLabel) statusLabel.textContent = isPlaying ? 'Đang phát' : 'Tạm dừng';
+    }
+
+    async function togglePlay() {
+      if (!audio) return;
+      if (audio.paused) {
+        try {
+          await audio.play();
+          updatePlayStateUI(true);
+          localStorage.setItem('couple_music_playing', 'true');
+          if (autoplayPrompt) autoplayPrompt.style.display = 'none';
+        } catch (err) {
+          console.info('[Audio] Autoplay blocked, waiting for click:', err);
+          if (autoplayPrompt) autoplayPrompt.style.display = 'block';
+        }
+      } else {
+        audio.pause();
+        updatePlayStateUI(false);
+        localStorage.setItem('couple_music_playing', 'false');
+      }
+    }
+
+    // Toggle expand/collapse
+    if (discBtn) {
+      discBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isCollapsed = widget.classList.contains('is-collapsed');
+        if (isCollapsed) {
+          widget.classList.remove('is-collapsed');
+          discBtn.setAttribute('aria-expanded', 'true');
+        } else {
+          togglePlay();
+        }
+      });
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        widget.classList.add('is-collapsed');
+        discBtn?.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    if (playPauseBtn) {
+      playPauseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        togglePlay();
+      });
+    }
+
+    if (volumeSlider) {
+      volumeSlider.addEventListener('input', () => {
+        const v = parseFloat(volumeSlider.value);
+        audio.volume = v;
+        localStorage.setItem('couple_music_volume', String(v));
+        if (volumeIcon) {
+          volumeIcon.textContent = v === 0 ? '🔇' : v < 0.5 ? '🔉' : '🔊';
+        }
+      });
+    }
+
+    if (muteBtn) {
+      muteBtn.addEventListener('click', () => {
+        if (audio.volume > 0) {
+          audio.dataset.prevVolume = String(audio.volume);
+          audio.volume = 0;
+          if (volumeSlider) volumeSlider.value = '0';
+          if (volumeIcon) volumeIcon.textContent = '🔇';
+        } else {
+          const prev = parseFloat(audio.dataset.prevVolume || '0.5');
+          audio.volume = prev;
+          if (volumeSlider) volumeSlider.value = String(prev);
+          if (volumeIcon) volumeIcon.textContent = '🔊';
+        }
+      });
+    }
+
+    // Listen for custom music update event from SyncHubModal
+    window.addEventListener('couple-music-updated', (e: any) => {
+      const newUrl = e.detail?.url;
+      const newTitle = e.detail?.title;
+      if (newUrl) {
+        const directAudio = convertDriveLinkToDirectAudio(newUrl);
+        if (audio.src !== directAudio) {
+          audio.src = directAudio;
+        }
+        if (newTitle && titleText) titleText.textContent = newTitle;
+        audio.play().then(() => updatePlayStateUI(true)).catch(() => {});
+      }
+    });
+
+    // Auto-resume if was playing previously, or auto-start on first user interaction anywhere
+    const wasPlaying = localStorage.getItem('couple_music_playing') !== 'false';
+    const firstInteractionHandler = () => {
+      if (wasPlaying && audio.paused) {
+        audio.play().then(() => updatePlayStateUI(true)).catch(() => {});
+      }
+      window.removeEventListener('click', firstInteractionHandler);
+      window.removeEventListener('keydown', firstInteractionHandler);
+    };
+
+    window.addEventListener('click', firstInteractionHandler, { once: true });
+    window.addEventListener('keydown', firstInteractionHandler, { once: true });
+
+    // Sync UI with audio events
+    audio.addEventListener('play', () => updatePlayStateUI(true));
+    audio.addEventListener('pause', () => updatePlayStateUI(false));
+  }
+
+  initRomanticAudioPlayer();
+  document.addEventListener('astro:after-swap', initRomanticAudioPlayer);
+</script>

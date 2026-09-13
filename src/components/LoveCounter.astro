@@ -978,13 +978,17 @@ const { boysInfo, girlsInfo, anniversaryDate, loveDeclaration } = COUPLE_CONFIG;
 
     // Birthday countdown
     function calculateNextBirthday(month, day) {
+      if (now.getMonth() === month - 1 && now.getDate() === day) {
+        return 'Hôm nay sinh nhật! 🎉';
+      }
       const currentYear = now.getFullYear();
+      const todayStart = new Date(currentYear, now.getMonth(), now.getDate(), 0, 0, 0);
       let nextBday = new Date(currentYear, month - 1, day, 0, 0, 0);
-      if (now.getTime() > nextBday.getTime()) {
+      if (todayStart.getTime() > nextBday.getTime()) {
         nextBday = new Date(currentYear + 1, month - 1, day, 0, 0, 0);
       }
-      const bdiff = nextBday.getTime() - now.getTime();
-      const bDays = Math.ceil(bdiff / (1000 * 60 * 60 * 24));
+      const bdiff = nextBday.getTime() - todayStart.getTime();
+      const bDays = Math.round(bdiff / (1000 * 60 * 60 * 24));
       return bDays === 0 ? 'Hôm nay sinh nhật! 🎉' : `còn ${bDays} ngày`;
     }
 
