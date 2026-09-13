@@ -510,11 +510,15 @@
 
   .parchment-sheet-inner {
     position: relative;
-    padding: 2.4rem 2.2rem;
+    padding: 2.2rem 2.2rem 1.8rem;
     box-sizing: border-box;
     border: 1px solid rgba(160, 120, 70, 0.35);
     margin: 6px;
     border-radius: 12px;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
 
   /* Close Corner X */
@@ -537,18 +541,20 @@
     transform: scale(1.15);
   }
 
-  /* Corner Floral Accents */
+  /* Corner Floral Accents (Default hidden to avoid stray artifacts) */
   .parchment-corner {
+    display: none;
     position: absolute;
-    font-size: 1.3rem;
+    font-size: 1.15rem;
     color: #b38b55;
-    opacity: 0.55;
+    opacity: 0.4;
     line-height: 1;
+    pointer-events: none;
   }
-  .corner-tl { top: 6px; left: 8px; transform: scaleX(-1); }
-  .corner-tr { top: 6px; right: 38px; }
-  .corner-bl { bottom: 6px; left: 8px; transform: scaleX(-1) scaleY(-1); }
-  .corner-br { bottom: 6px; right: 8px; transform: scaleY(-1); }
+  .corner-tl { top: 8px; left: 10px; transform: scaleX(-1); }
+  .corner-tr { top: 8px; right: 38px; }
+  .corner-bl { bottom: 8px; left: 10px; transform: scaleX(-1) scaleY(-1); }
+  .corner-br { bottom: 8px; right: 10px; transform: scaleY(-1); }
 
   /* Header */
   .parchment-header {
