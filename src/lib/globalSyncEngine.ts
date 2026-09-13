@@ -171,6 +171,19 @@ export function initGlobalSyncEngine(): void {
       }
     }
 
+    // 9. Surprise Love Letter (Thư tay bí mật)
+    if (cloudData.surpriseLetter !== undefined) {
+      const current = localStorage.getItem('couple_surprise_letter');
+      const next = JSON.stringify(cloudData.surpriseLetter);
+      if (current !== next) {
+        safeSetItem('couple_surprise_letter', next);
+        window.dispatchEvent(new CustomEvent('couple-letter-updated', {
+          detail: cloudData.surpriseLetter
+        }));
+        hasChanges = true;
+      }
+    }
+
     if (hasChanges) {
       window.dispatchEvent(new CustomEvent('couple-cloud-updated', { detail: cloudData }));
     }

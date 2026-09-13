@@ -1,0 +1,1091 @@
+---
+/**
+ * =========================================================================
+ * SURPRISE LOVE LETTER (PHONG THƯ CON DẤU SÁP HOÀNG GIA - KIỂU 1)
+ * =========================================================================
+ * Phiên bản tối ưu hóa hiệu năng 60-120fps mượt mà:
+ * 1. Loại bỏ backdrop-filter blur nặng để giải phóng GPU và chống giật/lag.
+ * 2. Thay thế canvas font repaint liên tục bằng CSS GPU Composited Particles.
+ * 3. Tạm dừng render hoạt cảnh nền vũ trụ (CosmosBackground) khi mở thư.
+ * 4. Rút ngắn transition từ 0.9s -> 0.35s cho phản hồi tức thì, tự nhiên.
+ */
+---
+
+<div class="wax-letter-overlay" id="surprise-letter-overlay" style="display: none;" aria-hidden="true">
+  <!-- Nền tối lãng mạn GPU-friendly không dùng blur nặng -->
+  <div class="wax-letter-backdrop"></div>
+  
+  <!-- Container chứa các hạt hoa & trái tim bay mượt mà bằng CSS GPU -->
+  <div id="wax-letter-particles" class="wax-letter-particles" aria-hidden="true"></div>
+
+  <div class="wax-stage-container" id="wax-stage">
+    
+    <!-- PHASE 1: PHONG THƯ NIÊM PHONG SÁP (UNOPENED ENVELOPE) -->
+    <div class="wax-envelope-card" id="wax-envelope-card">
+      <div class="envelope-shadow"></div>
+      
+      <!-- Thân phong thư vintage -->
+      <div class="envelope-body">
+        <!-- Nắp phong thư tam giác (Flap) -->
+        <div class="envelope-flap" id="envelope-flap"></div>
+        <div class="envelope-pocket"></div>
+        
+        <!-- Tem thư tình yêu retro & Dấu bưu điện -->
+        <div class="envelope-postage">
+          <div class="envelope-stamp">
+            <span class="stamp-heart">💖</span>
+            <span class="stamp-text">LOVE 15/08</span>
+          </div>
+          <div class="postage-seal-mark">
+            <span>COSMIC POST</span>
+            <small>AI ➔ MAZE</small>
+          </div>
+        </div>
+
+        <!-- Thông tin người nhận trên phong thư -->
+        <div class="envelope-address">
+          <span class="addr-label">Gửi riêng người con gái của anh:</span>
+          <strong class="addr-name gradient-love-text" id="envelope-recipient-name">Bé Yêu (Maze 🌸)</strong>
+          <span class="addr-sub">Dải Ngân Hà Tình Yêu · Trái Tim Anh</span>
+        </div>
+
+        <!-- CON DẤU SÁP 3D HOÀNG GIA (WAX SEAL) -->
+        <button type="button" class="wax-seal-btn" id="wax-seal-btn" title="Chạm tay vào đây để bẻ con dấu sáp mở thư 💌">
+          <div class="wax-seal-disc wax-color-ruby" id="wax-seal-disc">
+            <div class="wax-seal-rim"></div>
+            <div class="wax-seal-inner">
+              <span class="wax-seal-icon">💖</span>
+              <span class="wax-seal-monogram">AI &amp; MAZE</span>
+            </div>
+            <div class="wax-seal-glow"></div>
+          </div>
+        </button>
+
+        <!-- Hàng hướng dẫn nhấp nháy -->
+        <div class="envelope-hint">
+          <span class="hint-pulse-dot"></span>
+          <span class="hint-text">Chạm vào con dấu sáp để mở thư</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 2: TỜ GIẤY DA THƯ TAY VINTAGE (EXPANDED PARCHMENT LETTER) -->
+    <div class="parchment-sheet-card" id="parchment-sheet" style="display: none;">
+      <div class="parchment-sheet-inner">
+        <!-- Nút đóng nhanh ở góc -->
+        <button type="button" class="parchment-close-corner" id="btn-close-letter-corner" title="Cất bức thư đi">&times;</button>
+        
+        <!-- Trang trí viền hoa góc hoàng gia -->
+        <div class="parchment-corner corner-tl">❧</div>
+        <div class="parchment-corner corner-tr">❧</div>
+        <div class="parchment-corner corner-bl">❧</div>
+        <div class="parchment-corner corner-br">❧</div>
+
+        <!-- Header Bức Thư -->
+        <div class="parchment-header">
+          <div class="parchment-badge">
+            <span id="letter-badge-display">💌 Bức Thư Tình Yêu</span>
+          </div>
+          <div class="parchment-date" id="letter-date-display">13 Tháng 9, 2026</div>
+        </div>
+
+        <!-- Tiêu Đề Bức Thư -->
+        <h2 class="parchment-title" id="letter-title-display">Gửi Bông Hoa Nhỏ Của Anh...</h2>
+
+        <!-- Lời mở đầu nồng ấm -->
+        <div class="parchment-salutation" id="letter-salutation-display">
+          Em yêu dấu thương mến,
+        </div>
+
+        <!-- Nội Dung Thư Viết Tay -->
+        <div class="parchment-body" id="letter-content-display">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Lời Kết & Ký Tên -->
+        <div class="parchment-footer">
+          <div class="parchment-signoff">
+            <p class="signoff-quote" id="letter-quote-display">"Mãi luôn thương và đồng hành cùng em qua muôn ngàn vì sao."</p>
+            <div class="signoff-signature">
+              <span class="sig-from" id="letter-sig-from-display">Thương gửi từ,</span>
+              <strong class="sig-name" id="letter-author-name">AI (Anh 🚀)</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hàng Nút Hành Động Cuối Thư -->
+        <div class="parchment-actions-row">
+          <button type="button" class="btn-parchment-read" id="btn-confirm-letter-read">
+            <span id="letter-btn-read-display">💖 Em Đã Đọc Và Rất Yêu Anh!</span>
+          </button>
+          <button type="button" class="btn-parchment-fold" id="btn-fold-letter">
+            <span id="letter-btn-fold-display">🌸 Gấp Thư Lại Cất Đi</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  /* =========================================================================
+     SURPRISE LOVE LETTER - ULTRA SMOOTH 60FPS STYLES
+     ========================================================================= */
+  .wax-letter-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 1.5rem;
+    animation: letterFadeIn 0.3s ease-out forwards;
+    will-change: opacity;
+  }
+
+  @keyframes letterFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Dark luxury backdrop without expensive blur filter */
+  .wax-letter-backdrop {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 50% 40%, rgba(20, 10, 20, 0.94) 0%, rgba(5, 7, 15, 0.98) 100%);
+    pointer-events: auto;
+  }
+
+  /* CSS GPU Confetti Container */
+  .wax-letter-particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100001;
+    overflow: hidden;
+  }
+
+  .wax-stage-container {
+    position: relative;
+    z-index: 100000;
+    width: 100%;
+    max-width: 640px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px;
+  }
+
+  /* --- PHASE 1: VINTAGE ENVELOPE --- */
+  .wax-envelope-card {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    height: 330px;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
+    will-change: transform, opacity;
+  }
+
+  .envelope-shadow {
+    position: absolute;
+    bottom: -15px;
+    left: 8%;
+    right: 8%;
+    height: 24px;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5) 0%, transparent 75%);
+    border-radius: 50%;
+  }
+
+  .envelope-body {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #dfcfb7 0%, #cebe9e 50%, #c4b18c 100%);
+    border-radius: 14px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.6rem 2rem;
+    box-sizing: border-box;
+    border: 2px solid #b8a07c;
+  }
+
+  /* Triangle flap styling */
+  .envelope-flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 165px;
+    background: linear-gradient(180deg, #d3bf9f 0%, #c4b08d 100%);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    border-bottom: 2px solid rgba(138, 114, 76, 0.4);
+    transform-origin: top center;
+    transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 10;
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  .envelope-pocket {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 195px;
+    background: linear-gradient(0deg, #c7b390 0%, #d8c7a6 100%);
+    clip-path: polygon(0 100%, 100% 100%, 100% 25%, 50% 70%, 0 25%);
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  /* Postage Stamp */
+  .envelope-postage {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 12;
+  }
+
+  .envelope-stamp {
+    width: 48px;
+    height: 58px;
+    background: #fff8eb;
+    border: 2px dashed #e11d48;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transform: rotate(4deg);
+  }
+
+  .stamp-heart {
+    font-size: 1.3rem;
+  }
+
+  .stamp-text {
+    font-size: 0.52rem;
+    font-weight: 800;
+    color: #e11d48;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+  }
+
+  .postage-seal-mark {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: rgba(90, 70, 45, 0.7);
+    border: 1px solid rgba(90, 70, 45, 0.4);
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.1;
+    transform: rotate(-12deg);
+    text-transform: uppercase;
+  }
+
+  .postage-seal-mark small {
+    font-size: 0.5rem;
+    color: #e11d48;
+    margin-top: 2px;
+  }
+
+  /* Address Text */
+  .envelope-address {
+    position: relative;
+    z-index: 12;
+    margin-top: auto;
+    margin-bottom: 2.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .addr-label {
+    font-size: 0.76rem;
+    font-style: italic;
+    color: #5c4827;
+  }
+
+  .addr-name {
+    font-size: 1.3rem;
+    font-weight: 800;
+  }
+
+  .addr-sub {
+    font-size: 0.7rem;
+    color: #78623b;
+  }
+
+  /* --- 3D WAX SEAL BUTTON --- */
+  .wax-seal-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    outline: none;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: transform;
+  }
+
+  .wax-seal-btn:hover {
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+
+  .wax-seal-btn:active {
+    transform: translate(-50%, -50%) scale(0.96);
+  }
+
+  .wax-seal-disc {
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(185, 28, 28, 0.45);
+    transition: transform 0.25s ease, opacity 0.25s ease;
+    will-change: transform, opacity;
+  }
+
+  /* Wax Colors */
+  .wax-color-ruby {
+    background: radial-gradient(circle at 35% 30%, #f43f5e 0%, #b91c1c 65%, #7f1d1d 100%);
+  }
+  .wax-color-rose {
+    background: radial-gradient(circle at 35% 30%, #fb7185 0%, #e11d48 65%, #9f1239 100%);
+  }
+  .wax-color-gold {
+    background: radial-gradient(circle at 35% 30%, #fbbf24 0%, #d97706 65%, #78350f 100%);
+  }
+
+  .wax-seal-rim {
+    position: absolute;
+    inset: 4px;
+    border: 2px dashed rgba(255, 255, 255, 0.35);
+    border-radius: 50%;
+  }
+
+  .wax-seal-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  }
+
+  .wax-seal-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .wax-seal-monogram {
+    font-size: 0.46rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+    text-transform: uppercase;
+  }
+
+  .wax-seal-glow {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(244, 63, 94, 0.35) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Envelope Hint Bar */
+  .envelope-hint {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(26, 15, 8, 0.75);
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    white-space: nowrap;
+  }
+
+  .hint-pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #f43f5e;
+    box-shadow: 0 0 8px #f43f5e;
+  }
+
+  .hint-text {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: #fed7aa;
+  }
+
+  /* --- FAST & SNAPPY OPENING STATE --- */
+  .wax-envelope-card.is-opening .wax-seal-disc {
+    transform: scale(1.18);
+    opacity: 0;
+  }
+
+  .wax-envelope-card.is-opening .envelope-flap {
+    transform: rotateX(180deg);
+  }
+
+  .wax-envelope-card.is-hidden {
+    transform: translateY(40px) scale(0.9);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* --- PHASE 2: VINTAGE PARCHMENT LETTER --- */
+  .parchment-sheet-card {
+    position: relative;
+    width: 100%;
+    max-width: 620px;
+    margin: 1rem auto;
+    background: #fcf6e8;
+    border-radius: 16px;
+    border: 2px solid #c9ad84;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+    animation: parchmentSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    will-change: transform, opacity;
+  }
+
+  @keyframes parchmentSlideUp {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 30px, 0) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+  }
+
+  .parchment-sheet-inner {
+    position: relative;
+    padding: 2.4rem 2.2rem;
+    box-sizing: border-box;
+    border: 1px solid rgba(160, 120, 70, 0.35);
+    margin: 6px;
+    border-radius: 12px;
+  }
+
+  /* Close Corner X */
+  .parchment-close-corner {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    color: #8c6e43;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+    transition: color 0.2s, transform 0.2s;
+  }
+
+  .parchment-close-corner:hover {
+    color: #e11d48;
+    transform: scale(1.15);
+  }
+
+  /* Corner Floral Accents */
+  .parchment-corner {
+    position: absolute;
+    font-size: 1.3rem;
+    color: #b38b55;
+    opacity: 0.55;
+    line-height: 1;
+  }
+  .corner-tl { top: 6px; left: 8px; transform: scaleX(-1); }
+  .corner-tr { top: 6px; right: 38px; }
+  .corner-bl { bottom: 6px; left: 8px; transform: scaleX(-1) scaleY(-1); }
+  .corner-br { bottom: 6px; right: 8px; transform: scaleY(-1); }
+
+  /* Header */
+  .parchment-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+    border-bottom: 1px dashed rgba(160, 120, 70, 0.4);
+    padding-bottom: 0.7rem;
+  }
+
+  .parchment-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(225, 29, 72, 0.1);
+    border: 1px solid rgba(225, 29, 72, 0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #be123c;
+  }
+
+  .parchment-date {
+    font-size: 0.8rem;
+    font-style: italic;
+    color: #785a33;
+    font-family: 'Literata', 'Be Vietnam Pro', serif;
+  }
+
+  /* Title & Salutation */
+  .parchment-title {
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: #4a2810;
+    margin: 0 0 0.8rem;
+    line-height: 1.35;
+    font-family: 'Literata', 'Be Vietnam Pro', serif;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+
+  .parchment-salutation {
+    font-size: 1.05rem;
+    font-weight: 700;
+    font-style: italic;
+    color: #78350f;
+    margin-bottom: 1rem;
+    font-family: 'Literata', 'Be Vietnam Pro', serif;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+
+  /* Body Content */
+  .parchment-body {
+    font-size: 1.06rem;
+    line-height: 1.9;
+    color: #3b2413;
+    font-family: 'Literata', 'Be Vietnam Pro', serif;
+    font-feature-settings: "kern" 1, "liga" 1;
+    margin-bottom: 1.8rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Sign-off */
+  .parchment-footer {
+    border-top: 1px dashed rgba(160, 120, 70, 0.4);
+    padding-top: 1rem;
+    margin-bottom: 1.6rem;
+  }
+
+  .parchment-signoff {
+    text-align: right;
+  }
+
+  .signoff-quote {
+    font-size: 0.92rem;
+    font-style: italic;
+    color: #855325;
+    margin: 0 0 0.5rem;
+    font-family: 'Literata', 'Be Vietnam Pro', serif;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+
+  .signoff-signature {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .sig-from {
+    font-size: 0.8rem;
+    font-style: italic;
+    color: #6b431e;
+    font-family: 'Literata', 'Be Vietnam Pro', serif;
+  }
+
+  .sig-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #b91c1c;
+    font-family: 'Literata', 'Be Vietnam Pro', serif;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+
+  /* Action Buttons */
+  .parchment-actions-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .btn-parchment-read {
+    background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+    color: #fff;
+    border: none;
+    padding: 11px 26px;
+    border-radius: 30px;
+    font-size: 0.94rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(225, 29, 72, 0.4);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .btn-parchment-read:hover {
+    transform: translateY(-2px) scale(1.03);
+  }
+
+  .btn-parchment-fold {
+    background: rgba(120, 70, 20, 0.08);
+    color: #6b431e;
+    border: 1px solid rgba(120, 70, 20, 0.25);
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .btn-parchment-fold:hover {
+    background: rgba(120, 70, 20, 0.16);
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .wax-envelope-card {
+      height: 290px;
+    }
+    .envelope-body {
+      padding: 1.2rem;
+    }
+    .envelope-postage {
+      top: 0.8rem;
+      right: 0.8rem;
+    }
+    .envelope-stamp {
+      width: 42px;
+      height: 52px;
+    }
+    .postage-seal-mark {
+      display: none;
+    }
+    .wax-seal-disc {
+      width: 68px;
+      height: 68px;
+    }
+    .parchment-sheet-inner {
+      padding: 1.6rem 1.1rem;
+    }
+    .parchment-title {
+      font-size: 1.3rem;
+    }
+    .parchment-body {
+      font-size: 0.96rem;
+      line-height: 1.75;
+    }
+    .parchment-corner {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { pushDataToFirebase } from '../lib/firebaseClient';
+
+  interface SurpriseLetterData {
+    enabled: boolean;
+    title: string;
+    content: string;
+    sender?: 'ai' | 'maze';
+    recipient?: 'ai' | 'maze' | 'both';
+    waxColor?: string;
+    showOnce?: boolean;
+    readAt?: string;
+    readBy?: string;
+    updatedAt?: string;
+    badgeText?: string;
+    salutation?: string;
+    bottomQuote?: string;
+    signatureSignoff?: string;
+    signatureName?: string;
+    btnReadText?: string;
+    btnFoldText?: string;
+  }
+
+  // AudioContext singleton to eliminate sound lag
+  let cachedAudioCtx: AudioContext | null = null;
+  function playWaxBreakSound() {
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      if (!cachedAudioCtx) {
+        cachedAudioCtx = new AudioCtx();
+      }
+      if (cachedAudioCtx.state === 'suspended') {
+        cachedAudioCtx.resume();
+      }
+      const ctx = cachedAudioCtx;
+      
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.2);
+      
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.35);
+    } catch {}
+  }
+
+  // Ultra-lightweight GPU-composited CSS particle burst (Zero Canvas Overhead, 60-120fps)
+  function triggerLetterConfetti() {
+    const container = document.getElementById('wax-letter-particles');
+    if (!container) return;
+
+    // Clear any previous particles
+    container.innerHTML = '';
+
+    const emojis = ['💖', '🌸', '✨', '🌹', '💕', '🥰', '⭐', '💌'];
+    const count = 22; // Just enough for delightful romance without flooding the DOM
+
+    const fragment = document.createDocumentFragment();
+
+    for (let i = 0; i < count; i++) {
+      const span = document.createElement('span');
+      span.textContent = emojis[i % emojis.length];
+
+      // Calculate radial trajectory in 360 degrees
+      const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
+      const distance = 90 + Math.random() * 160;
+      const tx = Math.cos(angle) * distance;
+      const ty = Math.sin(angle) * distance - 20; // slight upwards bias
+      const rot = (Math.random() - 0.5) * 120;
+      const size = 16 + Math.random() * 14;
+      const dur = 0.85 + Math.random() * 0.4;
+
+      span.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        font-size: ${size}px;
+        pointer-events: none;
+        user-select: none;
+        will-change: transform, opacity;
+        transform: translate3d(-50%, -50%, 0);
+        animation: burstFly ${dur}s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      `;
+
+      // Inject keyframe animation dynamically if not present
+      if (!document.getElementById('burst-keyframe-style')) {
+        const style = document.createElement('style');
+        style.id = 'burst-keyframe-style';
+        style.textContent = `
+          @keyframes burstFly {
+            0% {
+              transform: translate3d(-50%, -50%, 0) scale(0.4);
+              opacity: 1;
+            }
+            70% {
+              opacity: 0.9;
+            }
+            100% {
+              transform: translate3d(calc(-50% + var(--tx)), calc(-50% + var(--ty)), 0) scale(1.1) rotate(var(--rot));
+              opacity: 0;
+            }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+
+      span.style.setProperty('--tx', `${tx}px`);
+      span.style.setProperty('--ty', `${ty}px`);
+      span.style.setProperty('--rot', `${rot}deg`);
+
+      fragment.appendChild(span);
+    }
+
+    container.appendChild(fragment);
+
+    // Auto cleanup after animation ends
+    setTimeout(() => {
+      container.innerHTML = '';
+    }, 1400);
+  }
+
+  function getStoredLetterData(): SurpriseLetterData | null {
+    try {
+      const raw = localStorage.getItem('couple_surprise_letter');
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    return null;
+  }
+
+  function hashLetter(title: string, content: string): string {
+    let hash = 0;
+    const str = `${title}__${content}`;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash << 5) - hash + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return String(hash);
+  }
+
+  let isLetterOpened = false;
+  let currentLetterData: SurpriseLetterData | null = null;
+
+  function openLetterModal(data: SurpriseLetterData) {
+    currentLetterData = data;
+    const overlay = document.getElementById('surprise-letter-overlay');
+    const envelopeCard = document.getElementById('wax-envelope-card');
+    const parchmentSheet = document.getElementById('parchment-sheet');
+    const recipientEl = document.getElementById('envelope-recipient-name');
+    const waxDisc = document.getElementById('wax-seal-disc');
+
+    if (!overlay || !envelopeCard || !parchmentSheet) return;
+
+    // Pause heavy background animation and optimize page scroll
+    document.body.classList.add('letter-modal-open');
+
+    // Reset envelope state
+    isLetterOpened = false;
+    envelopeCard.classList.remove('is-opening', 'is-hidden');
+    envelopeCard.style.display = 'block';
+    parchmentSheet.style.display = 'none';
+
+    // Recipient on envelope
+    if (recipientEl) {
+      if (data.recipient === 'maze') recipientEl.textContent = 'Bé Yêu (Maze 🌸)';
+      else if (data.recipient === 'ai') recipientEl.textContent = 'Anh Yêu (AI 🚀)';
+      else recipientEl.textContent = 'Cả Hai Đứa 💖';
+    }
+
+    // Wax color
+    if (waxDisc) {
+      waxDisc.className = `wax-seal-disc wax-color-${data.waxColor || 'ruby'}`;
+    }
+
+    // Populate parchment content
+    const badgeEl = document.getElementById('letter-badge-display');
+    const titleEl = document.getElementById('letter-title-display');
+    const contentEl = document.getElementById('letter-content-display');
+    const authorEl = document.getElementById('letter-author-name');
+    const sigFromEl = document.getElementById('letter-sig-from-display');
+    const quoteEl = document.getElementById('letter-quote-display');
+    const dateEl = document.getElementById('letter-date-display');
+    const salutationEl = document.getElementById('letter-salutation-display');
+    const btnReadEl = document.getElementById('letter-btn-read-display');
+    const btnFoldEl = document.getElementById('letter-btn-fold-display');
+
+    if (badgeEl) badgeEl.textContent = data.badgeText || '💌 Bức Thư Tình Yêu';
+    if (titleEl) titleEl.textContent = data.title || 'Gửi Người Anh Thương...';
+    if (contentEl) contentEl.textContent = data.content || 'Anh nhớ em nhiều lắm...';
+    
+    // Salutation
+    if (salutationEl) {
+      if (data.salutation && data.salutation.trim().length > 0) {
+        salutationEl.textContent = data.salutation;
+      } else if (data.recipient === 'maze') {
+        salutationEl.textContent = 'Em yêu dấu thương mến,';
+      } else if (data.recipient === 'ai') {
+        salutationEl.textContent = 'Anh yêu dấu của em,';
+      } else {
+        salutationEl.textContent = 'Gửi người đặc biệt nhất cuộc đời anh,';
+      }
+    }
+
+    // Quote / Bottom note
+    if (quoteEl) {
+      quoteEl.textContent = data.bottomQuote !== undefined && data.bottomQuote.trim().length > 0
+        ? data.bottomQuote
+        : '"Mãi luôn thương và đồng hành cùng em qua muôn ngàn vì sao."';
+    }
+
+    // Sign-off prefix & Author Signature
+    if (sigFromEl) {
+      sigFromEl.textContent = data.signatureSignoff && data.signatureSignoff.trim().length > 0
+        ? data.signatureSignoff
+        : 'Thương gửi từ,';
+    }
+    if (authorEl) {
+      authorEl.textContent = data.signatureName && data.signatureName.trim().length > 0
+        ? data.signatureName
+        : (data.sender === 'ai' ? 'AI (Anh người yêu 🚀)' : 'Maze (Em người yêu 🌸)');
+    }
+
+    // Button Labels
+    if (btnReadEl) {
+      btnReadEl.textContent = data.btnReadText && data.btnReadText.trim().length > 0
+        ? data.btnReadText
+        : '💖 Em Đã Đọc Và Rất Yêu Anh!';
+    }
+    if (btnFoldEl) {
+      btnFoldEl.textContent = data.btnFoldText && data.btnFoldText.trim().length > 0
+        ? data.btnFoldText
+        : '🌸 Gấp Thư Lại Cất Đi';
+    }
+
+    if (dateEl) {
+      const now = new Date();
+      dateEl.textContent = `${now.getDate()} Tháng ${now.getMonth() + 1}, ${now.getFullYear()}`;
+    }
+
+    overlay.style.display = 'flex';
+    overlay.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeLetterModal() {
+    // Resume background animations
+    document.body.classList.remove('letter-modal-open');
+
+    const overlay = document.getElementById('surprise-letter-overlay');
+    if (overlay) {
+      overlay.style.display = 'none';
+      overlay.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  function breakWaxSealAndOpen() {
+    if (isLetterOpened) return;
+    isLetterOpened = true;
+
+    // Sound & Particles
+    playWaxBreakSound();
+    triggerLetterConfetti();
+
+    const envelopeCard = document.getElementById('wax-envelope-card');
+    const parchmentSheet = document.getElementById('parchment-sheet');
+
+    if (envelopeCard) {
+      envelopeCard.classList.add('is-opening');
+    }
+
+    // Snappy transition (320ms) - eliminates waiting and lag feel
+    setTimeout(() => {
+      if (envelopeCard) {
+        envelopeCard.classList.add('is-hidden');
+        envelopeCard.style.display = 'none';
+      }
+      if (parchmentSheet) {
+        parchmentSheet.style.display = 'block';
+      }
+    }, 320);
+  }
+
+  async function handleConfirmRead() {
+    triggerLetterConfetti();
+    if (currentLetterData) {
+      const nowIso = new Date().toISOString();
+      const readHash = hashLetter(currentLetterData.title, currentLetterData.content);
+      localStorage.setItem('couple_letter_last_read_hash', readHash);
+      localStorage.setItem('couple_letter_last_read_at', nowIso);
+
+      try {
+        await pushDataToFirebase({
+          surpriseLetter: {
+            ...currentLetterData,
+            readAt: nowIso,
+            readBy: 'Maze'
+          },
+          lastUpdatedBy: 'MazeReadLetter'
+        });
+      } catch {}
+    }
+
+    setTimeout(() => {
+      closeLetterModal();
+    }, 800);
+  }
+
+  function checkAndTriggerSurpriseLetter() {
+    // Không tự động bật trên trang quản trị / cài đặt thư
+    if (window.location.pathname.includes('/gui-thu')) return;
+
+    const data = getStoredLetterData();
+    if (!data || !data.enabled) return;
+
+    // Check if showOnce is true and user already read this exact letter
+    if (data.showOnce) {
+      const readHash = localStorage.getItem('couple_letter_last_read_hash');
+      const curHash = hashLetter(data.title, data.content);
+      if (readHash === curHash) return; // Already read
+    }
+
+    // Auto-pop after 1.2s delay for delightful entrance
+    setTimeout(() => {
+      openLetterModal(data);
+    }, 1200);
+  }
+
+  function setupSurpriseLetterInteractive() {
+    const waxSealBtn = document.getElementById('wax-seal-btn');
+    const btnRead = document.getElementById('btn-confirm-letter-read');
+    const btnFold = document.getElementById('btn-fold-letter');
+    const btnCloseCorner = document.getElementById('btn-close-letter-corner');
+
+    waxSealBtn?.addEventListener('click', breakWaxSealAndOpen);
+    btnRead?.addEventListener('click', handleConfirmRead);
+    btnFold?.addEventListener('click', closeLetterModal);
+    btnCloseCorner?.addEventListener('click', closeLetterModal);
+
+    // Listen for custom preview trigger from SyncHubModal or /gui-thu
+    window.addEventListener('open-surprise-letter-preview', (e: any) => {
+      const previewData: SurpriseLetterData = e.detail || {
+        enabled: true,
+        title: 'Gửi Bông Hoa Nhỏ Của Anh...',
+        content: 'Mỗi ngày thức dậy được nhớ về em là điều hạnh phúc nhất...',
+        sender: 'ai',
+        recipient: 'maze',
+        waxColor: 'ruby'
+      };
+      openLetterModal(previewData);
+    });
+
+    // Listen for realtime updates from partner
+    window.addEventListener('couple-letter-updated', (e: any) => {
+      const updatedData: SurpriseLetterData = e.detail;
+      if (updatedData && updatedData.enabled) {
+        checkAndTriggerSurpriseLetter();
+      } else {
+        closeLetterModal();
+      }
+    });
+
+    // Check on page load
+    checkAndTriggerSurpriseLetter();
+  }
+
+  setupSurpriseLetterInteractive();
+  document.addEventListener('astro:page-load', setupSurpriseLetterInteractive);
+  document.addEventListener('astro:after-swap', setupSurpriseLetterInteractive);
+</script>

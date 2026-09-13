@@ -63,19 +63,18 @@ export const HABIT_MILESTONES: HabitMilestone[] = [
   }
 ];
 
-export const DEFAULT_HABIT_START_DATE = '2026-09-12';
+export const DEFAULT_HABIT_START_DATE = '2026-09-13';
 export const DEFAULT_SHIELDS = { ai: 2, maze: 2 };
 
-export const HABIT_21_DAYS: DayHabit[] = Array.from({ length: 21 }, (_, i) => {
-  const isDayOne = i === 0;
-  return {
-    day: i + 1,
-    aiCompleted: isDayOne,
-    mazeCompleted: isDayOne,
-    completed: isDayOne,
-    aiCompletedDate: isDayOne ? '2026-09-12' : undefined,
-    mazeCompletedDate: isDayOne ? '2026-09-12' : undefined,
-    completedDate: isDayOne ? '2026-09-12' : undefined
-  };
-});
+export const HABIT_21_DAYS: DayHabit[] = Array.from({ length: 21 }, (_, i) => ({
+  day: i + 1,
+  aiCompleted: false,
+  mazeCompleted: false,
+  completed: false,
+  aiCompletedDate: undefined,
+  mazeCompletedDate: undefined,
+  completedDate: undefined,
+  aiShieldUsed: false,
+  mazeShieldUsed: false
+}));
 

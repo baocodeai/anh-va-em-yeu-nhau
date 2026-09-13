@@ -251,6 +251,12 @@
     let time = 0;
 
     function render() {
+      // Tạm dừng vẽ nền vũ trụ khi tab ẩn hoặc khi phong thư/modal đang mở để đạt 60fps mượt mà
+      if (document.hidden || document.body.classList.contains('letter-modal-open')) {
+        animId = requestAnimationFrame(render);
+        return;
+      }
+
       time += 0.014;
 
       // Mouse Smooth Interpolation

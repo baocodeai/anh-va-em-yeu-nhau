@@ -62,6 +62,26 @@ export function initFirebaseClient(): Database | null {
   }
 }
 
+export interface SurpriseLetterPayload {
+  enabled: boolean;
+  title: string;
+  content: string;
+  sender?: 'ai' | 'maze';
+  recipient?: 'ai' | 'maze' | 'both';
+  waxColor?: string; // 'ruby' | 'rose' | 'gold'
+  showOnce?: boolean;
+  readAt?: string;
+  readBy?: string;
+  updatedAt?: string;
+  badgeText?: string;
+  salutation?: string;
+  bottomQuote?: string;
+  signatureSignoff?: string;
+  signatureName?: string;
+  btnReadText?: string;
+  btnFoldText?: string;
+}
+
 export interface CoupleCloudPayload {
   habit21?: any[];
   habitStartDate?: string;
@@ -83,6 +103,7 @@ export interface CoupleCloudPayload {
   };
   musicUrl?: string;
   musicTitle?: string;
+  surpriseLetter?: SurpriseLetterPayload;
   lastUpdatedBy?: string;
   updatedAt?: string;
 }
@@ -222,6 +243,25 @@ export function normalizeCoupleCloudPayload(raw: any): CoupleCloudPayload {
     avatars: raw.avatars && typeof raw.avatars === 'object' ? raw.avatars : undefined,
     musicUrl: typeof raw.musicUrl === 'string' ? raw.musicUrl : undefined,
     musicTitle: typeof raw.musicTitle === 'string' ? raw.musicTitle : undefined,
+    surpriseLetter: raw.surpriseLetter && typeof raw.surpriseLetter === 'object' ? {
+      enabled: Boolean(raw.surpriseLetter.enabled),
+      title: typeof raw.surpriseLetter.title === 'string' ? raw.surpriseLetter.title : 'Thư Tình Gửi Em',
+      content: typeof raw.surpriseLetter.content === 'string' ? raw.surpriseLetter.content : '',
+      sender: raw.surpriseLetter.sender || 'ai',
+      recipient: raw.surpriseLetter.recipient || 'maze',
+      waxColor: raw.surpriseLetter.waxColor || 'ruby',
+      showOnce: Boolean(raw.surpriseLetter.showOnce),
+      readAt: typeof raw.surpriseLetter.readAt === 'string' ? raw.surpriseLetter.readAt : undefined,
+      readBy: typeof raw.surpriseLetter.readBy === 'string' ? raw.surpriseLetter.readBy : undefined,
+      updatedAt: typeof raw.surpriseLetter.updatedAt === 'string' ? raw.surpriseLetter.updatedAt : undefined,
+      badgeText: typeof raw.surpriseLetter.badgeText === 'string' ? raw.surpriseLetter.badgeText : undefined,
+      salutation: typeof raw.surpriseLetter.salutation === 'string' ? raw.surpriseLetter.salutation : undefined,
+      bottomQuote: typeof raw.surpriseLetter.bottomQuote === 'string' ? raw.surpriseLetter.bottomQuote : undefined,
+      signatureSignoff: typeof raw.surpriseLetter.signatureSignoff === 'string' ? raw.surpriseLetter.signatureSignoff : undefined,
+      signatureName: typeof raw.surpriseLetter.signatureName === 'string' ? raw.surpriseLetter.signatureName : undefined,
+      btnReadText: typeof raw.surpriseLetter.btnReadText === 'string' ? raw.surpriseLetter.btnReadText : undefined,
+      btnFoldText: typeof raw.surpriseLetter.btnFoldText === 'string' ? raw.surpriseLetter.btnFoldText : undefined
+    } : undefined,
     lastUpdatedBy: typeof raw.lastUpdatedBy === 'string' ? raw.lastUpdatedBy : undefined,
     updatedAt: typeof raw.updatedAt === 'string' ? raw.updatedAt : undefined
   };
@@ -284,7 +324,8 @@ export async function pushDataToFirebase(payload: CoupleCloudPayload): Promise<b
       'passcodeVersion',
       'avatars',
       'musicUrl',
-      'musicTitle'
+      'musicTitle',
+      'surpriseLetter'
     ];
 
     for (const key of keys) {

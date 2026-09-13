@@ -24,6 +24,7 @@
 
     <div class="sync-hub-tabs">
       <button type="button" class="tab-btn is-active" data-tab="tab-firebase">🔥 Firebase Realtime</button>
+      <button type="button" class="tab-btn" data-tab="tab-letter">💌 Thư Tay Cho Nàng</button>
       <button type="button" class="tab-btn" data-tab="tab-music">🎶 Nhạc Tình Yêu (Drive/MP3)</button>
       <button type="button" class="tab-btn" data-tab="tab-storage">🖼️ Bộ Nhớ Ảnh &amp; Cloud</button>
       <button type="button" class="tab-btn" data-tab="tab-backup">💾 Sao Lưu / Khôi Phục</button>
@@ -72,6 +73,112 @@
           <button type="button" class="btn-outline-love" id="btn-force-push-firebase">
             <span>⬆️ Đẩy Dữ Liệu Hiện Tại Lên Firebase</span>
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Thư Tay Cho Nàng (Kiểu 1: Phong Thư Con Dấu Sáp) -->
+    <div class="tab-content" id="tab-letter">
+      <div class="sync-block">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 8px;">
+          <h4 class="block-title gradient-rose-text" style="margin: 0;">💌 Bức Thư Tình Niêm Phong Sáp Hoàng Gia:</h4>
+          <span class="badge-love" id="letter-status-pill">⚪ Đang Tắt</span>
+        </div>
+        <p class="block-desc">
+          Cài đặt bức thư tình gửi riêng cho bạn gái. Khi bạn bật công tắc <strong>(true)</strong>, mỗi khi em mở website thì phong thư vintage với con dấu sáp 3D sẽ tự động hiện lên làm em bất ngờ!
+        </p>
+
+        <!-- Master Switch Card -->
+        <div class="letter-master-switch-card">
+          <div class="switch-info">
+            <strong class="switch-title">Tự động hiển thị khi em mở web:</strong>
+            <p class="switch-sub" id="letter-switch-desc">Thư đang tắt. Bấm công tắc bên cạnh để bật hiển thị cho nàng.</p>
+          </div>
+          <div class="switch-toggle-wrap">
+            <button type="button" class="btn-letter-toggle" id="btn-toggle-letter-master" data-enabled="false">
+              <span class="toggle-slider"></span>
+              <span class="toggle-label" id="toggle-letter-label">TẮT</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Read Receipt Box -->
+        <div class="letter-read-receipt-box mt-3" id="letter-read-receipt-box">
+          <span class="receipt-icon">👁️</span>
+          <span class="receipt-text" id="letter-receipt-text">Trạng thái: Nàng chưa đọc bức thư này.</span>
+        </div>
+
+        <!-- Editor Form -->
+        <div class="form-group mt-3">
+          <label for="letter-edit-title" class="form-label">Tiêu đề bức thư:</label>
+          <input
+            type="text"
+            id="letter-edit-title"
+            class="sync-input"
+            placeholder="Ví dụ: Gửi em, bông hoa nhỏ xinh đẹp nhất dải ngân hà..."
+          />
+        </div>
+
+        <div class="form-row-2 mt-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label for="letter-edit-recipient" class="form-label">Gửi đến:</label>
+            <select id="letter-edit-recipient" class="sync-input">
+              <option value="maze">Bé Yêu (Maze 🌸)</option>
+              <option value="ai">Anh Yêu (AI 🚀)</option>
+              <option value="both">Cả hai đứa 💖</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="letter-edit-wax" class="form-label">Màu con dấu sáp 3D:</label>
+            <select id="letter-edit-wax" class="sync-input">
+              <option value="ruby">🔴 Đỏ Ruby Hoàng Gia</option>
+              <option value="rose">🌸 Hồng Tình Yêu Lãng Mạn</option>
+              <option value="gold">👑 Vàng Hoàng Hôn Cổ Điển</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group mt-2">
+          <label class="checkbox-love-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.86rem; color: #cbd5e1; cursor: pointer;">
+            <input type="checkbox" id="letter-edit-show-once" style="accent-color: #f43f5e; cursor: pointer; width: 16px; height: 16px;" />
+            <span>Chỉ hiển thị 1 lần duy nhất (sau khi nàng bấm "Đã Đọc" thì không hiện lại nữa trừ khi anh đổi nội dung)</span>
+          </label>
+        </div>
+
+        <div class="form-group mt-3">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <label for="letter-edit-content" class="form-label" style="margin: 0;">Nội dung bức thư tay:</label>
+            <span class="word-counter" id="letter-word-count" style="font-size: 0.76rem; color: #94a3b8;">0 ký tự</span>
+          </div>
+          <textarea
+            id="letter-edit-content"
+            class="sync-textarea"
+            rows="6"
+            placeholder="Viết những lời dặn dò, tâm sự hoặc lời yêu thương ngọt ngào của anh gửi đến em tại đây..."
+          ></textarea>
+        </div>
+
+        <!-- Quick prompts pills -->
+        <div class="quick-letter-prompts mt-2">
+          <span class="prompt-label" style="font-size: 0.78rem; color: #fda4af; display: block; margin-bottom: 6px;">💡 Gợi ý nhanh:</span>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="btn-prompt-pill" data-prompt="Hôm nay trời trở lạnh rồi, em nhớ mặc áo ấm và uống nước ấm nhé. Anh lúc nào cũng nhớ và thương em! 💕">🧣 Nhắc mặc ấm</button>
+            <button type="button" class="btn-prompt-pill" data-prompt="Cảm ơn em vì đã luôn dịu dàng bước vào cuộc đời anh. Mỗi ngày có em đều là một ngày tuyệt vời nhất. 🌸">💐 Lời cảm ơn</button>
+            <button type="button" class="btn-prompt-pill" data-prompt="Hôm nay em học tập và làm việc có mệt không? Nhớ nghỉ ngơi sớm nhé, có anh luôn ở đây bên cạnh em! 💖">🥰 Động viên em</button>
+          </div>
+        </div>
+
+        <!-- Action Row -->
+        <div class="firebase-btn-row mt-4">
+          <button type="button" class="btn-love" id="btn-save-surprise-letter">
+            <span>💾 Lưu &amp; Bật Gửi Cho Nàng Ngay 💖</span>
+          </button>
+          <button type="button" class="btn-outline-love" id="btn-preview-surprise-letter">
+            <span>👁️ Xem Thử Thư (Preview)</span>
+          </button>
+          <a href="/gui-thu/" class="btn-outline-love" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+            <span>🚀 Mở Trang Quản Trị Toàn Màn Hình</span>
+          </a>
         </div>
       </div>
     </div>
@@ -617,6 +724,139 @@
     color: #94a3b8;
     margin: 0;
   }
+
+  /* Surprise Love Letter Control in SyncHub */
+  .letter-master-switch-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(244, 63, 94, 0.12), rgba(15, 23, 42, 0.8));
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  }
+
+  .switch-info {
+    flex: 1;
+    padding-right: 14px;
+  }
+
+  .switch-title {
+    display: block;
+    font-size: 0.95rem;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .switch-sub {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin: 4px 0 0;
+    line-height: 1.4;
+  }
+
+  .switch-toggle-wrap {
+    display: flex;
+    align-items: center;
+  }
+
+  .btn-letter-toggle {
+    position: relative;
+    width: 90px;
+    height: 40px;
+    border-radius: 9999px;
+    background: #334155;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    padding: 3px;
+  }
+
+  .btn-letter-toggle .toggle-slider {
+    position: absolute;
+    left: 4px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-letter-toggle .toggle-label {
+    width: 100%;
+    text-align: right;
+    padding-right: 12px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+  }
+
+  .btn-letter-toggle.is-active {
+    background: linear-gradient(135deg, #f43f5e, #e11d48);
+    border-color: #fda4af;
+    box-shadow: 0 0 16px rgba(244, 63, 94, 0.5);
+  }
+
+  .btn-letter-toggle.is-active .toggle-slider {
+    transform: translateX(50px);
+  }
+
+  .btn-letter-toggle.is-active .toggle-label {
+    text-align: left;
+    padding-left: 14px;
+    padding-right: 0;
+    color: #ffffff;
+  }
+
+  .letter-read-receipt-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px dashed rgba(244, 63, 94, 0.35);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+  }
+
+  .letter-read-receipt-box.is-read {
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.4);
+    color: #86efac;
+  }
+
+  .letter-read-receipt-box .receipt-icon {
+    font-size: 1.2rem;
+  }
+
+  .letter-read-receipt-box .receipt-text {
+    color: #cbd5e1;
+    line-height: 1.4;
+  }
+
+  .btn-prompt-pill {
+    background: rgba(244, 63, 94, 0.1);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    color: #fca5a5;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 0.74rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-prompt-pill:hover {
+    background: rgba(244, 63, 94, 0.25);
+    color: #fff;
+    border-color: #f43f5e;
+    transform: translateY(-1px);
+  }
 </style>
 
 <script>
@@ -626,7 +866,8 @@
     saveFirebaseConfig,
     subscribeToRealtimeSync,
     pushDataToFirebase,
-    convertDriveLinkToDirectAudio
+    convertDriveLinkToDirectAudio,
+    type SurpriseLetterPayload
   } from '../lib/firebaseClient';
 
   function initSyncHub() {
@@ -1101,6 +1342,226 @@
         }
       });
     }
+
+    // ==========================================
+    // Tab: Surprise Love Letter (Thư Tay Hoàng Gia)
+    // ==========================================
+    const btnToggleMaster = document.getElementById('btn-toggle-letter-master') as HTMLButtonElement | null;
+    const switchDesc = document.getElementById('letter-switch-desc');
+    const toggleLabel = document.getElementById('toggle-letter-label');
+    const readReceiptBox = document.getElementById('letter-read-receipt-box');
+    const receiptText = document.getElementById('letter-receipt-text');
+    const inputLetterTitle = document.getElementById('letter-edit-title') as HTMLInputElement | null;
+    const selectRecipient = document.getElementById('letter-edit-recipient') as HTMLSelectElement | null;
+    const selectWax = document.getElementById('letter-edit-wax') as HTMLSelectElement | null;
+    const checkShowOnce = document.getElementById('letter-edit-show-once') as HTMLInputElement | null;
+    const textareaLetterContent = document.getElementById('letter-edit-content') as HTMLTextAreaElement | null;
+    const wordCountEl = document.getElementById('letter-word-count');
+    const btnSaveLetter = document.getElementById('btn-save-surprise-letter');
+    const btnPreviewLetter = document.getElementById('btn-preview-surprise-letter');
+
+    let currentLetterState: SurpriseLetterPayload = {
+      enabled: false,
+      title: 'Gửi Bé Yêu Của Anh 💌',
+      content: 'Chào em, hôm nay anh có một bức thư nhỏ gửi tặng em. Chúc em một ngày thật an yên và nhiều niềm vui nhé! Anh yêu em rất nhiều 💖',
+      sender: 'ai',
+      recipient: 'maze',
+      waxColor: 'ruby',
+      showOnce: false,
+      updatedAt: new Date().toISOString()
+    };
+
+    function loadSurpriseLetterUI() {
+      try {
+        const raw = localStorage.getItem('couple_surprise_letter');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          currentLetterState = { ...currentLetterState, ...parsed };
+        }
+      } catch (err) {
+        console.warn('Failed to parse couple_surprise_letter from storage:', err);
+      }
+
+      if (inputLetterTitle) inputLetterTitle.value = currentLetterState.title || '';
+      if (selectRecipient) selectRecipient.value = currentLetterState.recipient || 'maze';
+      if (selectWax) selectWax.value = currentLetterState.waxColor || 'ruby';
+      if (checkShowOnce) checkShowOnce.checked = !!currentLetterState.showOnce;
+      if (textareaLetterContent) {
+        textareaLetterContent.value = currentLetterState.content || '';
+        updateLetterWordCount();
+      }
+
+      renderToggleUI(currentLetterState.enabled);
+      renderReceiptUI();
+    }
+
+    function renderToggleUI(enabled: boolean) {
+      if (!btnToggleMaster) return;
+      btnToggleMaster.setAttribute('data-enabled', enabled ? 'true' : 'false');
+      btnToggleMaster.classList.toggle('is-active', enabled);
+      if (toggleLabel) {
+        toggleLabel.textContent = enabled ? 'BẬT' : 'TẮT';
+      }
+      if (switchDesc) {
+        if (enabled) {
+          switchDesc.innerHTML = '✨ <strong style="color: #fda4af;">Thư đang BẬT.</strong> Nàng mở bất kỳ trang nào của website sẽ thấy phong thư con dấu sáp hiện ra ngay lập tức!';
+        } else {
+          switchDesc.textContent = 'Thư đang TẮT. Bấm công tắc để kích hoạt hiển thị cho nàng khi mở web.';
+        }
+      }
+      if (btnSaveLetter) {
+        const span = btnSaveLetter.querySelector('span');
+        if (span) {
+          span.textContent = enabled ? '💾 Lưu & Bật Gửi Cho Nàng Ngay 💖' : '💾 Lưu Nội Dung (Đang Tắt) 📁';
+        }
+      }
+    }
+
+    function renderReceiptUI() {
+      if (!readReceiptBox || !receiptText) return;
+      if (currentLetterState.readAt) {
+        try {
+          const date = new Date(currentLetterState.readAt);
+          const timeStr = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+          const dateStr = date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+          readReceiptBox.classList.add('is-read');
+          receiptText.innerHTML = `✨ <strong>Bé đã mở đọc thư</strong> lúc <strong>${timeStr} - ${dateStr}</strong> 💕`;
+        } catch {
+          readReceiptBox.classList.add('is-read');
+          receiptText.textContent = `✨ Nàng đã mở đọc bức thư này 💕`;
+        }
+      } else {
+        readReceiptBox.classList.remove('is-read');
+        receiptText.textContent = `Trạng thái: Nàng chưa mở đọc bức thư này.`;
+      }
+    }
+
+    function updateLetterWordCount() {
+      if (!textareaLetterContent || !wordCountEl) return;
+      wordCountEl.textContent = `${textareaLetterContent.value.length} ký tự`;
+    }
+
+    if (btnToggleMaster) {
+      btnToggleMaster.addEventListener('click', () => {
+        const isCurrentlyEnabled = btnToggleMaster.getAttribute('data-enabled') === 'true';
+        const nextState = !isCurrentlyEnabled;
+        currentLetterState.enabled = nextState;
+        renderToggleUI(nextState);
+      });
+    }
+
+    if (textareaLetterContent) {
+      textareaLetterContent.addEventListener('input', updateLetterWordCount);
+    }
+
+    // Quick prompt pills
+    modal.querySelectorAll('.btn-prompt-pill').forEach((pill: any) => {
+      pill.addEventListener('click', () => {
+        const prompt = pill.getAttribute('data-prompt');
+        if (prompt && textareaLetterContent) {
+          if (textareaLetterContent.value.trim().length > 0) {
+            textareaLetterContent.value += '\n\n' + prompt;
+          } else {
+            textareaLetterContent.value = prompt;
+          }
+          updateLetterWordCount();
+          textareaLetterContent.focus();
+        }
+      });
+    });
+
+    // Save & push letter to Firebase
+    if (btnSaveLetter) {
+      btnSaveLetter.addEventListener('click', async () => {
+        const isEnabled = btnToggleMaster ? btnToggleMaster.getAttribute('data-enabled') === 'true' : false;
+        const newTitle = inputLetterTitle ? inputLetterTitle.value.trim() : currentLetterState.title;
+        const newContent = textareaLetterContent ? textareaLetterContent.value.trim() : currentLetterState.content;
+        const newRecipient = selectRecipient ? (selectRecipient.value as any) : currentLetterState.recipient;
+        const newWax = selectWax ? (selectWax.value as any) : currentLetterState.waxColor;
+        const newShowOnce = checkShowOnce ? checkShowOnce.checked : false;
+
+        // If content was modified and user re-enables, reset read receipt so partner can read the new version
+        const hasContentChanged = newContent !== currentLetterState.content || newTitle !== currentLetterState.title;
+
+        currentLetterState = {
+          ...currentLetterState,
+          enabled: isEnabled,
+          title: newTitle || 'Thư Tình Gửi Em 💌',
+          content: newContent || 'Anh yêu em nhiều lắm!',
+          recipient: newRecipient,
+          waxColor: newWax,
+          showOnce: newShowOnce,
+          updatedAt: new Date().toISOString(),
+          readAt: hasContentChanged ? undefined : currentLetterState.readAt,
+          readBy: hasContentChanged ? undefined : currentLetterState.readBy
+        };
+
+        // Save locally
+        localStorage.setItem('couple_surprise_letter', JSON.stringify(currentLetterState));
+
+        // Push to Firebase RTDB
+        const prevBtnHtml = btnSaveLetter.innerHTML;
+        btnSaveLetter.innerHTML = '<span>⏳ Đang gửi lên Cloud...</span>';
+        btnSaveLetter.style.pointerEvents = 'none';
+
+        try {
+          const pushRes = await pushDataToFirebase({ surpriseLetter: currentLetterState });
+          if (pushRes.success) {
+            window.dispatchEvent(new CustomEvent('couple-letter-updated', { detail: currentLetterState }));
+            alert(isEnabled
+              ? '💌 Tuyệt vời! Bức thư tay đã được BẬT và đồng bộ lên Cloud. Nàng vào web sẽ thấy ngay!'
+              : '📁 Bức thư đã được lưu lại (ở chế độ TẮT). Khi nào muốn nàng thấy, bạn chỉ cần bấm BẬT nhé!');
+          } else {
+            window.dispatchEvent(new CustomEvent('couple-letter-updated', { detail: currentLetterState }));
+            alert('⚠️ Đã lưu bức thư trên máy này, nhưng Cloud Firebase chưa kết nối hoặc cấu hình sai. Vui lòng kiểm tra Tab Firebase!');
+          }
+        } catch (e: any) {
+          alert('⚠️ Lỗi khi đồng bộ lên Cloud: ' + (e?.message || e));
+        } finally {
+          btnSaveLetter.innerHTML = prevBtnHtml;
+          btnSaveLetter.style.pointerEvents = 'auto';
+          renderReceiptUI();
+        }
+      });
+    }
+
+    // Preview button
+    if (btnPreviewLetter) {
+      btnPreviewLetter.addEventListener('click', () => {
+        const previewLetter: SurpriseLetterPayload = {
+          ...currentLetterState,
+          enabled: true,
+          title: inputLetterTitle ? inputLetterTitle.value.trim() || 'Thư Tình Gửi Em 💌' : 'Thư Tình Gửi Em 💌',
+          content: textareaLetterContent ? textareaLetterContent.value.trim() || 'Đây là bản xem thử nội dung thư...' : 'Nội dung thư xem thử...',
+          sender: 'ai',
+          recipient: selectRecipient ? (selectRecipient.value as any) : 'maze',
+          waxColor: selectWax ? (selectWax.value as any) : 'ruby',
+          showOnce: false,
+          updatedAt: new Date().toISOString()
+        };
+
+        // Close modal first
+        closeModal();
+
+        // Dispatch preview event for SurpriseLoveLetter component
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('open-surprise-letter-preview', { detail: previewLetter }));
+        }, 150);
+      });
+    }
+
+    // Listen for realtime updates to update the read receipt in real time
+    window.addEventListener('couple-letter-updated', (e: any) => {
+      if (e?.detail) {
+        currentLetterState = { ...currentLetterState, ...e.detail };
+        renderReceiptUI();
+        if (e.detail.enabled !== undefined) {
+          renderToggleUI(e.detail.enabled);
+        }
+      }
+    });
+
+    loadSurpriseLetterUI();
   }
 
   initSyncHub();

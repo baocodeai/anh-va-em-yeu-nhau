@@ -1,0 +1,1388 @@
+---
+/**
+ * =========================================================================
+ * TRANG CÀI ĐẶT & ĐIỀU KHIỂN THƯ TAY TÌNH YÊU (DÀNH CHO BẠN TRAI)
+ * Đường dẫn: /gui-thu
+ * =========================================================================
+ * Trang quản trị độc lập, toàn màn hình, hỗ trợ:
+ * 1. Bật/Tắt (true/false) hiển thị bức thư phong bì sáp hoàng gia khi nàng vào web.
+ * 2. Soạn thảo tiêu đề, nội dung, màu con dấu sáp 3D, chọn người nhận.
+ * 3. Thư viện gợi ý mẫu thư nhanh (Sáng sớm, đêm muộn, động viên, nhắc ấm...).
+ * 4. Xem trước trực tiếp (Preview) con dấu sáp bung nở ngay trên trang.
+ * 5. Theo dõi thời gian thực xem nàng đã mở đọc thư lúc mấy giờ (Read Receipt).
+ */
+import Layout from '../components/Layout.astro';
+import { COUPLE_CONFIG } from '../couple.config';
+
+const { title } = COUPLE_CONFIG;
+---
+
+<Layout
+  title={`Quản Lý Thư Tay — ${title}`}
+  description="Trang cài đặt và điều khiển hiển thị bức thư tay bí mật gửi riêng người yêu."
+  canonicalPath="/gui-thu/"
+>
+  <main class="letter-admin-main">
+    <div class="admin-container">
+      
+      <!-- Top Navigation & Breadcrumb -->
+      <nav class="admin-nav-bar">
+        <a href="/" class="btn-back-home">
+          <span>⬅️ Về Tinh Cầu Tình Yêu</span>
+        </a>
+        <div class="admin-role-badge">
+          <span class="role-icon">👑</span>
+          <span class="role-text">Trang Quản Trị Bạn Trai</span>
+        </div>
+      </nav>
+
+      <!-- Header Section -->
+      <header class="admin-header">
+        <div class="header-icon-wrap">
+          <span class="header-icon">💌</span>
+        </div>
+        <div class="header-text-wrap">
+          <h1 class="header-title gradient-love-text">Cài Đặt &amp; Điều Khiển Thư Tay Cho Nàng</h1>
+          <p class="header-subtitle">
+            Bật/Tắt công tắc để phong thư niêm phong sáp 3D tự động xuất hiện khi bé Maze mở web.
+          </p>
+        </div>
+      </header>
+
+      <!-- Quick Status Cards Grid -->
+      <section class="status-cards-grid">
+        <!-- Card 1: Master Switch (Bật / Tắt) -->
+        <div class="status-card switch-card" id="card-master-switch">
+          <div class="card-head">
+            <span class="card-badge">CÔNG TẮC CHÍNH</span>
+            <span class="live-indicator-dot" id="live-indicator-dot"></span>
+          </div>
+          <div class="switch-core">
+            <button type="button" class="admin-toggle-switch" id="btn-admin-toggle" data-enabled="false" aria-label="Bật hoặc tắt thư">
+              <span class="admin-switch-slider"></span>
+              <span class="admin-switch-text" id="admin-switch-text">ĐANG TẮT</span>
+            </button>
+          </div>
+          <p class="switch-status-hint" id="admin-switch-hint">
+            Thư đang tắt. Nàng vào web sẽ không thấy phong thư.
+          </p>
+        </div>
+
+        <!-- Card 2: Read Receipt (Tình trạng đọc thư) -->
+        <div class="status-card receipt-card">
+          <div class="card-head">
+            <span class="card-badge">TÌNH TRẠNG ĐỌC THƯ</span>
+            <span class="receipt-status-icon" id="receipt-status-icon">⏳</span>
+          </div>
+          <div class="receipt-info-wrap">
+            <h3 class="receipt-heading" id="receipt-heading">Chưa Mở Đọc</h3>
+            <p class="receipt-detail" id="receipt-detail">Nàng chưa mở đọc bức thư này.</p>
+          </div>
+          <div class="receipt-badge-pill" id="receipt-badge-pill">
+            <span>Đang chờ nàng mở...</span>
+          </div>
+        </div>
+
+        <!-- Card 3: Cloud RTDB Connection -->
+        <div class="status-card cloud-card">
+          <div class="card-head">
+            <span class="card-badge">ĐỒNG BỘ CLOUD FIREBASE</span>
+            <span class="cloud-status-icon" id="cloud-status-icon">🟢</span>
+          </div>
+          <div class="cloud-info-wrap">
+            <h3 class="cloud-heading" id="cloud-sync-heading">Realtime Sẵn Sàng</h3>
+            <p class="cloud-detail" id="cloud-last-sync">Cập nhật lần cuối: Vừa xong</p>
+          </div>
+          <div class="cloud-actions">
+            <button type="button" class="btn-micro-sync" id="btn-refresh-cloud" title="Làm mới dữ liệu từ Cloud">
+              <span>🔄 Tải Lại Dữ Liệu Cloud</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Editor Section -->
+      <section class="admin-editor-section">
+        <div class="editor-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">✏️ Soạn Thảo Nội Dung Bức Thư Hoàng Gia</h2>
+            <span class="panel-tag">Kiểu 1 · Phong Thư Con Dấu Sáp</span>
+          </div>
+
+          <form id="admin-letter-form" class="editor-form" onsubmit="return false;">
+            <!-- Row 1: Recipient & Wax Color -->
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="adm-letter-recipient" class="admin-label">
+                  <span>👤 Người Nhận Thư:</span>
+                </label>
+                <select id="adm-letter-recipient" class="admin-select">
+                  <option value="maze">🌸 Bé Yêu (Maze) — Dành riêng cho nàng</option>
+                  <option value="ai">🚀 Anh Yêu (AI)</option>
+                  <option value="both">💖 Cả Hai Đứa</option>
+                </select>
+                <small class="field-hint">Tên người nhận sẽ được in hoa mỹ trên nắp phong bì vintage.</small>
+              </div>
+
+              <div class="form-group">
+                <label for="adm-letter-wax" class="admin-label">
+                  <span>🕯️ Màu Con Dấu Sáp 3D:</span>
+                </label>
+                <select id="adm-letter-wax" class="admin-select">
+                  <option value="ruby">🔴 Đỏ Ruby Hoàng Gia (Sang trọng, kinh điển)</option>
+                  <option value="rose">🌸 Hồng Tình Yêu (Ngọt ngào, lãng mạn)</option>
+                  <option value="gold">👑 Vàng Hoàng Hôn (Ấm áp, cổ điển)</option>
+                </select>
+                <small class="field-hint">Con dấu sẽ đổi màu và toả ánh sáng hoàng gia tương ứng.</small>
+              </div>
+            </div>
+
+            <!-- Row 2: Title -->
+            <div class="form-group mt-3">
+              <label for="adm-letter-title" class="admin-label">
+                <span>📝 Tiêu Đề Bức Thư:</span>
+              </label>
+              <input
+                type="text"
+                id="adm-letter-title"
+                class="admin-input"
+                placeholder="Ví dụ: Gửi bông hoa nhỏ xinh đẹp nhất dải ngân hà của anh..."
+                required
+              />
+            </div>
+
+            <!-- Row 3: Content & Word Counter -->
+            <div class="form-group mt-3">
+              <div class="textarea-head-row">
+                <label for="adm-letter-content" class="admin-label">
+                  <span>📜 Lời Nhắn Nhủ / Thư Viết Tay:</span>
+                </label>
+                <div class="counter-wrap">
+                  <span id="adm-char-count" class="counter-badge">0 ký tự</span>
+                  <span id="adm-word-count" class="counter-badge">0 từ</span>
+                </div>
+              </div>
+              <textarea
+                id="adm-letter-content"
+                class="admin-textarea"
+                rows="7"
+                placeholder="Viết những lời dặn dò, tâm sự hoặc lời yêu thương ngọt ngào của anh gửi đến em tại đây..."
+                required
+              ></textarea>
+            </div>
+
+            <!-- Quick Inspiration Prompt Chips -->
+            <div class="inspiration-box mt-3">
+              <div class="inspiration-title">
+                <span>💡 Gợi Ý Lời Nhắn Nhanh (Bấm để chèn ngay vào thư):</span>
+              </div>
+              <div class="prompt-chips-flow">
+                <button type="button" class="btn-prompt-chip" data-text="Hôm nay trời trở lạnh rồi, em nhớ mặc áo ấm và uống nước ấm đầy đủ nhé. Đừng để bị cảm đấy, anh lúc nào cũng nhớ và thương em nhiều lắm! 💕">
+                  🧣 Nhắc mặc ấm &amp; giữ gìn sức khỏe
+                </button>
+                <button type="button" class="btn-prompt-chip" data-text="Cảm ơn em vì đã luôn dịu dàng và bước vào cuộc đời anh. Mỗi ngày được nhìn thấy nụ cười của em là điều hạnh phúc nhất đối với anh! 💐">
+                  💐 Lời cảm ơn ngọt ngào
+                </button>
+                <button type="button" class="btn-prompt-chip" data-text="Hôm nay em học tập và làm việc có mệt mỏi không? Nếu mệt thì hãy tự thưởng cho mình một giấc ngủ thật ngon nhé, mọi giông bão bên ngoài cứ để anh lo! 🥰">
+                  🥰 Động viên khi bé mệt mỏi
+                </button>
+                <button type="button" class="btn-prompt-chip" data-text="Chúc cô gái nhỏ của anh có một buổi tối thật an lành và mơ những giấc mơ thật đẹp nhé. Trong giấc mơ nhớ chừa một góc nhỏ cho anh với đấy! 🌙✨">
+                  🌙 Chúc ngủ ngon mộng đẹp
+                </button>
+                <button type="button" class="btn-prompt-chip" data-text="Chúc em một ngày mới tràn ngập năng lượng tích cực và những điều may mắn nhất. Anh yêu em muôn ngàn lần! ☀️💖">
+                  ☀️ Chào ngày mới ngập tràn yêu thương
+                </button>
+                <button type="button" class="btn-prompt-chip" data-text="Dù khoảng cách có xa bao nhiêu thì trái tim anh vẫn luôn hướng về em. Chờ ngày hai đứa mình gặp nhau và ôm nhau thật chặt nhé! 🚀✨">
+                  🚀 Lời hứa tình yêu bền chặt
+                </button>
+              </div>
+            </div>
+
+            <!-- Detailed Component Customization Box -->
+            <div class="custom-components-box mt-3">
+              <div class="custom-box-head">
+                <span class="custom-box-icon">🎨</span>
+                <div class="custom-box-text">
+                  <h3 class="custom-box-title">Tùy Biến Chi Tiết Từng Thành Phần Trong Bức Thư</h3>
+                  <p class="custom-box-sub">Tự do đổi lời chào, câu châm ngôn kết thư, chữ ký và các nút bấm theo ý bạn.</p>
+                </div>
+              </div>
+
+              <div class="custom-fields-grid mt-3">
+                <!-- Salutation & Badge -->
+                <div class="form-group">
+                  <label for="adm-letter-salutation" class="admin-label">
+                    <span>👋 Lời Chào Mở Đầu (Salutation):</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="adm-letter-salutation"
+                    class="admin-input"
+                    placeholder="Mặc định: Em yêu dấu thương mến, (hoặc Bé iu của anh ơi, Gửi công chúa nhỏ...)"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="adm-letter-badge" class="admin-label">
+                    <span>🏷️ Huy Hiệu Nhỏ Góc Trên (Badge):</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="adm-letter-badge"
+                    class="admin-input"
+                    placeholder="Mặc định: 💌 Bức Thư Tình Yêu (hoặc 💐 Điều Bất Ngờ Cho Em)"
+                  />
+                </div>
+
+                <!-- Bottom Quote / Lời dặn -->
+                <div class="form-group span-full">
+                  <label for="adm-letter-quote" class="admin-label">
+                    <span>💬 Lời Dặn Dò / Câu Châm Ngôn Cuối Thư (Bottom Quote):</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="adm-letter-quote"
+                    class="admin-input"
+                    placeholder='Mặc định: "Mãi luôn thương và đồng hành cùng em qua muôn ngàn vì sao."'
+                  />
+                </div>
+
+                <!-- Signoff & Signature Name -->
+                <div class="form-group">
+                  <label for="adm-letter-sig-from" class="admin-label">
+                    <span>✒️ Lời Đề Từ Trước Chữ Ký:</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="adm-letter-sig-from"
+                    class="admin-input"
+                    placeholder="Mặc định: Thương gửi từ, (hoặc Yêu em ngàn lần, Mãi bên em...)"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="adm-letter-sig-name" class="admin-label">
+                    <span>✍️ Tên Chữ Ký Của Bạn:</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="adm-letter-sig-name"
+                    class="admin-input"
+                    placeholder="Mặc định: AI (Anh người yêu 🚀) (hoặc Anh Bảo 💖, Người iu của bé...)"
+                  />
+                </div>
+
+                <!-- Action Buttons Customization -->
+                <div class="form-group">
+                  <label for="adm-letter-btn-read" class="admin-label">
+                    <span>💖 Chữ Trên Nút Xác Nhận Đọc:</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="adm-letter-btn-read"
+                    class="admin-input"
+                    placeholder="Mặc định: 💖 Em Đã Đọc Và Rất Yêu Anh!"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="adm-letter-btn-fold" class="admin-label">
+                    <span>🌸 Chữ Trên Nút Gấp Thư:</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="adm-letter-btn-fold"
+                    class="admin-input"
+                    placeholder="Mặc định: 🌸 Gấp Thư Lại Cất Đi"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Checkbox: Show Once Option -->
+            <div class="form-checkbox-row mt-3">
+              <label class="custom-checkbox-label">
+                <input type="checkbox" id="adm-letter-show-once" class="custom-checkbox" />
+                <span class="checkbox-box"></span>
+                <span class="checkbox-text">
+                  <strong>Chế độ chỉ hiện 1 lần:</strong> Sau khi nàng bấm nút <em>"Em Đã Đọc Và Rất Yêu Anh"</em> thì bức thư sẽ tự động không hiện lại nữa (trừ khi anh sửa nội dung mới).
+                </span>
+              </label>
+            </div>
+
+            <!-- Action Buttons Row -->
+            <div class="admin-actions-bar mt-4">
+              <button type="button" class="btn-admin-save" id="btn-adm-save">
+                <span class="btn-icon">💾</span>
+                <span class="btn-label" id="btn-save-label">LƯU &amp; BẬT GỬI CHO NÀNG NGAY 💖</span>
+              </button>
+              
+              <button type="button" class="btn-admin-preview" id="btn-adm-preview">
+                <span class="btn-icon">👁️</span>
+                <span>Mở Xem Thử Thư (Preview)</span>
+              </button>
+
+              <button type="button" class="btn-admin-emergency" id="btn-adm-emergency">
+                <span class="btn-icon">🛑</span>
+                <span>Tắt Thư Khẩn Cấp</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Tip & PWA Bookmark Guide -->
+      <section class="admin-guide-card mt-4">
+        <div class="guide-header">
+          <span class="guide-icon">📱</span>
+          <h3 class="guide-title">Mẹo Truy Cập Nhanh Cho Bạn Trai:</h3>
+        </div>
+        <p class="guide-desc">
+          Để quản lý thư tay cho nàng bất cứ lúc nào trên điện thoại mà không cần tìm link:
+        </p>
+        <ul class="guide-list">
+          <li><strong>Trên iPhone (Safari):</strong> Bấm nút <em>Chia sẻ (biểu tượng hình vuông có mũi tên lên)</em> &rarr; Chọn <strong>"Thêm vào Màn hình chính" (Add to Home Screen)</strong>.</li>
+          <li><strong>Trên Android (Chrome):</strong> Bấm dấu <em>3 chấm ở góc phải</em> &rarr; Chọn <strong>"Thêm vào Màn hình chính" (Add to Home Screen)</strong>.</li>
+          <li>Trang quản trị này sẽ xuất hiện trên màn hình điện thoại của bạn như một chiếc app riêng biệt, mở ra là chỉnh sửa thư được ngay!</li>
+        </ul>
+      </section>
+
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .letter-admin-main {
+    min-height: 100vh;
+    background: radial-gradient(circle at 50% 10%, rgba(244, 63, 94, 0.12) 0%, rgba(15, 23, 42, 0.98) 65%);
+    color: #f8fafc;
+    padding: 2rem 1.2rem 4rem;
+  }
+
+  .admin-container {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  /* Nav Bar */
+  .admin-nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.8rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .btn-back-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(30, 41, 59, 0.7);
+    color: #cbd5e1;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .btn-back-home:hover {
+    background: rgba(244, 63, 94, 0.2);
+    color: #ffffff;
+    border-color: #f43f5e;
+    transform: translateX(-2px);
+  }
+
+  .admin-role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: #fbbf24;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  /* Header */
+  .admin-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 2rem;
+  }
+
+  .header-icon-wrap {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, rgba(244, 63, 94, 0.25), rgba(225, 29, 72, 0.45));
+    border: 1px solid rgba(244, 63, 94, 0.5);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    box-shadow: 0 10px 25px rgba(244, 63, 94, 0.3);
+    flex-shrink: 0;
+  }
+
+  .header-title {
+    font-size: 1.85rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1.25;
+  }
+
+  .header-subtitle {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    margin: 6px 0 0;
+    line-height: 1.4;
+  }
+
+  /* Status Cards Grid */
+  .status-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 2rem;
+  }
+
+  .status-card {
+    background: rgba(30, 41, 59, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.2rem;
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .status-card:hover {
+    border-color: rgba(244, 63, 94, 0.3);
+  }
+
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .card-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #94a3b8;
+    letter-spacing: 0.8px;
+  }
+
+  /* Switch Card */
+  .switch-card {
+    background: linear-gradient(135deg, rgba(244, 63, 94, 0.1), rgba(30, 41, 59, 0.7));
+    border-color: rgba(244, 63, 94, 0.3);
+  }
+
+  .switch-card.is-active-card {
+    background: linear-gradient(135deg, rgba(244, 63, 94, 0.22), rgba(30, 41, 59, 0.85));
+    border-color: #f43f5e;
+    box-shadow: 0 0 25px rgba(244, 63, 94, 0.35);
+  }
+
+  .live-indicator-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #64748b;
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+
+  .switch-card.is-active-card .live-indicator-dot {
+    background: #22c55e;
+    box-shadow: 0 0 10px #22c55e;
+    animation: pulseDot 1.5s infinite;
+  }
+
+  @keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.2); }
+  }
+
+  .switch-core {
+    margin: 8px 0;
+  }
+
+  .admin-toggle-switch {
+    position: relative;
+    width: 100%;
+    height: 48px;
+    border-radius: 12px;
+    background: #334155;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    padding: 4px;
+  }
+
+  .admin-switch-slider {
+    position: absolute;
+    left: 6px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .admin-switch-text {
+    width: 100%;
+    text-align: right;
+    padding-right: 18px;
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+  }
+
+  .admin-toggle-switch.is-active {
+    background: linear-gradient(135deg, #f43f5e, #e11d48);
+    border-color: #fda4af;
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.5);
+  }
+
+  .admin-toggle-switch.is-active .admin-switch-slider {
+    transform: translateX(calc(100% + 40px));
+  }
+
+  .admin-toggle-switch.is-active .admin-switch-text {
+    text-align: left;
+    padding-left: 18px;
+    padding-right: 0;
+    color: #ffffff;
+  }
+
+  .switch-status-hint {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    margin: 4px 0 0;
+    line-height: 1.35;
+  }
+
+  /* Receipt Card */
+  .receipt-heading {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin: 0;
+    color: #ffffff;
+  }
+
+  .receipt-detail {
+    font-size: 0.8rem;
+    color: #cbd5e1;
+    margin: 4px 0 10px;
+    line-height: 1.35;
+  }
+
+  .receipt-badge-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+    font-size: 0.72rem;
+    font-weight: 600;
+    width: fit-content;
+  }
+
+  .receipt-card.is-read {
+    border-color: rgba(34, 197, 94, 0.5);
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(30, 41, 59, 0.7));
+  }
+
+  .receipt-card.is-read .receipt-heading {
+    color: #86efac;
+  }
+
+  .receipt-card.is-read .receipt-badge-pill {
+    background: rgba(34, 197, 94, 0.2);
+    color: #86efac;
+  }
+
+  /* Cloud Card */
+  .cloud-heading {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin: 0;
+    color: #38bdf8;
+  }
+
+  .cloud-detail {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin: 4px 0 10px;
+  }
+
+  .btn-micro-sync {
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    color: #7dd3fc;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-micro-sync:hover {
+    background: rgba(56, 189, 248, 0.25);
+    color: #ffffff;
+  }
+
+  /* Editor Panel */
+  .editor-panel {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+  }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.6rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .panel-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin: 0;
+    color: #ffffff;
+  }
+
+  .panel-tag {
+    font-size: 0.78rem;
+    color: #fda4af;
+    background: rgba(244, 63, 94, 0.15);
+    padding: 4px 12px;
+    border-radius: 9999px;
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    font-weight: 600;
+  }
+
+  /* Form Elements */
+  .form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+
+  .admin-label {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 6px;
+  }
+
+  .admin-input,
+  .admin-select,
+  .admin-textarea {
+    width: 100%;
+    background: rgba(30, 41, 59, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: #ffffff;
+    font-size: 0.92rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .admin-input:focus,
+  .admin-select:focus,
+  .admin-textarea:focus {
+    outline: none;
+    border-color: #f43f5e;
+    box-shadow: 0 0 12px rgba(244, 63, 94, 0.4);
+    background: rgba(30, 41, 59, 0.98);
+  }
+
+  .admin-textarea {
+    resize: vertical;
+    line-height: 1.6;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.05rem;
+    color: #fff1f2;
+    background: rgba(15, 23, 42, 0.9);
+  }
+
+  .field-hint {
+    display: block;
+    font-size: 0.76rem;
+    color: #94a3b8;
+    margin-top: 4px;
+  }
+
+  .textarea-head-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .counter-wrap {
+    display: flex;
+    gap: 8px;
+  }
+
+  .counter-badge {
+    font-size: 0.74rem;
+    font-family: var(--mono, monospace);
+    color: #7dd3fc;
+    background: rgba(56, 189, 248, 0.12);
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  /* Inspiration Box */
+  .inspiration-box {
+    background: rgba(244, 63, 94, 0.06);
+    border: 1px dashed rgba(244, 63, 94, 0.35);
+    border-radius: 14px;
+    padding: 14px 16px;
+  }
+
+  .inspiration-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #fda4af;
+    margin-bottom: 8px;
+  }
+
+  .prompt-chips-flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .btn-prompt-chip {
+    background: rgba(30, 41, 59, 0.85);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    color: #fca5a5;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-prompt-chip:hover {
+    background: rgba(244, 63, 94, 0.25);
+    color: #ffffff;
+    border-color: #f43f5e;
+    transform: translateY(-1px);
+  }
+
+  /* Custom Checkbox */
+  .custom-checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 12px 16px;
+    border-radius: 12px;
+    transition: background 0.2s;
+  }
+
+  .custom-checkbox-label:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .custom-checkbox {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .checkbox-box {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #64748b;
+    border-radius: 6px;
+    background: #0f172a;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: all 0.2s;
+  }
+
+  .custom-checkbox:checked + .checkbox-box {
+    background: #f43f5e;
+    border-color: #f43f5e;
+  }
+
+  .custom-checkbox:checked + .checkbox-box::after {
+    content: '✓';
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .checkbox-text {
+    font-size: 0.86rem;
+    color: #cbd5e1;
+    line-height: 1.45;
+  }
+
+  /* Custom Components Box */
+  .custom-components-box {
+    background: rgba(30, 41, 59, 0.55);
+    border: 1px solid rgba(244, 63, 94, 0.25);
+    border-radius: 14px;
+    padding: 18px 20px;
+  }
+
+  .custom-box-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  }
+
+  .custom-box-icon {
+    font-size: 1.8rem;
+  }
+
+  .custom-box-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #fda4af;
+    margin: 0;
+  }
+
+  .custom-box-sub {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    margin: 2px 0 0;
+  }
+
+  .custom-fields-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .custom-fields-grid .span-full {
+    grid-column: 1 / -1;
+  }
+
+  /* Actions Bar */
+  .admin-actions-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .btn-admin-save {
+    flex: 2;
+    min-width: 260px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+    color: #ffffff;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 0.96rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(244, 63, 94, 0.4);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .btn-admin-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(244, 63, 94, 0.6);
+  }
+
+  .btn-admin-preview {
+    flex: 1;
+    min-width: 200px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(30, 41, 59, 0.85);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    color: #fda4af;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-admin-preview:hover {
+    background: rgba(244, 63, 94, 0.2);
+    color: #ffffff;
+    border-color: #f43f5e;
+  }
+
+  .btn-admin-emergency {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-admin-emergency:hover {
+    background: rgba(239, 68, 68, 0.3);
+    color: #ffffff;
+  }
+
+  /* Guide Card */
+  .admin-guide-card {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.4rem 1.6rem;
+  }
+
+  .guide-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .guide-icon {
+    font-size: 1.4rem;
+  }
+
+  .guide-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin: 0;
+    color: #38bdf8;
+  }
+
+  .guide-desc {
+    font-size: 0.86rem;
+    color: #cbd5e1;
+    margin: 0 0 8px;
+  }
+
+  .guide-list {
+    margin: 0;
+    padding-left: 1.2rem;
+    font-size: 0.84rem;
+    color: #94a3b8;
+    line-height: 1.65;
+  }
+
+  /* Responsive Mobile */
+  @media (max-width: 768px) {
+    .status-cards-grid {
+      grid-template-columns: 1fr;
+    }
+    .form-grid-2 {
+      grid-template-columns: 1fr;
+    }
+    .admin-actions-bar {
+      flex-direction: column;
+    }
+    .btn-admin-save,
+    .btn-admin-preview,
+    .btn-admin-emergency {
+      width: 100%;
+    }
+    .header-title {
+      font-size: 1.45rem;
+    }
+    .editor-panel {
+      padding: 1.4rem 1.1rem;
+    }
+  }
+</style>
+
+<script>
+  import {
+    pushDataToFirebase,
+    subscribeToRealtimeSync,
+    type SurpriseLetterPayload
+  } from '../lib/firebaseClient';
+
+  function initLetterAdmin() {
+    // DOM Elements
+    const cardSwitch = document.getElementById('card-master-switch');
+    const btnToggle = document.getElementById('btn-admin-toggle') as HTMLButtonElement | null;
+    const switchText = document.getElementById('admin-switch-text');
+    const switchHint = document.getElementById('admin-switch-hint');
+
+    const receiptCard = document.querySelector('.receipt-card');
+    const receiptHeading = document.getElementById('receipt-heading');
+    const receiptDetail = document.getElementById('receipt-detail');
+    const receiptBadge = document.getElementById('receipt-badge-pill');
+    const receiptIcon = document.getElementById('receipt-status-icon');
+
+    const cloudSyncHeading = document.getElementById('cloud-sync-heading');
+    const cloudLastSync = document.getElementById('cloud-last-sync');
+    const btnRefreshCloud = document.getElementById('btn-refresh-cloud');
+
+    const selectRecipient = document.getElementById('adm-letter-recipient') as HTMLSelectElement | null;
+    const selectWax = document.getElementById('adm-letter-wax') as HTMLSelectElement | null;
+    const inputTitle = document.getElementById('adm-letter-title') as HTMLInputElement | null;
+    const textareaContent = document.getElementById('adm-letter-content') as HTMLTextAreaElement | null;
+    const checkShowOnce = document.getElementById('adm-letter-show-once') as HTMLInputElement | null;
+    const charCountEl = document.getElementById('adm-char-count');
+    const wordCountEl = document.getElementById('adm-word-count');
+
+    // Custom Component Inputs
+    const inputSalutation = document.getElementById('adm-letter-salutation') as HTMLInputElement | null;
+    const inputBadge = document.getElementById('adm-letter-badge') as HTMLInputElement | null;
+    const inputQuote = document.getElementById('adm-letter-quote') as HTMLInputElement | null;
+    const inputSigFrom = document.getElementById('adm-letter-sig-from') as HTMLInputElement | null;
+    const inputSigName = document.getElementById('adm-letter-sig-name') as HTMLInputElement | null;
+    const inputBtnRead = document.getElementById('adm-letter-btn-read') as HTMLInputElement | null;
+    const inputBtnFold = document.getElementById('adm-letter-btn-fold') as HTMLInputElement | null;
+
+    const btnSave = document.getElementById('btn-adm-save') as HTMLButtonElement | null;
+    const btnSaveLabel = document.getElementById('btn-save-label');
+    const btnPreview = document.getElementById('btn-adm-preview');
+    const btnEmergency = document.getElementById('btn-adm-emergency');
+
+    // Internal State
+    let letterState: SurpriseLetterPayload = {
+      enabled: false,
+      title: 'Gửi Bé Yêu Của Anh 💌',
+      content: 'Chào em, hôm nay anh có một bức thư nhỏ gửi tặng em. Chúc em một ngày thật an yên và nhiều niềm vui nhé! Anh yêu em rất nhiều 💖',
+      sender: 'ai',
+      recipient: 'maze',
+      waxColor: 'ruby',
+      showOnce: false,
+      updatedAt: new Date().toISOString()
+    };
+
+    // Load from LocalStorage
+    function loadLetterState() {
+      try {
+        const raw = localStorage.getItem('couple_surprise_letter');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          letterState = { ...letterState, ...parsed };
+        }
+      } catch (e) {
+        console.warn('Cannot parse couple_surprise_letter:', e);
+      }
+
+      // Populate Form
+      if (selectRecipient) selectRecipient.value = letterState.recipient || 'maze';
+      if (selectWax) selectWax.value = letterState.waxColor || 'ruby';
+      if (inputTitle) inputTitle.value = letterState.title || '';
+      if (textareaContent) textareaContent.value = letterState.content || '';
+      if (checkShowOnce) checkShowOnce.checked = !!letterState.showOnce;
+
+      // Populate Custom Components
+      if (inputSalutation) inputSalutation.value = letterState.salutation || '';
+      if (inputBadge) inputBadge.value = letterState.badgeText || '';
+      if (inputQuote) inputQuote.value = letterState.bottomQuote || '';
+      if (inputSigFrom) inputSigFrom.value = letterState.signatureSignoff || '';
+      if (inputSigName) inputSigName.value = letterState.signatureName || '';
+      if (inputBtnRead) inputBtnRead.value = letterState.btnReadText || '';
+      if (inputBtnFold) inputBtnFold.value = letterState.btnFoldText || '';
+
+      updateWordCounts();
+      renderSwitchUI(letterState.enabled);
+      renderReceiptUI();
+      renderCloudTime();
+    }
+
+    // Render Toggle Switch UI
+    function renderSwitchUI(enabled: boolean) {
+      if (!btnToggle) return;
+      btnToggle.setAttribute('data-enabled', enabled ? 'true' : 'false');
+      btnToggle.classList.toggle('is-active', enabled);
+      if (cardSwitch) {
+        cardSwitch.classList.toggle('is-active-card', enabled);
+      }
+      if (switchText) {
+        switchText.textContent = enabled ? 'ĐANG BẬT' : 'ĐANG TẮT';
+      }
+      if (switchHint) {
+        if (enabled) {
+          switchHint.innerHTML = '✨ <strong style="color: #fda4af;">Thư đang BẬT.</strong> Nàng mở bất kỳ trang web nào sẽ thấy phong thư con dấu sáp hiện ra ngay sau 1.2s!';
+        } else {
+          switchHint.textContent = 'Thư đang TẮT. Nàng vào web sẽ không thấy phong thư xuất hiện.';
+        }
+      }
+      if (btnSaveLabel) {
+        btnSaveLabel.textContent = enabled ? 'LƯU & BẬT GỬI CHO NÀNG NGAY 💖' : 'LƯU NỘI DUNG (ĐANG TẮT) 📁';
+      }
+    }
+
+    // Render Read Receipt UI
+    function renderReceiptUI() {
+      if (!receiptCard || !receiptHeading || !receiptDetail || !receiptBadge || !receiptIcon) return;
+
+      if (letterState.readAt) {
+        receiptCard.classList.add('is-read');
+        receiptIcon.textContent = '💖';
+        try {
+          const d = new Date(letterState.readAt);
+          const timeStr = d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+          const dateStr = d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+          receiptHeading.textContent = 'Bé Đã Đọc Thư 💕';
+          receiptDetail.textContent = `Nàng đã bấm "Em đã đọc" lúc ${timeStr} ngày ${dateStr}.`;
+          receiptBadge.innerHTML = `<span>✨ Đã đọc lúc ${timeStr}</span>`;
+        } catch {
+          receiptHeading.textContent = 'Bé Đã Đọc Thư 💕';
+          receiptDetail.textContent = 'Nàng đã xác nhận mở đọc bức thư này.';
+          receiptBadge.innerHTML = '<span>✨ Đã mở đọc</span>';
+        }
+      } else {
+        receiptCard.classList.remove('is-read');
+        receiptIcon.textContent = '⏳';
+        receiptHeading.textContent = 'Chưa Mở Đọc';
+        receiptDetail.textContent = 'Nàng chưa mở đọc bức thư này.';
+        receiptBadge.innerHTML = '<span>Đang chờ nàng mở...</span>';
+      }
+    }
+
+    // Render Cloud Timestamp
+    function renderCloudTime() {
+      if (!cloudLastSync) return;
+      if (letterState.updatedAt) {
+        try {
+          const d = new Date(letterState.updatedAt);
+          cloudLastSync.textContent = `Cập nhật: ${d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}`;
+        } catch {
+          cloudLastSync.textContent = 'Cập nhật: Vừa xong';
+        }
+      }
+    }
+
+    // Update Counters
+    function updateWordCounts() {
+      if (!textareaContent) return;
+      const text = textareaContent.value;
+      if (charCountEl) charCountEl.textContent = `${text.length} ký tự`;
+      if (wordCountEl) {
+        const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+        wordCountEl.textContent = `${words} từ`;
+      }
+    }
+
+    if (textareaContent) {
+      textareaContent.addEventListener('input', updateWordCounts);
+    }
+
+    // Toggle Switch Click
+    if (btnToggle) {
+      btnToggle.addEventListener('click', () => {
+        const currentEnabled = btnToggle.getAttribute('data-enabled') === 'true';
+        const nextEnabled = !currentEnabled;
+        letterState.enabled = nextEnabled;
+        renderSwitchUI(nextEnabled);
+      });
+    }
+
+    // Inspiration Prompt Chips Click
+    document.querySelectorAll('.btn-prompt-chip').forEach((btn: any) => {
+      btn.addEventListener('click', () => {
+        const text = btn.getAttribute('data-text');
+        if (text && textareaContent) {
+          if (textareaContent.value.trim().length > 0) {
+            textareaContent.value += '\n\n' + text;
+          } else {
+            textareaContent.value = text;
+          }
+          updateWordCounts();
+          textareaContent.focus();
+        }
+      });
+    });
+
+    // Save & Push to Firebase
+    if (btnSave) {
+      btnSave.addEventListener('click', async () => {
+        const isEnabled = btnToggle ? btnToggle.getAttribute('data-enabled') === 'true' : false;
+        const newTitle = inputTitle ? inputTitle.value.trim() : letterState.title;
+        const newContent = textareaContent ? textareaContent.value.trim() : letterState.content;
+        const newRecipient = selectRecipient ? (selectRecipient.value as any) : letterState.recipient;
+        const newWax = selectWax ? (selectWax.value as any) : letterState.waxColor;
+        const newShowOnce = checkShowOnce ? checkShowOnce.checked : false;
+
+        const hasContentChanged = newContent !== letterState.content || newTitle !== letterState.title;
+
+        letterState = {
+          ...letterState,
+          enabled: isEnabled,
+          title: newTitle || 'Thư Tình Gửi Em 💌',
+          content: newContent || 'Anh yêu em nhiều lắm!',
+          recipient: newRecipient,
+          waxColor: newWax,
+          showOnce: newShowOnce,
+          updatedAt: new Date().toISOString(),
+          readAt: hasContentChanged ? undefined : letterState.readAt,
+          readBy: hasContentChanged ? undefined : letterState.readBy,
+          badgeText: inputBadge ? inputBadge.value.trim() : undefined,
+          salutation: inputSalutation ? inputSalutation.value.trim() : undefined,
+          bottomQuote: inputQuote ? inputQuote.value.trim() : undefined,
+          signatureSignoff: inputSigFrom ? inputSigFrom.value.trim() : undefined,
+          signatureName: inputSigName ? inputSigName.value.trim() : undefined,
+          btnReadText: inputBtnRead ? inputBtnRead.value.trim() : undefined,
+          btnFoldText: inputBtnFold ? inputBtnFold.value.trim() : undefined
+        };
+
+        // Save local
+        localStorage.setItem('couple_surprise_letter', JSON.stringify(letterState));
+
+        // Loading state
+        const prevHtml = btnSave.innerHTML;
+        btnSave.innerHTML = '<span>⏳ Đang gửi lên Cloud Firebase...</span>';
+        btnSave.style.pointerEvents = 'none';
+
+        try {
+          const res = await pushDataToFirebase({ surpriseLetter: letterState });
+          if (res.success) {
+            window.dispatchEvent(new CustomEvent('couple-letter-updated', { detail: letterState }));
+            renderReceiptUI();
+            renderCloudTime();
+            alert(isEnabled
+              ? '💌 THÀNH CÔNG RỰC RỠ!\n\nBức thư tay đã được BẬT và đồng bộ lên Cloud.\nNgay khi bé Maze mở web trên điện thoại hay máy tính, phong thư hoàng gia sẽ xuất hiện!'
+              : '📁 ĐÃ LƯU BỨC THƯ (Ở CHẾ ĐỘ TẮT)!\n\nNội dung đã được lưu an toàn. Khi nào bạn muốn bé thấy, chỉ cần bấm BẬT và Lưu nhé!');
+          } else {
+            window.dispatchEvent(new CustomEvent('couple-letter-updated', { detail: letterState }));
+            alert('⚠️ Đã lưu trên máy này nhưng Cloud Firebase chưa kết nối được. Vui lòng kiểm tra internet hoặc cấu hình Firebase!');
+          }
+        } catch (err: any) {
+          alert('⚠️ Lỗi gửi lên Cloud: ' + (err?.message || err));
+        } finally {
+          btnSave.innerHTML = prevHtml;
+          btnSave.style.pointerEvents = 'auto';
+        }
+      });
+    }
+
+    // Preview Button (Bật phong thư trải nghiệm ngay trên trang)
+    if (btnPreview) {
+      btnPreview.addEventListener('click', () => {
+        const previewPayload: SurpriseLetterPayload = {
+          enabled: true,
+          title: inputTitle ? inputTitle.value.trim() || 'Thư Tình Gửi Em 💌' : 'Thư Tình Gửi Em 💌',
+          content: textareaContent ? textareaContent.value.trim() || 'Đây là bản xem thử nội dung thư...' : 'Nội dung xem thử...',
+          sender: 'ai',
+          recipient: selectRecipient ? (selectRecipient.value as any) : 'maze',
+          waxColor: selectWax ? (selectWax.value as any) : 'ruby',
+          showOnce: false,
+          updatedAt: new Date().toISOString(),
+          badgeText: inputBadge ? inputBadge.value.trim() : undefined,
+          salutation: inputSalutation ? inputSalutation.value.trim() : undefined,
+          bottomQuote: inputQuote ? inputQuote.value.trim() : undefined,
+          signatureSignoff: inputSigFrom ? inputSigFrom.value.trim() : undefined,
+          signatureName: inputSigName ? inputSigName.value.trim() : undefined,
+          btnReadText: inputBtnRead ? inputBtnRead.value.trim() : undefined,
+          btnFoldText: inputBtnFold ? inputBtnFold.value.trim() : undefined
+        };
+
+        // Dispatch preview event for global SurpriseLoveLetter component
+        window.dispatchEvent(new CustomEvent('open-surprise-letter-preview', { detail: previewPayload }));
+      });
+    }
+
+    // Emergency Turn Off
+    if (btnEmergency) {
+      btnEmergency.addEventListener('click', async () => {
+        if (confirm('🛑 Bạn có chắc chắn muốn TẮT KHẨN CẤP bức thư này không? Nàng sẽ không thấy thư nữa.')) {
+          letterState.enabled = false;
+          letterState.updatedAt = new Date().toISOString();
+          renderSwitchUI(false);
+          localStorage.setItem('couple_surprise_letter', JSON.stringify(letterState));
+
+          try {
+            await pushDataToFirebase({ surpriseLetter: letterState });
+            window.dispatchEvent(new CustomEvent('couple-letter-updated', { detail: letterState }));
+            alert('✅ Đã tắt thư khẩn cấp thành công!');
+          } catch {
+            alert('⚠️ Đã tắt trên máy này.');
+          }
+        }
+      });
+    }
+
+    // Refresh from Cloud Button
+    if (btnRefreshCloud) {
+      btnRefreshCloud.addEventListener('click', async () => {
+        btnRefreshCloud.innerHTML = '<span>⏳ Đang tải...</span>';
+        try {
+          const raw = localStorage.getItem('couple_surprise_letter');
+          if (raw) {
+            letterState = { ...letterState, ...JSON.parse(raw) };
+            loadLetterState();
+          }
+          setTimeout(() => {
+            btnRefreshCloud.innerHTML = '<span>🔄 Tải Lại Dữ Liệu Cloud</span>';
+            alert('✅ Đã làm mới dữ liệu từ Cloud thành công!');
+          }, 400);
+        } catch {
+          btnRefreshCloud.innerHTML = '<span>🔄 Tải Lại Dữ Liệu Cloud</span>';
+        }
+      });
+    }
+
+    // Listen for Realtime Updates from Cloud
+    window.addEventListener('couple-letter-updated', (e: any) => {
+      if (e?.detail) {
+        letterState = { ...letterState, ...e.detail };
+        renderReceiptUI();
+        renderCloudTime();
+        if (e.detail.enabled !== undefined) {
+          renderSwitchUI(e.detail.enabled);
+        }
+      }
+    });
+
+    // Initial Load
+    loadLetterState();
+  }
+
+  initLetterAdmin();
+  document.addEventListener('astro:after-swap', initLetterAdmin);
+</script>

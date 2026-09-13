@@ -88,9 +88,10 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
 
       <div class="quick-preset-btns" id="quick-presets-container">
         <span class="preset-label">Chọn nhanh:</span>
-        <button type="button" class="btn-preset-pill" id="btn-preset-today">⚡ Hôm Nay</button>
+        <button type="button" class="btn-preset-pill" id="btn-preset-today">⚡ Hôm Nay (13/09)</button>
         <button type="button" class="btn-preset-pill" id="btn-preset-anniversary">💌 Kỷ Niệm (15/08)</button>
-        <button type="button" class="btn-preset-pill" id="btn-preset-default">🔄 Mặc Định (12/09)</button>
+        <button type="button" class="btn-preset-pill" id="btn-preset-default">🔄 Mặc Định (13/09)</button>
+        <button type="button" class="btn-preset-pill btn-reset-streak" id="btn-reset-habit-streak" title="Làm mới lại toàn bộ chuỗi ngày về 0/21">🔄 Làm Mới Chặng (0/21)</button>
       </div>
     </div>
 
@@ -1813,7 +1814,7 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       const stored = localStorage.getItem(START_DATE_STORAGE_KEY);
       if (stored && /^\d{4}-\d{2}-\d{2}$/.test(stored)) return stored;
     } catch {}
-    return (window as any).__DEFAULT_HABIT_START_DATE__ || '2026-09-12';
+    return (window as any).__DEFAULT_HABIT_START_DATE__ || '2026-09-13';
   }
 
   function saveStoredStartDate(dateStr: string) {
@@ -1892,28 +1893,46 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     }
 
     return list.map((item: any, idx: number) => {
-      const aiCompleted = Boolean(item.aiCompleted);
-      const mazeCompleted = Boolean(item.mazeCompleted);
-      const aiShieldUsed = Boolean(item.aiShieldUsed);
-      const mazeShieldUsed = Boolean(item.mazeShieldUsed);
+      const aiCompleted = Boolean(item && item.aiCompleted);
+      const mazeCompleted = Boolean(item && item.mazeCompleted);
+      const aiShieldUsed = Boolean(item && item.aiShieldUsed);
+      const mazeShieldUsed = Boolean(item && item.mazeShieldUsed);
       const isAIHandled = aiCompleted || aiShieldUsed;
       const isMazeHandled = mazeCompleted || mazeShieldUsed;
-      const completed = (isAIHandled && isMazeHandled) || Boolean(item.rescuedBy);
+      const completed = (isAIHandled && isMazeHandled) || Boolean(item && item.rescuedBy);
 
       return {
-        day: item.day || idx + 1,
+        day: (item && item.day) || idx + 1,
         aiCompleted,
-        aiCompletedDate: item.aiCompletedDate,
+        aiCompletedDate: aiCompleted ? item.aiCompletedDate : undefined,
         mazeCompleted,
-        mazeCompletedDate: item.mazeCompletedDate,
+        mazeCompletedDate: mazeCompleted ? item.mazeCompletedDate : undefined,
         aiShieldUsed,
         mazeShieldUsed,
-        rescuedBy: item.rescuedBy,
-        rescueNote: item.rescueNote,
+        rescuedBy: item ? item.rescuedBy : undefined,
+        rescueNote: item ? item.rescueNote : undefined,
         completed,
-        completedDate: item.completedDate
+        completedDate: completed ? item.completedDate : undefined
       };
     });
+  }
+
+  function resetAllHabitsClean(targetDays: number): any[] {
+    const freshList = Array.from({ length: targetDays }, (_, i) => ({
+      day: i + 1,
+      aiCompleted: false,
+      mazeCompleted: false,
+      completed: false,
+      aiCompletedDate: undefined,
+      mazeCompletedDate: undefined,
+      completedDate: undefined,
+      aiShieldUsed: false,
+      mazeShieldUsed: false
+    }));
+    const freshShields = { ai: 2, maze: 2 };
+    saveStoredShields(freshShields);
+    saveStoredHabits(freshList);
+    return freshList;
   }
 
   function saveStoredHabits(list: any[]) {
@@ -2357,7 +2376,11 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       aiToggleBtn.addEventListener('click', () => {
         dayData.aiCompleted = !dayData.aiCompleted;
         dayData.aiCompletedDate = dayData.aiCompleted ? new Date().toISOString().slice(0, 10) : undefined;
+        const wasCompleted = dayData.completed;
         recalcDayCompletion(dayData);
+        if (!wasCompleted && dayData.completed) {
+          triggerLoveHeartConfetti();
+        }
         saveStoredHabits(list);
         renderHabitUI();
       });
@@ -2368,7 +2391,11 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       mazeToggleBtn.addEventListener('click', () => {
         dayData.mazeCompleted = !dayData.mazeCompleted;
         dayData.mazeCompletedDate = dayData.mazeCompleted ? new Date().toISOString().slice(0, 10) : undefined;
+        const wasCompleted = dayData.completed;
         recalcDayCompletion(dayData);
+        if (!wasCompleted && dayData.completed) {
+          triggerLoveHeartConfetti();
+        }
         saveStoredHabits(list);
         renderHabitUI();
       });
@@ -2436,12 +2463,28 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
       jointToggleBtn.addEventListener('click', () => {
         const willComplete = !dayData.completed;
         const nowIso = new Date().toISOString().slice(0, 10);
-        dayData.aiCompleted = willComplete;
-        dayData.mazeCompleted = willComplete;
-        dayData.aiCompletedDate = willComplete ? nowIso : undefined;
-        dayData.mazeCompletedDate = willComplete ? nowIso : undefined;
+        if (!willComplete) {
+          dayData.aiCompleted = false;
+          dayData.mazeCompleted = false;
+          dayData.aiCompletedDate = undefined;
+          dayData.mazeCompletedDate = undefined;
+          dayData.aiShieldUsed = false;
+          dayData.mazeShieldUsed = false;
+          dayData.rescuedBy = undefined;
+          dayData.rescueNote = undefined;
+          dayData.completed = false;
+          dayData.completedDate = undefined;
+        } else {
+          dayData.aiCompleted = true;
+          dayData.mazeCompleted = true;
+          dayData.aiCompletedDate = nowIso;
+          dayData.mazeCompletedDate = nowIso;
+        }
         recalcDayCompletion(dayData);
         saveStoredHabits(list);
+        if (willComplete) {
+          triggerLoveHeartConfetti();
+        }
         renderHabitUI();
       });
     }
@@ -2817,8 +2860,36 @@ const coupleGirlsInfoJSON = JSON.stringify(COUPLE_CONFIG.girlsInfo).replace(/</g
     const presetDefault = document.getElementById('btn-preset-default');
     if (presetDefault) {
       presetDefault.addEventListener('click', () => {
-        saveStoredStartDate((window as any).__DEFAULT_HABIT_START_DATE__ || '2026-09-12');
+        saveStoredStartDate((window as any).__DEFAULT_HABIT_START_DATE__ || '2026-09-13');
         renderHabitUI();
+      });
+    }
+
+    const resetStreakBtn = document.getElementById('btn-reset-habit-streak');
+    if (resetStreakBtn) {
+      resetStreakBtn.addEventListener('click', async () => {
+        const confirmed = (window as any).romanticConfirm
+          ? await (window as any).romanticConfirm({
+              heading: 'Bắt Đầu Lại Hành Trình Mới?',
+              subject: 'Làm mới toàn bộ chặng 21 ngày',
+              subjectIcon: '🔄',
+              quote: 'Toàn bộ các ngày đã tích sẽ được làm mới về 0/21 để hai đứa bắt đầu lại từ đầu một cách trọn vẹn nhất.',
+              typeBadge: '✨ Tinh Cầu Số 21',
+              sealEmoji: '🌱',
+              confirmText: 'Làm Mới (0/21) 🔄',
+              cancelText: 'Giữ Lại Tiến Trình 🌸',
+              isDanger: true,
+              notice: 'Số khiên hộ mệnh sẽ được khôi phục 2/2 cho cả AI và Maze.'
+            })
+          : confirm('Hai bạn có chắc muốn làm mới toàn bộ tiến trình về 0 để bắt đầu lại chặng 21 ngày không?');
+
+        if (confirmed) {
+          const targetDays = getStoredTargetDays();
+          resetAllHabitsClean(targetDays);
+          currentSelectedDay = 1;
+          hasUserManuallySelectedDay = false;
+          renderHabitUI();
+        }
       });
     }
 
